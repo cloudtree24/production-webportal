@@ -46,9 +46,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Content Update="service-account-hcmportal.json">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
     <Content Update="Views\Subscription\_InvoicePrintPartialView.cshtml">
       <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
       <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
