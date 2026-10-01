@@ -1,0 +1,19 @@
+﻿@* @using HCMPortal.ViewModel *@
+@model List<DynamicPage>
+
+
+            @{
+    string privacy = Model.Where(e => e.Slug.Contains("privacy")).Select(e => e.Slug).FirstOrDefault() ?? "javascript:void(0)";
+    string purchase = Model.Where(e => e.Slug.Contains("purchase")).Select(e => e.Slug).FirstOrDefault() ?? "javascript:void(0)";
+    string refund = Model.Where(e => e.Slug.Contains("refund")).Select(e => e.Slug).FirstOrDefault() ?? "javascript:void(0)";
+    string terms = Model.Where(e => e.Slug.Contains("terms")).Select(e => e.Slug).FirstOrDefault() ?? "javascript:void(0)";
+    string disclaimer = Model.Where(e => e.Slug.Contains("disclaimer")).Select(e => e.Slug).FirstOrDefault() ?? "javascript:void(0)";
+    string serviceagreement = Model.Where(e => e.Slug.Contains("agreement")).Select(e => e.Slug).FirstOrDefault() ?? "javascript:void(0)";
+            }
+            <a href="/@terms" class="text-decoration-none mb-1">Terms &amp; Condition</a>
+            <a href="/@privacy" class="text-decoration-none mb-1">Privacy Policy</a>
+            <a href="/@purchase" class="text-decoration-none mb-1">Purchase Policy</a>
+            <a href="/@refund" class="text-decoration-none mb-1">Refund Policy</a>
+            <a href="/@disclaimer" class="text-decoration-none mb-1">Disclaimer</a>
+            <a href="/@serviceagreement" class="text-decoration-none mb-1">Service Level Agreement</a>
+ 

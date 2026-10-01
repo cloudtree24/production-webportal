@@ -1,0 +1,536 @@
+﻿@model HCMPortal.ViewModel.InvoicePrintDetailsViewModel
+@using HCMPortal.Helper
+
+@{
+    ViewData["Title"] = "Invoice Details";
+    Layout = null;
+}
+@{
+    // Define helper variables for calculation consistency and reuse
+    decimal totalTaxableAmount = 0;
+    decimal totalTaxAmount = 0;
+    decimal totalDiscountAmount = 0;
+    decimal totalPayableAmount = 0;
+
+    if (Model?.invoiceItems != null)
+    {
+        foreach (var item in Model.invoiceItems)
+        {
+            // Handle nullables gracefully with ?? 0m
+            decimal serviceAmount = item.ServiceAmount;
+            decimal discountPercentage = item.DiscountPercentage ?? 0m;
+            decimal igstAmount = item.Igstamount ?? 0m;
+            decimal cgstAmount = item.Cgstamount ?? 0m;
+            decimal sgstAmount = item.Sgstamount ?? 0m;
+
+            decimal itemDiscount = Math.Round(Convert.ToDecimal((serviceAmount * discountPercentage / 100)), 2);
+            decimal itemTaxableAmount = Math.Round(serviceAmount - itemDiscount, 2);
+            decimal itemTax = cgstAmount + sgstAmount + igstAmount;
+            decimal itemNetAmount = Math.Round(itemTaxableAmount + itemTax, 2);
+
+            totalTaxableAmount += itemTaxableAmount;
+            totalTaxAmount += itemTax;
+            totalDiscountAmount += itemDiscount;
+            totalPayableAmount += itemNetAmount;
+        }
+    }
+
+    // Round off calculation for the summary table
+    decimal payableRounded = Math.Round(totalPayableAmount);
+    decimal roundOff = payableRounded - totalPayableAmount;
+
+    // Helper to calculate rate from amount and taxable base (used in the table loop)
+    decimal CalculateTaxRate(decimal taxAmount, decimal taxableAmount)
+    {
+        if (taxableAmount == 0) return 0;
+        // Check if it's IGST (whole taxable amount) or CGST/SGST (half taxable amount)
+        decimal divisor = taxAmount > 0 && taxableAmount > 0 && taxAmount == totalTaxAmount 
+                          ? taxableAmount 
+                          : taxableAmount / 2;
+        
+        if (divisor <= 0) return 0;
+        
+        return Math.Round((taxAmount / divisor) * 100, 1);
+    }
+}
+<!doctype html>
+<html lang="en">
+
+  <head>
+    <meta charset="utf-8">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <title>Invoice - @Model.InvoiceNumber</title>
+    <style>
+      *,
+      *::before,
+      *::after {
+        box-sizing: border-box;
+      }
+
+      * {
+        margin: 0;
+        padding: 0;
+        border: 0;
+      }
+
+      html {
+        -webkit-text-size-adjust: 100%;
+      }
+
+      body {
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+        font-family: Arial, sans-serif;
+        font-size: 16px; 
+        line-height: 1.4; 
+      }
+
+      /* === TABLES === */
+      table,
+      tr,
+      td,
+      th {
+        page-break-inside: avoid !important;
+      }
+
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-bottom: 20px; 
+      }
+
+      th,
+      td {
+        text-align: center;
+        vertical-align: middle;
+        word-wrap: break-word;
+        white-space: normal;
+        padding: 10px 5px; 
+        font-size: 16px;
+      }
+
+      .tableBorder th,
+      .tableBorder td {
+        border: 1px solid #000;
+      }
+
+      .text-left {
+        text-align: left;
+      }
+
+      .text-right {
+        text-align: right;
+      }
+
+      .no-padding {
+        padding: 0px;
+      }
+
+      .gray-bg {
+        background: rgba(0, 0, 0, 0.05);
+      }
+
+      p {
+        margin: 0;
+      }
+
+      .invoice-container {
+        width: 98%;
+        margin: 0 auto;
+        box-sizing: border-box;
+      }
+
+      .invoice-container .logo {
+        width: 250px; 
+      }
+      
+      .invoice-container strong {
+        font-weight: bold;
+      }
+
+      /* QR Code Style */
+      .qr-image {
+        width: 150px; 
+        height: 150px;
+        vertical-align: middle;
+        margin-right: 10px;
+      }
+
+      @@page {
+        size: A4 portrait;
+        margin: 15mm;
+      }
+
+      /* Print specific overrides */
+      @@media print {
+        body {
+            font-size: 14px; 
+            line-height: 1.3;
+        }
+        th, td {
+            padding: 5px 3px; 
+            font-size: 14px;
+        }
+        .invoice-container .logo {
+            width: 180px;
+        }
+        .qr-image {
+            width: 100px; 
+            height: 100px;
+        }
+        #downloadPdf {
+            display: none !important;
+        }
+      }
+    </style>
+  </head>
+
+  <body>
+
+    <div class="invoice-container" id="invoiceToPrintDiv">
+
+      <table style="margin-top: 10px">
+        <tr>
+          <td style="width:50%; text-align: left; vertical-align:middle;">
+            <img src="~/assets/images/cloudtree_final_Logo.png" alt="theCloudtreeAI" title="theCloudtreeAI" class="logo">
+          </td>
+
+          <td style="width:50%; text-align: left; vertical-align:middle;">
+            @{
+                if (Model.InvoiceStatus == "final")
+                {
+                    <p style="font-size: 24px;"><strong><u>Tax Invoice</u></strong></p>
+                }
+                else
+                {
+                    <p style="font-size: 24px;"><strong><u>Order Invoice</u></strong></p>
+                }
+            }
+          </td>
+        </tr>
+      </table>
+
+      <table style="margin-bottom: 10px">
+        <tbody>
+          <tr>
+            <td class="text-left">
+                        <p><strong>@(Model.SelfDetails?.OrgName ?? "CLOUDTREE® AI INDIA PRIVATE LIMITED")</strong></p>
+                        <p>@(Model.SelfDetails?.AddressLine1 ?? "Plot No-532/1026, P.S Plaza")</p>
+                        <p>@(Model.SelfDetails?.City ?? "Rasulgarh"), @(Model.SelfDetails?.StateName ?? "Bhubaneswar, India"), @(Model.SelfDetails?.PostalCode ?? "751 010")</p>
+                        @* Added Email, CIN, and Tan from Code-2 (assuming these are constant for the SelfDetails) *@
+                        <p>Email: @Model.SelfDetails?.PrimaryEmail</p>
+                        <p>State Code: @Model.SelfDetails?.StateCode</p>
+                        <p><strong>PAN NO: </strong>@Model.SelfDetails?.Pan</p>
+                        <p><strong>GSTIN: </strong>@Model.SelfDetails?.Gstin</p>
+                        <p>CIN No: U40100TN2010PTC075961</p>
+                        <p>Tan No: @Model.SelfDetails?.Tannumber</p>
+            </td>
+
+            <td class="text-right">
+              @{
+                  if (Model.InvoiceStatus == "final")
+                  {
+                      <p><strong>Invoice No:</strong> @Model.InvoiceNumber</p>
+                      <p><strong>Invoice Date:</strong> @Model.InvoiceDate.ToString("dd-MM-yyyy")</p>
+                  }
+                  else
+                  {
+                      <p><strong>Order No:</strong> @Model.OrderNumber</p>
+                      <p><strong>Order Date:</strong> @Model.CreatedDate.ToString("dd-MM-yyyy")</p>
+                  }
+              }
+                        <br />
+                        <p><strong>Banking Details</strong></p>
+                        <p>Bank: @Model.SelfDetails?.BankName</p>
+                        <p>A/c No: @Model.SelfDetails?.AccountNumber, IFSC: @Model.SelfDetails?.IFSCCode</p>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+
+      <table style="width:100%; margin-bottom:20px; table-layout: fixed; border-collapse: collapse;">
+        <tbody>
+          <tr>
+            <th style="width:50%; padding:10px; border:1px solid #000; text-align:left; background:#f0f0f0;">
+              Billing To
+            </th>
+
+            <th style="width:50%; padding:10px; border:1px solid #000; text-align:left; background:#f0f0f0;">
+              Shipping To
+            </th>
+          </tr>
+
+          <tr>
+            <td style="width:50%; padding:10px; border:1px solid #000; vertical-align: top; text-align:left;">
+              <strong>@(Model.customerDetails?.CompanyName ?? "NOT AVAILABLE")</strong><br>
+              @(Model.customerDetails?.Address ?? "NA")<br>
+              @* Postal Code and City are available if needed: @(Model.customerDetails?.City) - @(Model.customerDetails?.PostalCode) *@
+              Phone No: @(Model.customerDetails?.Phonenumber ?? "NA")<br>
+              Email: @(Model.customerDetails?.EmailAddress ?? "NA")<br>
+              GSTIN: @(Model.customerDetails?.Gstinnumber ?? "NA")<br>
+              <p>Pan No: @(Model.customerDetails?.Pancard ?? "NA")</p> @* Corrected: Used Pancard property *@
+              State Code: @(Model.customerDetails?.Gstinnumber?.Length >= 2 ? Model.customerDetails.Gstinnumber.Substring(0, 2) : "NA")
+            </td>
+
+            <td style="width:50%; padding:10px; border:1px solid #000; vertical-align: top; text-align:left;">
+              <strong>@(Model.customerDetails?.CompanyName ?? "NOT AVAILABLE")</strong><br>
+              @(Model.customerDetails?.Address ?? "NA")<br>
+              Phone No: @(Model.customerDetails?.Phonenumber ?? "NA")<br>
+              Email: @(Model.customerDetails?.EmailAddress ?? "NA")<br>
+              GSTIN: @(Model.customerDetails?.Gstinnumber ?? "NA")<br>
+              Pan No: @(Model.customerDetails?.Pancard ?? "NA")<br> @* Corrected: Used Pancard property *@
+            </td>
+          </tr>
+        </tbody>
+      </table>
+
+
+      <table class="tableBorder" style="margin-bottom: 20px; table-layout: fixed; width: 100%;">
+        <thead>
+          <tr class="bg-light">
+            <th rowspan="2" class="gray-bg text-left" style="width: 22%;">Item Description</th>
+            <th rowspan="2" class="gray-bg text-left" style="width: 6%;">HSN/SAC</th>
+            <th rowspan="2" class="gray-bg text-left" style="width: 4%;">Qty</th>
+            <th rowspan="2" class="gray-bg text-left" style="width: 4%;">UM</th>
+            <th rowspan="2" class="gray-bg text-right" style="width: 8%;">Rate (INR)</th>
+            <th colspan="2" class="gray-bg" style="width: 12%;">Discount</th>
+            <th colspan="2" class="gray-bg" style="width: 12%;">CGST</th>
+            <th colspan="2" class="gray-bg" style="width: 12%;">SGST</th>
+            <th colspan="2" class="gray-bg" style="width: 12%;">IGST</th>
+            <th rowspan="2" class="gray-bg text-right" style="width: 8%;">Total</th>
+          </tr>
+
+          <tr class="bg-light">
+            <th class="gray-bg">Rate(%)</th>
+            <th class="gray-bg text-right">Amount</th>
+            <th class="gray-bg">Rate(%)</th>
+            <th class="gray-bg text-right">Amount</th>
+            <th class="gray-bg">Rate(%)</th>
+            <th class="gray-bg text-right">Amount</th>
+            <th class="gray-bg">Rate(%)</th>
+            <th class="gray-bg text-right">Amount</th>
+          </tr>
+        </thead>
+
+        <tbody>
+          @if (Model.invoiceItems != null)
+          {
+              foreach (var item in Model.invoiceItems)
+              {
+                  decimal serviceAmount = item.ServiceAmount;
+                  decimal discountPercentage = item.DiscountPercentage ?? 0m;
+                  decimal igstAmount = item.Igstamount ?? 0m;
+                  decimal cgstAmount = item.Cgstamount ?? 0m;
+                  decimal sgstAmount = item.Sgstamount ?? 0m;
+
+                  decimal itemDiscount = Math.Round(Convert.ToDecimal((serviceAmount * discountPercentage / 100)), 2);
+                  decimal itemTaxableAmount = Math.Round(serviceAmount - itemDiscount, 2);
+                  decimal itemNetAmount = Math.Round(itemTaxableAmount + cgstAmount + sgstAmount + igstAmount, 2);
+                  
+                  // UM logic from previous view
+                  string[] serviceNameParts = item.ServiceName.Split(new[] { '-' }, 2);
+                  string um = (serviceNameParts.Length > 1) ? serviceNameParts[1].Trim() : "Add-On";
+
+                  // Rate Calculation
+                  decimal cgstrate = (cgstAmount > 0 && itemTaxableAmount != 0) ? CalculateTaxRate(cgstAmount, itemTaxableAmount) : 0;
+                  decimal sgstrate = (sgstAmount > 0 && itemTaxableAmount != 0) ? CalculateTaxRate(sgstAmount, itemTaxableAmount) : 0;
+                  decimal igstrate = (igstAmount > 0 && itemTaxableAmount != 0) ? CalculateTaxRate(igstAmount, itemTaxableAmount) : 0;
+                  
+                  <tr>
+                    <td class="text-left" style="word-wrap: break-word; overflow-wrap: break-word; white-space: normal;">
+                      @item.ServiceName
+                    </td>
+                    <td class="text-left">@item.Hsncode</td>
+                    <td class="text-left">1</td>
+                    <td class="text-left">@um</td>
+                    <td class="text-right">@Math.Round(serviceAmount, 2).ToString("N2")</td>
+                    <td>@discountPercentage</td>
+                    <td class="text-right">@itemDiscount.ToString("N2")</td>
+                    <td>@cgstrate</td>
+                    <td class="text-right">@Math.Round(cgstAmount, 2).ToString("N2")</td>
+                    <td>@sgstrate</td>
+                    <td class="text-right">@Math.Round(sgstAmount, 2).ToString("N2")</td>
+                    <td>@igstrate</td>
+                    <td class="text-right">@Math.Round(igstAmount, 2).ToString("N2")</td>
+                    <td class="text-right">@itemNetAmount.ToString("N2")</td>
+                  </tr>
+              }
+          }
+          else
+          {
+              <tr>
+                <td colspan="13" class="text-center">No invoice items found.</td>
+              </tr>
+          }
+
+        </tbody>
+      </table>
+
+      <table>
+        <tbody>
+          <tr>
+            <td class="no-border no-padding text-left" style="width: 65%; vertical-align: top; padding-right:10px;">
+              <p><strong>In Words: </strong>INR @NumberToWordsConverter.NumberToWords((long)payableRounded) Only</p>
+              <p><strong>Notes:</strong></p>
+              <p>- Payments are to be made in INR.</p>
+              <p>- The customer being provided with this Invoice is not authorized to alter Terms & Conditions.</p>
+              <p>- Any purported amendment is a legal offence.</p>
+              <p>- All disputes are subject to Bhubaneswar Jurisdiction Only.</p>
+              <p>- Tax should not be deducted on the GST Component Charged on the invoice as per circular no. 23 of
+                2017, issued by Central Board of Direct Taxes, Ministry of Finance, Govt of India.</p>
+              <p>- Tax on the invoice is not payable under Reverse Charge.</p>
+            </td>
+
+            <td class="no-padding" style="width: 35%">
+              <table class="tableBorder">
+                <tbody>
+                  <tr>
+                    <td>Taxable Value(Amount)</td>
+                    <td class="text-right">₹@totalTaxableAmount.ToString("N2")</td>
+                  </tr>
+                  <tr>
+                    <td>Tax Value(Amount)</td>
+                    <td class="text-right">₹@totalTaxAmount.ToString("N2")</td>
+                  </tr>
+                  <tr>
+                    <td>Discount(Amount)</td>
+                    <td class="text-right">₹@totalDiscountAmount.ToString("N2")</td>
+                  </tr>
+                  <tr>
+                    <td>Round Off(Amount)</td>
+                    <td class="text-right">₹@Math.Round(roundOff, 2).ToString("N2")</td>
+                  </tr>
+                  <tr>
+                    <td><strong>Invoice Value</strong></td>
+                    <td class="text-right"><strong>₹@payableRounded.ToString("N2")</strong></td>
+                  </tr>
+                  <tr>
+                    <td colspan="2" style="text-align: right;">
+                      <img src="signature.png" alt="Authorized Signatory" style="width:150px; height:auto; margin-top: 5px;"><br>
+                      <strong>Authorized Signatory</strong>
+                      <p>For @(Model.SelfDetails?.OrgName ?? "Company Name")</p>
+                    </td>
+                  </tr>
+
+                </tbody>
+              </table>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+
+      @* <table style="width: 100%; margin-top: 20px; table-layout: fixed; border-collapse: collapse;">
+        <tbody>
+          <tr>
+            <td class="no-padding" style="text-align: left; vertical-align: middle;">
+              
+              @if (!string.IsNullOrEmpty(Model.QrCodeBase64Image))
+              {
+                  <img src="data:image/png;base64,@Model.QrCodeBase64Image" alt="Invoice QR Code"
+                    class="qr-image">
+                  <span style="vertical-align: middle; font-size: 18px;">
+                    Scan the QR code to view the soft copy of the invoice.
+                  </span>
+              }
+              else
+              {
+                  <span style="vertical-align: middle; font-size: 18px; color: red;">
+                    QR Code Not Available.
+                  </span>
+              }
+
+            </td>
+          </tr>
+        </tbody>
+      </table> *@
+
+    </div>
+
+    @* <div class="justify-content-center" style="margin-top: 10px; text-align:center;">
+      <button id="downloadPdf" class="btn btn-light border text-black-50 shadow-none mx-1">
+        <i class="fa fa-file-pdf"></i> Download PDF
+      </button>
+    </div> *@
+
+
+   @*  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
+    <script>
+      document.getElementById("downloadPdf").addEventListener("click", async function () {
+        const { jsPDF } = window.jspdf;
+
+        const invoice = document.getElementById("invoiceToPrintDiv");
+
+        // Hide the download button before generating PDF
+        const downloadButton = document.getElementById("downloadPdf");
+        downloadButton.style.display = 'none';
+
+        try {
+            // Capture with higher scale for better quality
+            const canvas = await html2canvas(invoice, { scale: 3, useCORS: true, logging: false });
+            const imgData = canvas.toDataURL("image/jpeg", 0.9); // Use JPEG for smaller file size
+
+            // A4 size in mm: 210 x 297
+            const pdf = new jsPDF("p", "mm", "a4");
+
+            const pageWidth = pdf.internal.pageSize.getWidth();
+            const pageHeight = pdf.internal.pageSize.getHeight();
+
+            // Custom margin
+            const margin = 10; // mm
+            const imgWidth = pageWidth - margin * 2;
+            const imgHeight = (canvas.height * imgWidth) / canvas.width;
+
+            let currentHeight = 0;
+
+            // Handle multi-page content
+            while (currentHeight < imgHeight) {
+                if (currentHeight > 0) {
+                    pdf.addPage();
+                }
+
+                // Calculate the source Y position on the canvas for the current page
+                const srcY = (currentHeight / imgHeight) * canvas.height;
+                
+                // Calculate the height of the image portion to display on the current PDF page (target height in mm)
+                const cropHeightMM = pageHeight - 2 * margin;
+
+                // Calculate the actual canvas height (pixels) that corresponds to cropHeightMM
+                const cropHeightPx = (cropHeightMM / imgHeight) * canvas.width * (canvas.height / canvas.width);
+                
+                // Draw image on PDF, cropping based on srcY
+                pdf.addImage(
+                    imgData,
+                    'JPEG',
+                    margin,
+                    margin,
+                    imgWidth,
+                    imgHeight,
+                    null,
+                    'NONE',
+                    0,
+                    srcY 
+                );
+
+                // Update current height (in mm)
+                currentHeight += cropHeightMM; 
+            }
+
+            // Fallback for invoice number in case it's null
+            const filename = "Invoice_" + ('@Model.InvoiceNumber' || 'Unknown') + ".pdf";
+
+            pdf.save(filename);
+        } catch (error) {
+            console.error("PDF generation failed:", error);
+        } finally {
+            // Re-display the download button
+            downloadButton.style.display = 'block';
+        }
+      });
+    </script> *@
+
+  </body>
+
+</html>

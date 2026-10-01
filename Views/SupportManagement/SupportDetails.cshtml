@@ -1,0 +1,451 @@
+﻿@model HCMPortal.ViewModel.SupportPageViewModel
+@{
+    Layout = "_customerDashboardLayout";
+    ViewData["Title"] = "Ticket Details";
+
+    <link href="~/assets/font/font-awsome/css/all.min.css" rel="stylesheet" />
+    // Include DataTables CSS and JS
+}
+<style>
+    #dropZone {
+        background-color: #f9f9f9;
+        border: 2px dashed #ccc;
+        transition: background-color 0.2s ease, border-color 0.2s ease;
+        cursor: pointer;
+    }
+
+        #dropZone:hover {
+            background-color: #f1f1f1;
+            border-color: #007bff;
+        }
+    /* File label styled like a link after selection */
+    .file-link {
+        color: #007bff;
+        text-decoration: underline;
+        cursor: pointer;
+    }
+
+</style>
+
+
+<section class="breadcumnd__banner">
+    <!--Container-->
+    <div class="container">
+        <div class="d-flex justify-content-start gap-4">
+            <h2 class="bread__title">
+                Support
+            </h2>
+            <ul class="breadcumnd__link">
+                <li>
+                    <a asp-controller="CustomerManagement" asp-action="PortalDashboard">Dashboard</a>
+                </li>
+                <li><i class="bi bi-chevron-right"></i></li>
+                <li class="active">
+                    <a href="javascript:void(0)">Support</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+    <!--Container-->
+</section>
+
+<div class="section_gap_large">
+    <div class="container">
+
+        <div class="d-flex justify-content-between align-items-center mb-4 gap-3">
+            <h4 class="mb-0">Ticket History</h4>
+            <button type="button" data-bs-toggle="modal" data-bs-target="#supportTicketModal" class="btn btn-success btn-lg shadow-sm">
+                <i class="bi bi-plus-circle me-2"></i> New Request
+            </button>
+        </div>
+
+        <div class="card shadow border-0 mb-4">
+            <div class="card-body p-4">
+                <div class="row">
+                    <div class="col-12">
+                        <div class="mb-4">
+                            <form id="supportForm" asp-action="TicketFilterResults" method="get">
+                                <div class="d-flex gap-2 justify-content-end">
+
+                                    <div class="mb-3">
+                                        <label for="fromDate" class="form-label">From Date<span class="text-danger">*</span></label>
+                                        <input asp-for=FromDate type="date" class="form-control" id="fromDate">
+                                        <div id="fromWarning" class="text-danger mt-1" style="display:none;"></div>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="toDate" class="form-label">To Date<span class="text-danger">*</span></label>
+                                        <input asp-for=ToDate type="date" class="form-control" id="toDate">
+                                        <div id="toWarning" class="text-danger mt-1" style="display:none;"></div>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="category" class="form-label">Category</label>
+                                        <select class="form-select" id="category" asp-for=Category>
+                                            <option value="">Select Category</option>
+                                            <option value="General">General</option>
+                                            <option value="Technical">Technical</option>
+                                            <option value="Billing">Billing</option>
+                                        </select>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="label" class="form-label d-block">&nbsp</label>
+                                        <button type="submit" id="searchBtn" class="btn btn-primary w-100 mb-3">
+                                            <i class="mdi mdi-file-account me-1"></i>Search
+                                        </button>
+                                        @* <a type="button" style="background-color: #4859a8;color: white;" class="btn btn-Primary" asp-area="" asp-controller="Subscription" asp-action="SubscriptionList">Reset</a> *@
+                                    </div>
+
+                                </div>
+                            </form>
+                        </div>
+                        <div class="table-responsive">
+                            <table class="table align-middle" id="datatable_support">
+                                <thead class="table-light">
+                                    <tr>
+                                        <th>Ticket ID</th>
+                                        <th>Report Date</th>
+                                        <th>Category</th>
+                                        <th>Subject</th>
+                                        <th>Status</th>
+                                        <th>Details</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @{
+                                        if (Model.ticketList != null)
+                                        {
+                                            foreach (var item in Model.ticketList)
+                                            {
+                                                <tr>
+
+                                                    <td>TCK#@item.TicketId</td>
+                                                    <td>@item.CreatedDate.ToString("dd-MM-yyyy")</td>
+                                                    <td>@item.QueryType</td>
+                                                    <td>@item.Subject</td>
+                                                    <td>
+                                                        @if (item.ResolveStatus?.Trim().ToLower().Equals("open") == true)
+                                                        {
+                                                            <span class="badge bg-warning text-dark">Open</span>
+                                                        }
+                                                        else if (item.ResolveStatus?.Trim().ToLower().Equals("inprogress") == true)
+                                                        {
+                                                            <span class="badge bg-primary">In Progress</span>
+                                                        }
+                                                        else if (item.ResolveStatus?.Trim().ToLower().Equals("closed") == true)
+                                                        {
+                                                            <span class="badge bg-success">Closed</span>
+                                                        }
+                                                        else
+                                                        {
+                                                            <span class="badge bg-warning text-dark">@item.ResolveStatus</span>
+                                                        }
+                                                    </td>
+
+
+                                                    <td>
+                                                        <a href="javascript:void(0);"
+                                                           class="btn btn-outline-primary"
+                                                           id="ticketDetails"
+                                                           data-id="@item.TicketId">
+                                                            <i class="fa-solid fa-circle-info"></i>
+                                                        </a>
+
+                                                    </td>
+                                                </tr>
+                                            }
+                                        }
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+
+
+<!-- Ticket Details Modal -->
+<div class="modal fade" id="ticketModal" tabindex="-1" aria-labelledby="ticketModalTitle" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+
+            <div class="modal-header">
+                <h5 class="modal-title" id="ticketModalTitle">Ticket Details</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+
+            <div class="modal-body" id="ticketModalBody">
+                <!-- Dynamic ticket details will be inserted here -->
+            </div>
+
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+
+<div class="modal fade" id="supportTicketModal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Create New Request</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <form id="issueForm" asp-action="TicketGenerate" method="post" enctype="multipart/form-data">
+                    <input type="hidden" asp-for="Tmid">
+                    <div class="mb-3">
+                        <label for="feedbackType" class="form-label">Support Category<span class="text-danger">*</span></label>
+                        <select class="form-select" id="feedbackType" asp-for="@Model.QueryType" required>
+                            <option value="" disabled selected>Select Category</option>
+                            <option value="General">General</option>
+                            <option value="Technical">Technical</option>
+                            <option value="Billing">Billing</option>
+                        </select>
+                        <span class="text-danger" asp-validation-for="@Model.QueryType"></span>
+                    </div>
+                    <div class="mb-3">
+                        <label for="feedbackSubject" class="form-label">Subject<span class="text-danger">*</span></label>
+                        <input type="text" asp-for="@Model.Subject" class="form-control" id="feedbackSubject" placeholder="Enter subject" required maxlength="100">
+                        <span class="text-danger" asp-validation-for="@Model.Subject"></span>
+                    </div>
+                    <div class="mb-3">
+                        <label for="feedbackSummary" class="form-label">Summary<span class="text-danger">*</span></label>
+                        <textarea class="form-control" asp-for="@Model.Summary" id="feedbackSummary" placeholder="Enter your feedback" rows="4" required></textarea>
+                        <span class="text-danger" asp-validation-for="@Model.Summary"></span>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Attachment</label>
+                        <div class="form-group">
+                            <!-- DropZone Style -->
+                            <label for="attachment" id="dropZone"
+                                   class="d-flex flex-column align-items-center justify-content-center p-4 border border-2 rounded text-center cursor-pointer">
+                                <i class="fas fa-file-upload text-secondary fa-2x"></i>
+                                <span class="mt-2" id="fileLabel">Click to Upload<br>(.jpg, .png, .jpeg, .mp4, .mov)</span>
+                            </label>
+
+                            <!-- Hidden file input -->
+                            <input type="file" asp-for="@Model.attachment" id="attachment" accept="image/*,video/*" class="d-none" />
+
+                            <!-- Filename link -->
+                            <div id="fileInfo" class="mt-2"></div>
+
+                            <!-- Validation -->
+                            <span id="fileWarning" class="text-danger"></span>
+                        </div>
+                    </div>
+                    <button type="submit" class="btn btn-primary w-100">Submit Feedback</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<div class="main">
+    <div class="green-line"></div>
+</div>
+
+<footer>
+</footer>
+<div class="bottom-footer">
+</div>
+
+
+<script>
+    const fromDate = document.getElementById("fromDate");
+    const toDate = document.getElementById("toDate");
+    const searchBtn = document.getElementById("searchBtn");
+    const form = document.getElementById("supportForm");
+
+    const fromWarning = document.getElementById("fromWarning");
+    const toWarning = document.getElementById("toWarning");
+
+    const validateDates = () => {
+        let invalid = false;
+
+        if (fromDate.value && !toDate.value) {
+            toWarning.textContent = "Please select To Date.";
+            toWarning.style.display = "block";
+            fromWarning.style.display = "none";
+            invalid = true;
+        } else if (!fromDate.value && toDate.value) {
+            fromWarning.textContent = "Please select From Date.";
+            fromWarning.style.display = "block";
+            toWarning.style.display = "none";
+            invalid = true;
+        } else {
+            fromWarning.style.display = "none";
+            toWarning.style.display = "none";
+            invalid = false;
+        }
+
+        searchBtn.disabled = invalid;
+    };
+
+
+    // Listen for changes
+    fromDate.addEventListener("change", validateDates);
+    toDate.addEventListener("change", validateDates);
+
+    // Prevent submit if invalid
+    form.addEventListener("submit", function(e) {
+        validateDates();
+        if (searchBtn.disabled) {
+            e.preventDefault();
+        }
+    });
+
+    // Initial validation
+
+
+</script>
+
+
+
+<script>
+    $(document).on("click", "#ticketDetails", function () {
+        var ticketId = $(this).data("id");
+
+
+        $.ajax({
+            url: '/SupportManagement/GetLastTicketDetailsById',
+            type: 'GET',
+            data: { ticketId: ticketId },
+            success: function (ticket) {
+                // set title
+                $("#ticketModalTitle").text("Ticket #" + ticket.ticketId + " - " + (ticket.subject || ""));
+
+                // build file link if available
+            var fileLink = "No Attachment Found";
+
+            if (ticket.attachedFileName) {
+                    // Get the filename (assuming it's not null/empty for this logic to run)
+    const fileName = ticket.attachedFileName;
+
+    // 1. Determine the file extension
+    // It splits the string by '.', takes the last part, and converts to lowercase
+    const extension = fileName.split('.').pop().toLowerCase();
+
+    // 2. Define image extensions for comparison
+    const imageExtensions = ['jpg', 'jpeg', 'png', 'gif'];
+
+    // 3. Determine the dynamic base path using a ternary operator
+    const basePath = imageExtensions.includes(extension)
+        ? '../../assets/UploadImg/' // Path for images
+        : '../../assets/UploadDoc/'; // Path for documents (or any other file type)
+
+    // 4. Construct the final file URL
+    const fileUrl = basePath + fileName;
+                /* var fileUrl = "/assets/UploadImg/" + ticket.attachedFileName; */ // adjust if stored differently
+                fileLink = ` <a href="${fileUrl}" target="_blank">${ticket.attachedFileName}</a>`;
+            }
+                // build modal body dynamically
+                var detailsHtml = `
+                    <p><b>Query Type:</b> ${ticket.queryType ?? ""}</p>
+                    <p><b>Summary:</b> ${ticket.summary ?? ""}</p>
+                     <p><b>Attachment:</b>${fileLink}</p>
+                    <p><b>Status:</b> ${ticket.resolveStatus ?? ""}</p>
+                    <p><b>Created:</b> ${formatDate(ticket.createdDate)}</p>
+                    <p><b>Respond Date:</b> ${ticket.respondDate ?? ""}</p>
+                `;
+
+                $("#ticketModalBody").html(detailsHtml);
+
+                // show modal
+                $("#ticketModal").modal("show");
+            },
+            error: function () {
+                alert("Unable to load ticket details.");
+            }
+        });
+            function formatDate(dateString) {
+        if (!dateString) return "";
+        var d = new Date(dateString);
+        var day = String(d.getDate()).padStart(2, '0');
+        var month = String(d.getMonth() + 1).padStart(2, '0'); // month is 0-indexed
+        var year = d.getFullYear();
+        return `${day}-${month}-${year}`;
+    }
+    });
+</script>
+
+
+<script src="~/assets/js/vanilla-toast.min.js"></script>
+
+<script>
+    $(document).ready(function() {
+          $('#datatable_support').DataTable(); // Assuming your table has id="datatable-buttons"
+
+       const fileInput = document.getElementById("attachment");
+    const fileLabel = document.getElementById("fileLabel");
+    const fileInfo = document.getElementById("fileInfo");
+    const fileWarning = document.getElementById("fileWarning");
+
+        fileInput.addEventListener("change", function () {
+        if (fileInput.files.length > 0) {
+            const file = fileInput.files[0];
+            const validTypes = ["image/jpeg", "image/png", "image/jpg", "video/mp4", "video/quicktime"];
+
+            if (!validTypes.includes(file.type)) {
+                fileWarning.textContent = "Invalid file type. Please upload an image or video.";
+                fileInput.value = "";
+                fileLabel.innerHTML = "Click to Upload<br>(.jpg, .png, .jpeg, .mp4, .mov)";
+                fileInfo.innerHTML = "";
+            } else {
+                fileWarning.textContent = "";
+
+                // Change label text to "Change"
+                fileLabel.textContent = "Change";
+
+                // Show filename as a blue clickable link
+                fileInfo.innerHTML = `<span class="file-link" id="previewFile">${file.name}</span>`;
+
+                // Preview click
+                document.getElementById("previewFile").onclick = () => {
+                    const fileURL = URL.createObjectURL(file);
+                    window.open(fileURL, "_blank");
+                };
+            }
+        }
+    });
+    });
+</script>
+
+@* @{
+    if (ViewBag.Success != null)
+    {
+        <script type="text/javascript">
+            vt.success("@ViewBag.Success", {
+                title: "Successfull",
+                position: "top-center",
+                closable: true,
+                focusable: true,
+            });
+        </script>
+    }
+    if (ViewBag.Exception != null)
+    {
+        <script type="text/javascript">
+            vt.error("@ViewBag.Exception", {
+                title: "Alert",
+                position: "top-center",
+            });
+        </script>
+    }
+    if (ViewBag.Delete != null)
+    {
+        <script type="text/javascript">
+            vt.warn("@ViewBag.Delete", {
+                title: "Alert",
+                position: "top-center",
+            });
+        </script>
+    }
+} *@

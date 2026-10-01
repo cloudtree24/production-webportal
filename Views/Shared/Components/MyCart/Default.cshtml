@@ -1,0 +1,72 @@
+﻿@model List<HCMPortal.ViewModel.MyCartViewModel>
+@using Microsoft.AspNetCore.Http
+@inject IHttpContextAccessor HttpContextAccessor
+
+@if (Model != null && Model.Count > 0)
+{
+    int ncount = Model.Count;
+
+    <a href="#" class="cart">
+        <i class="bi-bag-check-fill"></i>
+        <span class="badge bg-danger rounded-pill">@ncount</span>
+    </a> 
+
+    <div class="dropdown-menu cart-submenu p-2">
+        @foreach (var list in Model)
+        {
+            <div class="dropdown-item d-flex align-items-end gap-3 p-2 bg-light rounded mb-2">
+                <p class="mb-0">
+                    <span class="fw-bold">@list.SubscriptionName</span>
+                    <br>
+                    <span class="text-secondary">@list.PlanName</span>
+                </p>
+                <a asp-controller="Order" asp-action="CheckoutDetails"
+                   asp-route-pid="@list.Pid"
+                   asp-route-sid="@list.Sid"
+                   class="btn btn-outline-primary ms-auto btn-sm">Go to order</a>
+            </div>
+        }
+        <!-- Clear All link -->
+        <hr class="my-1" />
+        <div>
+            <a href="#" class="clear-all text-danger text-decoration-none" id="clearall">Clear All</a>
+        </div>
+    </div>
+}
+else
+{
+    <a href="#" class="cart">
+        <i class="bi-bag-check-fill"></i>
+        <span class="badge bg-danger rounded-pill">0</span>
+    </a>
+    <div class="dropdown-menu cart-submenu p-0">
+       <div class="dropdown-item d-flex align-items-end gap-3 p-2 bg-light rounded mb-2">
+            Your cart is empty.
+        </div>
+    </div>
+}
+
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $("#clearall").on("click", function (e) {
+                
+                e.preventDefault();
+
+                if (!confirm("Are you sure you want to clear your cart?")) {
+                    return;
+                }
+
+                $.ajax({
+                    url: '/Order/clearMyCart',
+                    type: 'POST',
+                    success: function (response) {
+            $("#cartArea").load("/Order/ReloadCart");
+                    },
+                    error: function (xhr, status, error) {
+                        console.error("Error:", xhr.responseText || error);
+                        alert("An error occurred while clearing your cart.");
+                    }
+                });
+            });
+        });
+    </script>

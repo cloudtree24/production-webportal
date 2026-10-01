@@ -1,0 +1,454 @@
+﻿@{
+    Layout = "_LayoutWithoutEnquiryForm";
+}
+
+<script src="~/assets/js/sweetalert.js"></script>
+
+<script type="application/ld+json">
+    {
+    "@@context": "https://schema.org",
+    "@@type": "ContactPage",
+    "@@id": "https://thecloudtree.ai/company/contact-us",
+    "url": "https://thecloudtree.ai/company/contact-us",
+    "name": "Contact Thecloudtree",
+    "description": "Contact Thecloudtree for HRMS and payroll software inquiries, product demonstrations, customer support, sales assistance, and partnership opportunities.",
+    "mainEntity": {
+      "@@type": "Organization",
+      "@@id": "https://thecloudtree.ai/#organization",
+      "name": "Thecloudtree",
+      "url": "https://thecloudtree.ai/",
+      "logo": "https://thecloudtree.ai/assets/images/logos/cloudtree-logo.webp",
+      "telephone": "+91 9090973033",
+      "email": "info@thecloudtree.ai",
+      "address": {
+        "@@type": "PostalAddress",
+        "streetAddress": "PS PLAZA, 532/1026, RASULGARH",
+        "addressLocality": "Bhubaneswar",
+        "addressRegion": "Odisha",
+         "postalCode": "751010",
+        "addressCountry": "IN"
+      },
+      "contactPoint": {
+        "@@type": "ContactPoint",
+        "telephone": "+91 9090973033",
+        "contactType": "Customer Support",
+        "areaServed": "IN",
+        "availableLanguage": [
+          "English"
+        ]
+       }
+     },
+    "breadcrumb": {
+      "@@type": "BreadcrumbList",
+      "itemListElement": [
+        {
+          "@@type": "ListItem",
+          "position": 1,
+          "name": "Home",
+          "item": "https://thecloudtree.ai/"
+        },
+         {
+          "@@type": "ListItem",
+          "position": 2,
+          "name": "Company",
+          "item": "https://thecloudtree.ai/company"
+        },
+        {
+          "@@type": "ListItem",
+          "position": 3,
+          "name": "Contact Us",
+          "item": "https://thecloudtree.ai/company/contact-us"
+        }
+       ]
+     }
+    }
+</script>
+
+<div class="ct-inner_banner ct-gray__bg">
+    <div class="container">
+        <div class="d-flex gap-2 align-items-center py-4 justify-content-between">
+            <div class="ct-inner__content mb-4 w-50">
+                <h2 class="display-4 fw-bold mb-3">Contact Us</h2>
+                <p>
+                    Have a project in mind or need expert technical consulting? Drop us a message, and our executive team
+                    will get back to you shortly.
+                </p>
+            </div>
+            <img class="img-fluid banner-img" alt="Career" src="~/assets/images/banner/conctactus-banner.png">
+        </div>
+    </div>
+</div>
+
+<section class="ct-we__section">
+
+    <div class="container position-relative z-1">
+        <div class="row align-items-center g-5">
+
+            <!-- LEFT SIDE -->
+            <div class="col-lg-5 wow animate__animated animate__fadeInLeft" data-wow-delay="0.1s">
+
+                <div class="ct-contact__address-wrapper">
+
+                    <span class="text-uppercase fw-bold text-success tracking-wider small mb-2 d-block">
+                        Let's Connect
+                    </span>
+
+                    <h2 class="ct-fs-48 fw-bold mb-4">
+                        Contact Details
+                    </h2>
+
+                    <p class="text-muted mb-5">
+                        Have a project in mind or need expert technical consulting?
+                        Drop us a message, and our executive team will get back
+                        to you shortly.
+                    </p>
+
+                    <div class="ct-info__blocks d-flex flex-column gap-4">
+
+                        <div class="ct-info__item d-flex align-items-start gap-3">
+                            <div class="ct-info__icon">
+                                <i class="bi bi-geo-alt-fill"></i>
+                            </div>
+
+                            <div>
+                                <h5 class="fw-bold mb-1">Our Hubs</h5>
+                                <p class="mb-0 text-muted">
+                                    Delhi-NCR | Bhubaneswar | Bangalore | Oman
+                                </p>
+                            </div>
+                        </div>
+
+                        <div class="ct-info__item d-flex align-items-start gap-3">
+                            <div class="ct-info__icon">
+                                <i class="bi bi-envelope-open-fill"></i>
+                            </div>
+
+                            <div>
+                                <h5 class="fw-bold mb-1">Email Us</h5>
+
+                                <p class="mb-0">
+                                    <a href="mailto:info@thecloudtree.ai" class="text-decoration-none text-muted ct-link__hover">
+                                        info@thecloudtree.ai
+                                    </a>
+                                </p>
+                            </div>
+                        </div>
+
+                        <div class="ct-info__item d-flex align-items-start gap-3">
+                            <div class="ct-info__icon">
+                                <i class="bi bi-telephone-fill"></i>
+                            </div>
+
+                            <div>
+                                <h5 class="fw-bold mb-1">Call Support</h5>
+
+                                <p class="mb-0">
+                                    <a href="tel:+919090973033" class="text-decoration-none text-muted ct-link__hover">
+                                        (+91) 9090973033
+                                    </a>
+                                </p>
+                            </div>
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+            <!-- RIGHT SIDE FORM -->
+            <div class="col-lg-7 wow animate__animated animate__fadeInUp" data-wow-delay="0.2s">
+
+                <form id="enquiryForm" class="ct-contactUs__modern-form p-4 p-sm-5">
+
+                    <div class="row">
+
+                        <div class="col-sm-6 mb-4">
+                            <label class="form-label small fw-semibold">Full Name<span class="text-danger">*</span></label>
+                            <input type="text" name="ProspectName" id="ProspectName" class="form-control" />
+                            <span id="err_ProspectName" class="text-danger small"></span>
+                        </div>
+
+                        <div class="col-sm-6 mb-4">
+                            <label class="form-label small fw-semibold">Email Address<span class="text-danger">*</span></label>
+                            <input type="email" name="EmailAddress" id="EmailAddress" class="form-control" />
+                            <span id="err_EmailAddress" class="text-danger small"></span>
+                        </div>
+
+                        <div class="col-sm-6 mb-4">
+                            <label class="form-label small fw-semibold">Phone No<span class="text-danger">*</span></label>
+                            <input type="tel" name="PhoneNumber" id="PhoneNumber" class="form-control" />
+                            <span id="err_PhoneNumber" class="text-danger small"></span>
+                        </div>
+
+                        <div class="col-sm-6 mb-4">
+                            <label class="form-label small fw-semibold">Subject<span class="text-danger">*</span></label>
+                            <input type="text" name="Subject" id="Subject" class="form-control" />
+                            <span id="err_Subject" class="text-danger small"></span>
+                        </div>
+
+                        <div class="col-12 mb-4">
+                            <label class="form-label small fw-semibold">Drop Your Message<span class="text-danger">*</span></label>
+                            <textarea rows="4" name="Message" id="Message" class="form-control"></textarea>
+                            <span id="err_Message" class="text-danger small"></span>
+                        </div>
+
+                        <!-- CAPTCHA -->
+                        <div class="col-12 mb-4">
+
+                            <div class="g-recaptcha"
+                                 data-sitekey="6LcP1r4rAAAAAHNiLqWilMZWVAroHkjaHZAEAIT9"
+                                 data-callback="verifyCaptcha">
+                            </div>
+
+                            <span id="captchaError" class="text-danger small" style="display:none;">
+                                Please verify captcha.
+                            </span>
+
+                        </div>
+
+                        <!-- BUTTON -->
+                        <div class="col-12">
+
+                            <button type="submit" id="btnSubmit" class="ct-btn__submit w-100 py-3 fw-bold border-0 text-white rounded-3">
+
+                                <span id="submitText">
+                                    Send Message
+                                    <i class="bi bi-send-fill ms-2"></i>
+                                </span>
+
+                                <span id="submitLoader" style="display:none;">
+                                    <i class="fa fa-spinner fa-spin"></i>
+                                    Sending...
+                                </span>
+
+                            </button>
+
+                        </div>
+
+                    </div>
+
+                </form>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+@* Removed placeholders and retained the * mark for mandatory fields of ContactUs Page.
+ *@
+@section Scripts {
+
+    <script>
+
+        function verifyCaptcha() {
+            $("#captchaError").hide();
+        }
+
+        $(document).ready(function() {
+
+            var form = $("#enquiryForm");
+
+            $("input, textarea").on("input", function() {
+
+                let id = $(this).attr("id");
+                let val = $(this).val().trim();
+                let errorSpan = $("#err_" + id);
+
+                if (val === "") {
+
+                    errorSpan.text("Required").show();
+
+                }
+                else if (id === "PhoneNumber") {
+
+                    if (!/^[0-9]{10}$/.test(val)) {
+
+                        errorSpan.text("Enter valid 10 digit mobile number").show();
+
+                    } else {
+
+                        errorSpan.hide();
+
+                    }
+
+                }
+                else if (id === "EmailAddress") {
+
+                    if (!/^[^\s@@]+@@[^\s@@]+\.[^\s@@]+$/.test(val)) {
+
+                        errorSpan.text("Enter valid email address").show();
+
+                    } else {
+
+                        errorSpan.hide();
+
+                    }
+
+                }
+                else {
+
+                    errorSpan.hide();
+
+                }
+
+            });
+
+            form.on("submit", function(e) {
+
+                e.preventDefault();
+                        $("span[id^='err_'], #captchaError").hide();
+                // $(".text-danger").hide();
+
+                let name = $("#ProspectName").val().trim();
+                let phone = $("#PhoneNumber").val().trim();
+                let email = $("#EmailAddress").val().trim();
+                let subject = $("#Subject").val().trim();
+                let message = $("#Message").val().trim();
+
+                let isValid = true;
+
+                if (!name) {
+
+                    $("#err_ProspectName").text("Name is required").show();
+                    isValid = false;
+
+                }
+
+                if (!phone) {
+
+                    $("#err_PhoneNumber").text("Phone number is required").show();
+                    isValid = false;
+
+                }
+                else if (!/^[0-9]{10}$/.test(phone)) {
+
+                    $("#err_PhoneNumber").text("Enter valid 10 digit mobile number").show();
+                    isValid = false;
+
+                }
+
+                if (!email) {
+
+                    $("#err_EmailAddress").text("Email is required").show();
+                    isValid = false;
+
+                }
+                else if (!/^[^\s@@]+@@[^\s@@]+\.[^\s@@]+$/.test(email)) {
+
+                    $("#err_EmailAddress").text("Enter valid email address").show();
+                    isValid = false;
+
+                }
+
+                if (!subject) {
+
+                    $("#err_Subject").text("Subject is required").show();
+                    isValid = false;
+
+                }
+
+                if (!message) {
+
+                    $("#err_Message").text("Message is required").show();
+                    isValid = false;
+
+                }
+
+                var captchaResponse = grecaptcha.getResponse();
+
+                if (captchaResponse.length === 0) {
+
+                    $("#captchaError").text("Please verify captcha.").show();
+                    isValid = false;
+
+                }
+
+                if (!isValid)
+                    return false;
+
+                $("#btnSubmit").prop("disabled", true);
+
+                $("#submitText").hide();
+
+                $("#submitLoader").show();
+
+                $.ajax({
+
+                    url: '/Home/SendMessage',
+
+                    type: 'POST',
+
+                    data: form.serialize() + "&g-recaptcha-response=" + captchaResponse,
+
+                    success: function(response) {
+
+                        if (response.success) {
+
+                            Swal.fire({
+
+                                icon: 'success',
+                                title: 'Success',
+                                text: response.message,
+                                confirmButtonColor: '#1e4c27'
+
+                            });
+
+                            form[0].reset();
+
+                            grecaptcha.reset();
+
+                        }
+                        else {
+
+                            Swal.fire({
+
+                                icon: 'error',
+                                title: 'Error',
+                                text: response.message
+
+                            });
+
+                        }
+
+                        resetButton();
+
+                    },
+
+                    error: function() {
+
+                        Swal.fire({
+
+                            icon: 'error',
+                            title: 'Error',
+                            text: 'Server error!'
+
+                        });
+
+                        resetButton();
+
+                    }
+
+                });
+
+            });
+
+            function resetButton() {
+
+                $("#btnSubmit").prop("disabled", false);
+
+                $("#submitText").show();
+
+                $("#submitLoader").hide();
+
+            }
+
+        });
+
+    </script>
+
+}

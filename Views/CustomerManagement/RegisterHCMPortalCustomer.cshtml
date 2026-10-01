@@ -1,0 +1,1051 @@
+﻿@model HCMPortal.ViewModel.PortalCredentialViewModel
+@{
+    Layout = null;
+}
+@{
+    ViewData["Title"] = "Register Portal customer";
+}
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <title>Register</title>
+
+    <script src="https://www.google.com/recaptcha/api.js" async ></script>
+    <script src="https://www.google.com/recaptcha/api.js"></script>
+    <link href="~/assets/styles/bootstrap/bootstrap.css" rel="stylesheet">
+    <link href="~/assets/styles/bootstrap/bootstrap-icons.css" rel="stylesheet">
+    <link href="~/assets/fonts/font-awsome/css/all.min.css" rel="stylesheet">
+    <link href="~/assets/datatable/css/datatables.bootstrap5.min.css" rel="stylesheet" />
+    <link href="~/assets/datatable/css/buttons.bootstrap5.min.css" rel="stylesheet" />
+    <link href="~/assets/styles/owl.theme.default.min.css" rel="stylesheet">
+    <link href="~/assets/styles/owl.carousel.min.css" rel="stylesheet">
+    <link href="~/assets/styles/style.min.css" rel="stylesheet" />
+
+    <script src="~/assets/js/jquery.min.js"></script>
+    <script src="~/assets/js/vanilla-toast.min.js"></script>
+    <script src="~/assets/js/owl.carousel.min.js"></script>
+</head>
+
+  <body>
+
+    <header class="ct-header border-bottom">
+        <nav class="ct-nav__menu navbar navbar-expand-lg">
+            <div class="container-lg">
+                <a href="/Home/Index" class="navbar-brand p-0">
+                    <img src="~/assets/images/logos/cloudtree-logo.webp" alt="theCloudTree" class="img-fluid" style="height: 22px; margin-top: -5px;">
+                </a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
+                        data-bs-target="#ct-main-menu" aria-controls="ct-main-menu" aria-expanded="false"
+                        aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+
+                <div id="ct-main-menu" class="collapse navbar-collapse">
+
+                    @* <form role="search" class="me-2">
+                        <input class="form-control" type="search" placeholder="Search" aril-label="Search">
+                    </form> *@
+
+                    <ul class="navbar-nav">
+                        <li class="nav-item dropdown ct-mega-menu">
+                            <a class="nav-link px-3 dropdown-toggle d-lg-none"
+                               data-bs-toggle="dropdown" aria-expanded="false">
+                                HCM Solutions
+                            </a>
+                            <a class="nav-link px-3 dropdown-toggle d-none d-lg-block" asp-route="HCMProduct">
+                                HCM Solutions
+                            </a>
+                            <div class="dropdown-menu p-2">
+                                <div class="d-flex flex-wrap border-bottom pb-2">
+
+                                    <a href="/hcm-solution/time-and-attendance" class="dropdown-item w-50 ct-item teal">
+                                        <div class="ct-features">
+                                            <div class="icons"><i class="bi bi-clock"></i></div>
+                                            <div class="title">
+                                                <p>Time &amp; Attendance</p>
+                                                <span>Track attendance, shifts, and working hours</span>
+                                            </div>
+                                        </div>
+                                    </a>
+
+                                    <a href="/hcm-solution/payroll-management" class="dropdown-item w-50 ct-item red">
+                                        <div class="ct-features">
+                                            <div class="icons"><i class="bi bi-cash-stack"></i></div>
+                                            <div class="title">
+                                                <p>Payroll Management</p>
+                                                <span>Process salaries, taxes, and compliance easily</span>
+                                            </div>
+                                        </div>
+                                    </a>
+
+                                    <a href="/hcm-solution/hiring-and-onboarding" class="dropdown-item w-50 ct-item blue">
+                                        <div class="ct-features">
+                                            <div class="icons"><i class="bi bi-person-plus"></i></div>
+                                            <div class="title">
+                                                <p>Hiring &amp; Onboarding</p>
+                                                <span>Recruit, hire and onboard employees seamlessly</span>
+                                            </div>
+                                        </div>
+                                    </a>
+
+                                    <a href="/hcm-solution/leave-management" class="dropdown-item w-50 ct-item teal">
+                                        <div class="ct-features">
+                                            <div class="icons"><i class="bi bi-calendar-check"></i></div>
+                                            <div class="title">
+                                                <p>Leave Management</p>
+                                                <span>Manage leave requests, balances, and approvals</span>
+                                            </div>
+                                        </div>
+                                    </a>
+
+                                    <a href="/hcm-solution/performance-and-career" class="dropdown-item w-50 ct-item purple">
+                                        <div class="ct-features">
+                                            <div class="icons"><i class="bi bi-people"></i></div>
+                                            <div class="title">
+                                                <p>Performance &amp; Career</p>
+                                                <span>Track performance and support career growth</span>
+                                            </div>
+                                        </div>
+                                    </a>
+
+                                    <a href="/hcm-solution/exits-management" class="dropdown-item w-50 ct-item orange">
+                                        <div class="ct-features">
+                                            <div class="icons"><i class="bi bi-box-arrow-right"></i></div>
+                                            <div class="title">
+                                                <p>Exits Management</p>
+                                                <span>Manage resignations and employee offboarding</span>
+                                            </div>
+                                        </div>
+                                    </a>
+
+                                    <a href="/hcm-solution/employee-self-service" class="dropdown-item w-50 ct-item dark">
+                                        <div class="ct-features">
+                                            <div class="icons"><i class="bi bi-person-circle"></i></div>
+                                            <div class="title">
+                                                <p>Employee Self Service</p>
+                                                <span>Enable employees to manage their own requests</span>
+                                            </div>
+                                        </div>
+                                    </a>
+                                </div>
+                                <div class="d-flex flex-wrap pt-2">
+                                    <a href="/company/security-and-trust" class="dropdown-item ct-item green">
+                                        <div class="ct-features">
+
+                                            <div class="icons">
+                                                <i class="bi bi-shield-lock"></i>
+                                            </div>
+
+                                            <div class="title">
+                                                <p class="mb-0">Data Protection Addendum</p>
+                                                <span>
+                                                    Ensure compliance with data privacy and security
+                                                    regulations
+                                                </span>
+                                            </div>
+
+                                        </div>
+                                    </a>
+                                </div>
+                            </div>
+                        </li>
+                        <li class="nav-item dropdown ct-fullWith-menu">
+                            <a class="nav-link px-3 dropdown-toggle"
+                               data-bs-toggle="dropdown"
+                               aria-expanded="false">Customers</a>
+                            <div class="dropdown-menu">
+                                <div class="container">
+                                    <div class="row g-4">
+
+                                        <!-- Modern Left/Featured Panel (3 Columns) -->
+                                        <div class="col-lg-3 d-none d-lg-block">
+                                            <div class="ct-menu-featured-card">
+                                                <span class="badge bg-success-subtle text-success mb-2 px-2.5 py-1.5 rounded-pill">What's New</span>
+                                                <h5 class="fw-bold text-dark mb-2">Success Stories</h5>
+                                                <p class="text-secondary small mb-4">Discover how scaling enterprises automate global payroll and workforce administration seamlessly.</p>
+                                                <a href="/customers/customer-stories" class="btn btn-sm btn-outline-dark rounded-pill px-3">Read Case Studies</a>
+                                            </div>
+                                        </div>
+
+                                        <!-- Main Content Navigation Grid (9 Columns) -->
+                                        <div class="col-lg-9">
+                                            <div class="row g-3">
+
+                                                <!-- Menu Item 1 -->
+                                                <div class="col-sm-6">
+                                                    <a href="/customers/interactive-demos" class="dropdown-item ct-modern-item">
+                                                        <div class="ct-item-icon bg-primary-subtle text-primary">
+                                                            <i class="bi bi-play-circle-fill"></i>
+                                                        </div>
+                                                        <div class="ct-item-body">
+                                                            <h6>Interactive Demos</h6>
+                                                            <span>Explore features with sandbox environments.</span>
+                                                        </div>
+                                                    </a>
+                                                </div>
+                                                <!-- Menu Item 2 -->
+                                                <div class="col-sm-6">
+                                                    <a asp-route="Blogs" class="dropdown-item ct-modern-item">
+                                                        <div class="ct-item-icon bg-info-subtle text-info">
+                                                            <i class="bi bi-journal-text"></i>
+                                                        </div>
+                                                        <div class="ct-item-body">
+                                                            <h6>Blogs</h6>
+                                                            <span>Latest industry compliance trends.</span>
+                                                        </div>
+                                                    </a>
+                                                </div>
+
+                                                <!-- Menu Item 3 -->
+                                                <div class="col-sm-6">
+                                                    <a href="/customers/customer-stories" class="dropdown-item ct-modern-item">
+                                                        <div class="ct-item-icon bg-success-subtle text-success">
+                                                            <i class="bi bi-patch-check"></i>
+                                                        </div>
+                                                        <div class="ct-item-body">
+                                                            <h6>Customer Stories</h6>
+                                                            <span>See how teams scale with us.</span>
+                                                        </div>
+                                                    </a>
+                                                </div>
+
+                                                <!-- Menu Item 4 -->
+                                                <div class="col-sm-6">
+                                                    <a href="/customers/faq" class="dropdown-item ct-modern-item">
+                                                        <div class="ct-item-icon bg-warning-subtle text-warning">
+                                                            <i class="bi bi-question-circle"></i>
+                                                        </div>
+                                                        <div class="ct-item-body">
+                                                            <h6>FAQ</h6>
+                                                            <span>Find answers instantly in our FAQs.</span>
+                                                        </div>
+                                                    </a>
+                                                </div>
+
+                                            </div>
+                                        </div>
+
+                                    </div>
+                                </div>
+                            </div>
+                        </li>
+                        <li class="nav-item dropdown ct-fullWith-menu">
+                            <a class="nav-link px-3 dropdown-toggle"
+                               data-bs-toggle="dropdown"
+                               aria-expanded="false">Company</a>
+
+                            <div class="dropdown-menu">
+                                <div class="container">
+                                    <div class="row g-4">
+
+                                        <!-- Left Column: Featured Company Highlight Panel -->
+                                        <div class="col-lg-3 d-none d-lg-block">
+                                            <div class="ct-menu-featured-card h-100 d-flex flex-column justify-content-between p-4">
+                                                <div>
+                                                    <span class="badge text-success mb-2 px-2.5 py-1.5 rounded-pill" style="background-color: rgba(95, 191, 115, 0.15);">Our Mission</span>
+                                                    <h5 class="fw-bold text-dark mb-2">Shaping the Future of HR</h5>
+                                                    <p class="text-secondary small mb-0" style="line-height: 1.5;">
+                                                        Discover how we build modern tools to simplify compliance, payroll, and workforce automation globally.
+                                                    </p>
+                                                </div>
+                                                <div class="pt-3">
+                                                    <a href="/company/about-us" class="text-success small fw-semibold text-decoration-none d-inline-flex align-items-center gap-1">
+                                                        Learn more about us <i class="bi bi-arrow-right"></i>
+                                                    </a>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <!-- Right Column: Interactive Navigation Grid -->
+                                        <div class="col-lg-9">
+                                            <div class="row g-3">
+
+                                                <!-- Our Story -->
+                                                <div class="col-sm-6">
+                                                    <a asp-route="AboutUs" class="dropdown-item ct-modern-item">
+                                                        <div class="ct-item-icon bg-success-light text-success">
+                                                            <i class="bi bi-book"></i>
+                                                        </div>
+                                                        <div class="ct-item-body">
+                                                            <h6>Our Story</h6>
+                                                            <span>Learn about our journey, vision, and mission</span>
+                                                        </div>
+                                                    </a>
+                                                </div>
+
+                                                <!-- Career -->
+                                                <div class="col-sm-6">
+                                                    <a asp-route="Career" class="dropdown-item ct-modern-item">
+                                                        <div class="ct-item-icon bg-success-light text-success">
+                                                            <i class="bi bi-briefcase"></i>
+                                                        </div>
+                                                        <div class="ct-item-body">
+                                                            <h6>Career</h6>
+                                                            <span>Explore opportunities to grow with our team</span>
+                                                        </div>
+                                                    </a>
+                                                </div>
+
+                                                <!-- Investor Relations -->
+                                                <div class="col-sm-6">
+                                                    <a asp-route="Investorcell" class="dropdown-item ct-modern-item">
+                                                        <div class="ct-item-icon bg-success-light text-success">
+                                                            <i class="bi bi-graph-up-arrow"></i>
+                                                        </div>
+                                                        <div class="ct-item-body">
+                                                            <h6>Investor Relations</h6>
+                                                            <span>Access company reports and investor updates</span>
+                                                        </div>
+                                                    </a>
+                                                </div>
+
+                                                <!-- Galleria -->
+                                                <div class="col-sm-6">
+                                                    <a asp-route="Gallery" class="dropdown-item ct-modern-item">
+                                                        <div class="ct-item-icon bg-success-light text-success">
+                                                            <i class="bi bi-images"></i>
+                                                        </div>
+                                                        <div class="ct-item-body">
+                                                            <h6>Galleria</h6>
+                                                            <span>View moments, events, and company highlights</span>
+                                                        </div>
+                                                    </a>
+                                                </div>
+
+                                                <!-- Security & Trust -->
+                                                <div class="col-sm-6">
+                                                    <a href="/company/security-and-trust" class="dropdown-item ct-modern-item">
+                                                        <div class="ct-item-icon bg-success-light text-success">
+                                                            <i class="bi bi-shield-check"></i>
+                                                        </div>
+                                                        <div class="ct-item-body">
+                                                            <h6>Security &amp; Trust</h6>
+                                                            <span>Understand our commitment to data protection</span>
+                                                        </div>
+                                                    </a>
+                                                </div>
+
+                                                <!-- Contact Us -->
+                                                <div class="col-sm-6">
+                                                    <a asp-route="ContactUs" class="dropdown-item ct-modern-item">
+                                                        <div class="ct-item-icon bg-success-light text-success">
+                                                            <i class="bi bi-envelope-open"></i>
+                                                        </div>
+                                                        <div class="ct-item-body">
+                                                            <h6>Contact Us</h6>
+                                                            <span>Get in touch with our support and sales teams</span>
+                                                        </div>
+                                                    </a>
+                                                </div>
+
+                                            </div>
+                                        </div>
+
+                                    </div>
+                                </div>
+                            </div>
+                        </li>
+                    </ul>
+
+                    <div class="d-flex align-items-center gap-1">
+
+                        @if (Context.Session.GetInt32("UserId") == null || Context.Session.GetInt32("UserId") == 0)
+                        {
+                            @* <a asp-action="Login" asp-controller="CustomerManagement" class="ct-btn__primary">Login</a> *@
+                            <a asp-route="CustomerLogin" class="ct-btn__primary">Login</a>
+
+                        }
+
+                        @*  <a href="./register" class="booknow-btn">Register</a> *@
+                        @* <a asp-action="RegisterHCMPortalCustomer" asp-controller="CustomerManagement" class="booknow-btn">Register</a> *@
+                        @* <a href="/Order/DemoBookingDetails" class="ct-btn__dark btn">Book a Demo</a> *@
+                        <a asp-route="ProductDemoBook" class="ct-btn__dark btn">Book a Demo</a>
+                    </div>
+                </div>
+
+            </div>
+        </nav>
+    </header>
+
+<div class="header-top-gap">
+    <div class="section_gap_large">
+      <div class="container">
+        <div class="row">
+          <div class="col-md-5">
+            <div class="PositionSticky">
+              <figure class="text-center">
+                <img width="710" class="img-fluid" src="~/assets/images/bg/register.avif" alt="" title="Login">
+              </figure>
+              <div class="logIn-screen-testimonial owl-carousel">
+
+                <!-- Slide 1 -->
+                <div class="item text-center">
+                  <p class="text-muted">Secure, Scalable, and Easy-to-Use</p>
+                </div>
+                <div class="item text-center">
+                  <p class="text-muted">Automate Payroll and Compliance</p>
+                </div>
+                <div class="item text-center">
+                  <p class="text-muted">Intelligent Reporting and Insights</p>
+                </div>
+                <div class="item text-center">
+                  <p class="text-muted">Seamless Onboarding and Beyond</p>
+                </div>
+                <div class="item text-center">
+                  <p class="text-muted">Unlock Effortless HR Management</p>
+                </div>
+              </div>
+            </div>
+
+          </div>
+
+          <div class="col-md-7">
+            <div class="login-wrapper">
+              <div class="login-content rounded-custom border w-100">
+                <h4 class="fw-bold">Register</h4>
+               @*  <p class="text-muted">Create New ThecloudTree HRMS Account</p> *@
+
+              
+               <form asp-action="RegisterHCMPortalCustomer" id="regForm" asp-controller="CustomerManagement" method="post" class="row g-3">
+    <div class="col-md-6">
+        <label asp-for="CompanyName" class="form-label"></label><span class="text-danger">*</span>
+        <div class="input-group">
+                                        <input asp-for="CompanyName" class="form-control border-end-0" placeholder="Business Name" data-val="true" data-val-required="Business name is required." />
+            <span class="input-group-text no-bg"><i class="bi bi-bank"></i></span>
+        </div>
+        <span asp-validation-for="CompanyName" class="text-danger"></span>
+    </div>
+
+    <div class="col-md-6">
+        <label asp-for="ContactPersonName" class="form-label"></label><span class="text-danger">*</span>
+        <div class="input-group">
+                                        <input asp-for="ContactPersonName" class="form-control border-end-0" placeholder="Contact Person Name" data-val="true" data-val-required="Contact person is required." />
+            <span class="input-group-text no-bg"><i class="bi bi-person"></i></span>
+        </div>
+        <span asp-validation-for="ContactPersonName" class="text-danger"></span>
+    </div>
+
+    <div class="col-md-6">
+        <label asp-for="EmailAddress" class="form-label"></label><span class="text-danger">*</span>
+        <div class="input-group">
+            <input type="text" asp-for="EmailAddress" id="EmailAddress" class="form-control border-end-0" placeholder="Email Address" required />
+            <span class="input-group-text no-bg"><i class="bi bi-envelope"></i></span>
+        </div>
+        <span asp-validation-for="EmailAddress" class="text-danger"></span>
+        <div class="valid-feedback">Looks good!</div>
+    </div>
+
+    <div class="col-md-6">
+        <label asp-for="Phonenumber" class="form-label"></label><span class="text-danger">*</span>
+        <div class="input-group">
+          <input asp-for="Phonenumber" id="Phonenumber" class="form-control border-end-0" placeholder="Phone Number" data-val="true" data-val-required="Phone number is required." />
+            <span class="input-group-text no-bg"><i class="bi bi-telephone"></i></span>
+        </div>
+        <span asp-validation-for="Phonenumber" class="text-danger"></span>
+    </div>
+
+    <div class="col-md-12">
+        <label asp-for="IndustryTypeId" class="form-label"></label><span class="text-danger">*</span>
+                                    <select asp-for="IndustryTypeId" class="form-select" asp-items="@(new SelectList(ViewBag.IndusryType, "Imid", "IndustryName"))" data-val="true" data-val-required="Industry name is required.">
+            <option value="">Select Industry</option>
+        </select>
+        <span asp-validation-for="IndustryTypeId" class="text-danger"></span>
+    </div>
+     <div class="col-md-6">
+        <label asp-for="Gstinnumber" class="form-label"></label>
+        <div class="input-group">
+            <input asp-for="Gstinnumber" id="gstin" class="form-control border-end-0" placeholder="Enter GST Number"/>
+            <span class="input-group-text no-bg"><i class="bi bi-file-earmark-text"></i></span>
+        </div>
+        <span asp-validation-for="Gstinnumber" class="text-danger"></span>
+    </div>
+     <div class="col-md-6">
+        <label asp-for="Pancard" class="form-label"></label>
+        <div class="input-group">
+            <input asp-for="Pancard" id="panNumber" class="form-control border-end-0" placeholder="Enter PAN Number"/>
+            <span class="input-group-text no-bg"><i class="bi bi-person-vcard"></i></span>
+        </div>
+        <span asp-validation-for="Pancard" class="text-danger"></span>
+    </div>
+    <div class="col-md-6">
+        <label asp-for="CountryId"  class="form-label"></label><span class="text-danger">*</span>
+        <select asp-for="CountryId" id="ddlCountry" class="form-select" asp-items="@(new SelectList(ViewBag.CountryList, "CountryId", "CountryName"))"  disabled>
+            <option value="">Select Country</option>
+        </select>
+        
+        <span asp-validation-for="CountryId" class="text-danger"></span>
+        <input type="hidden" asp-for="CountryId">
+    </div>
+     <div class="col-md-6">
+        <label asp-for="StateId"  class="form-label"></label><span class="text-danger">*</span>
+                                    <select asp-for="StateId" id="ddlState" class="form-select" asp-items="@(new SelectList(ViewBag.StateList, "StateId", "StateName"))" data-val="true" data-val-required="State name is required.">
+            <option value="">Select State</option>
+        </select>
+        <span asp-validation-for="StateId" class="text-danger"></span>
+    </div>
+        <div class="col-md-6">
+        <label asp-for="City" class="form-label"></label><span class="text-danger">*</span>
+        <div class="input-group">
+                                        <input asp-for="City" class="form-control border-end-0" placeholder="City" data-val="true" data-val-required="City name is required." />
+            <span class="input-group-text no-bg"><i class="bi bi-building"></i></span>
+        </div>
+        <span asp-validation-for="City" class="text-danger"></span>
+    </div>
+    <div class="col-md-6">
+        <label asp-for="PostalCode" class="form-label"></label><span class="text-danger">*</span>
+        <div class="input-group">
+            <input asp-for="PostalCode" id="PostalCode" type="number" class="form-control border-end-0" placeholder="Postal Code" required />
+            <span class="input-group-text no-bg"><i class="bi bi-mailbox"></i></span>
+        </div>
+        <span asp-validation-for="PostalCode" class="text-danger"></span>
+    </div>
+        <div class="col-md-12">
+        <label asp-for="Address" class="form-label"></label>
+        <div class="input-group">
+            <input asp-for="Address" class="form-control border-end-0" placeholder="Address" />
+            <span class="input-group-text no-bg"><i class="bi bi-geo-alt"></i></span>
+        </div>
+        <span asp-validation-for="Address" class="text-danger"></span>
+    </div>
+           
+    <div class="col-12 mt-3">
+    <div class="g-recaptcha" data-sitekey="6LcP1r4rAAAAAHNiLqWilMZWVAroHkjaHZAEAIT9"></div>
+    <span asp-validation-summary="ModelOnly" class="text-danger"></span>
+    @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+     </div>
+    <div class="col-md-12">
+    <div class="d-flex align-items-center justify-content-between">
+        <div class="form-check">
+           @*  <input class="form-check-input" type="checkbox" id="checkDefault">
+            <label class="form-check-label text-muted" for="checkDefault">
+                I agree to the <span class="text-danger">terms & privacy</span>
+            </label> *@
+             <input class="form-check-input" type="checkbox" id="checkDefault">
+    <label class="form-check-label text-muted" for="checkDefault">
+        I agree to the 
+       <a href="javascript:void(0)" 
+   onclick="showPrivacyModal()" 
+   class="text-danger text-decoration-none">
+    Privacy-Policy
+</a>
+    </label>
+        </div>
+    </div>
+</div>
+
+<div class="col-12 mt-3">
+    <button type="submit" class="btn btn-primary btn-lg px-5 py-3 fs-4 w-100" id="registerBtn" disabled>
+        Register
+    </button>
+</div>
+
+<div class="col-12 mt-5">
+    <p class="text-muted text-center">Already have an account? 
+        <a asp-action="Login" asp-controller="CustomerManagement" class="text-primary text-decoration-none">Sign In →</a>
+    </p>
+</div>
+
+</form>
+
+      </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+</div>
+
+
+    <!-- FOOTER START -->
+    <footer class="footer pt-3">
+        <div class="container">
+            @await Component.InvokeAsync("FooterContact")
+            <!-- BOTTOM START -->
+            <div class="bottom">
+                <div class="container">
+                    <div class="d-flex justify-content-between py-4">
+                        <a href="#" class="logo">
+                            <img src="/assets/images/logos/cloudtree-logo-white.webp" alt="thecloudtree">
+                        </a>
+                        <p class="m-0">
+                            © Copyright <span id="year"></span> <a href="#" class="text-white">thecloudtree</a> All Rights Reserved.
+                        </p>
+                        <div>
+                            <a href="https://www.linkedin.com/company/thecloudtree/" class="text-light"><i class="bi bi-linkedin"></i></a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Privacy & Policy Modal -->
+    <div class="modal fade" id="privacyModal" tabindex="-1" aria-labelledby="privacyLabel" aria-hidden="true">
+        <div class="modal-dialog modal-xl modal-dialog-scrollable">
+            <div class="modal-content">
+
+                <div class="modal-header">
+                    <h5 class="modal-title" id="privacyLabel">Privacy Policy</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+
+                <div class="modal-body p-0">
+
+                    <!-- Loader -->
+                   @*  <div id="privacyLoader" class="d-flex justify-content-center align-items-center" 
+                         style="height:80vh;">
+                        <div class="spinner-border text-danger" role="status">
+                            <span class="visually-hidden">Loading...</span>
+                        </div>
+                    </div> *@
+
+                    <!-- iFrame -->
+                    <iframe id="privacyFrame" 
+                            src="" 
+                            style="width:100%; height:80vh; border:0; display:none;">
+                    </iframe>
+
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+
+   </body>
+</html>
+
+<script src="https://www.google.com/recaptcha/api.js" async ></script>    
+<script src="https://www.google.com/recaptcha/api.js"></script>
+<script src="~/assets/js/jquery.min.js"></script>
+<script src="~/assets/js/owl.carousel.min.js"></script>
+<script src="~/assets/js/vanilla-toast.min.js"></script>
+<script src="~/lib/jquery-validation/dist/jquery.validate.min.js"></script>
+@* <script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js"></script> *@
+<script src="~/lib/jquery-validation-unobtrusive/dist/jquery.validate.unobtrusive.min.js"></script>
+<script src="~/assets/js/bootstrap/bootstrap.bundle.js"></script>
+    <script>
+      $(document).ready(function () {
+        $('.logIn-screen-testimonial').owlCarousel({
+          loop: true,
+          margin: 10,
+          nav: false,
+          dots: true,
+          autoplay: true,
+          autoplayTimeout: 3000,
+          autoplayHoverPause: true,
+          items: 1
+        });
+      });
+
+    </script>
+    <script>
+        function showPrivacyModal() {
+
+            let url = "https://www.thecloudtree.ai/privacy-policy";
+
+            let iframe = document.getElementById("privacyFrame");
+            //let loader = document.getElementById("privacyLoader");
+
+            // Reset UI
+           // loader.style.display = "flex";
+            iframe.style.display = "none";
+            iframe.src = "";
+
+            // Load the privacy-policy page
+            iframe.src = url;
+
+            // When iframe content loads, hide loader
+            iframe.onload = function () {
+               // loader.style.display = "none";
+                iframe.style.display = "block";
+            };
+
+            // Show modal
+            var modal = new bootstrap.Modal(document.getElementById('privacyModal'));
+            modal.show();
+        }
+</script>
+    <script>
+        window.addEventListener("pageshow", function (event) {
+            if (event.persisted || performance.getEntriesByType("navigation")[0].type === "back_forward") {
+                document.querySelectorAll("form").forEach(f => f.reset());
+            }
+        });
+    </script>
+
+  @{
+    if (ViewBag.Success != null)
+    {
+                <script type="text/javascript">
+
+                    vt.success("@ViewBag.Success", {
+                        title: "Successfull",
+                        position: "top-center",
+                        closable: true,
+                       focusable: true, duration: 10000,
+                        //callback: function () {
+                        //    vt.success()
+                        //}
+                    });
+                </script>
+    }
+    if (ViewBag.Exception != null)
+    {
+                <script type="text/javascript">
+                    vt.error("@ViewBag.Exception", {
+                        title: "Alert",
+                        position: "top-center",duration: 10000,
+                        //callback: function () {
+                        //    vt.success()
+                        //}
+                    });
+                </script>
+    }
+    if (ViewBag.Delete != null)
+    {
+                <script type="text/javascript">
+                    vt.warn("@ViewBag.Delete", {
+                        title: "Alert",
+                        position: "top-center",duration: 10000,
+                        //callback: function () {
+                        //    vt.success()
+                        //}
+                    });
+                </script>
+    }
+}
+
+<script>
+    $(document).ready(function () {
+        // var ddlState = $('#ddlState');
+
+        // // Initially disable state dropdown
+        // ddlState.prop("disabled", true);
+
+        // $("#ddlCountry").change(function () {
+        //     var countryId = parseInt($(this).val());
+
+        //     if (!isNaN(countryId) && countryId > 0) {
+        //         ddlState.prop("disabled", false); // enable when a valid country is selected
+        //         ddlState.empty();
+        //         ddlState.append($("<option></option>").val('').html('Please wait ...'));
+
+        //         $.ajax({
+        //             url: '/CustomerManagement/GetStateList',
+        //             type: 'GET',
+        //             dataType: 'json',
+        //             data: { countryId: countryId },
+        //             success: function (states) {
+        //                 ddlState.empty(); // Clear the please wait
+        //                 ddlState.append($("<option></option>").val('').html('Select State'));
+        //                 $.each(states, function (i, state) {
+        //                     ddlState.append($("<option></option>").val(state.stateId).html(state.stateName));
+        //                 });
+        //             },
+        //             error: function () {
+        //                 alert('Error retrieving states!');
+        //                 ddlState.prop("disabled", true); // disable again on error
+        //             }
+        //         });
+        //     } else {
+        //         ddlState.empty();
+        //         ddlState.append($("<option></option>").val('').html('Select'));
+        //         ddlState.prop("disabled", true); // disable if no country selected
+        //     }
+        // });
+    });
+</script>
+
+
+@*  <script>
+        $(document).ready(function () {
+          
+            $("#ddlCountry").change(function () {
+                var countryId = parseInt($(this).val());
+
+                if (!isNaN(countryId) && countryId > 0) {
+                    var ddlState = $('#ddlState');
+                    ddlState.empty();
+                    ddlState.append($("<option></option>").val('').html('Please wait ...'));
+
+                    $.ajax({
+                        url: '/CustomerManagement/GetStateList',
+                        type: 'GET',
+                        dataType: 'json',
+                        data: { countryId: countryId },
+                        success: function (states) {
+                            ddlState.empty(); // Clear the please wait
+                            ddlState.append($("<option></option>").val('').html('Select State'));
+                            $.each(states, function (i, state) {
+                                ddlState.append($("<option></option>").val(state.stateId).html(state.stateName));
+                            });
+                        },
+                        error: function () {
+                            alert('Error retrieving states!');
+                        }
+                    });
+                } else {
+                    $('#ddlState').empty();
+                    $('#ddlState').append($("<option></option>").val('').html('Select'));
+                }
+            });
+        });
+    </script> *@
+  
+ <script>
+        $(document).ready(function () {
+//             $("#EmailAddress").on("blur", function () {
+//                 var email = $(this).val();
+//                   var emailPattern = /^[^\s@@]+@@[^\s@@]+\.[^\s@@]+$/;
+
+
+//                 if (!emailPattern.test(email)) {                    
+//                  //    vt.error("Please enter a valid email address.", {
+//                  //    title: "Alert",
+//                  // position: "top-center",
+//                  // duration: 2000
+       
+//                  //  });
+//                     $("#EmailAddress").val("");
+//                     //$("#email-error").text("Invalid email format.");
+//                    // $("#EmailAddress").addClass("is-invalid");
+//                     return; 
+//                 }
+//                 if (email.length > 0) {
+//                     $.ajax({
+//                         url: '@Url.Action("IsEmailExist", "CustomerManagement")',
+//                         type: "GET",
+//                         data: { emailAddress: email },
+//                        success: function (response) {
+//     // Debug: show what the API returned
+//     //alert("API Response: " + JSON.stringify(response));
+
+//     if (response==false) {
+//         //alert("Email Address is already in use!");
+//          vt.error("Email Address is already in use!", {
+//         title: "Alert",
+//         position: "top-center",
+//         duration: 2000
+//         // callback: function () {
+//         //     vt.success("Validation cleared!");
+//         // }
+//     });
+//         $("#EmailAddress").val("");
+//         //$("#email-error").text("Email Address is already in use!");
+//        // $("#EmailAddress").addClass("is-invalid");
+//     } else {
+//         //alert("Email Address is available!");
+//         //$("#email-error").text("");
+//         $("#EmailAddress").removeClass("is-invalid").addClass("is-valid");
+//     }
+// }
+
+//                     });
+//                 }
+//             });
+
+           
+//          $("#Phonenumber").on("blur", function () {
+//     var mobileNo = $(this).val();
+//       // var regex = /^[6-9]\d{9}$/;
+//       var regex = /^(?:[6-9]\d{9}|\+[1-9]\d{1,14})$/;
+//        if (!regex.test(mobileNo))
+//        {
+//     //         vt.error("Please enter a valid 10-digit mobile number.", {
+//     //     title: "Alert",
+//     //     position: "top-center",
+//     //     duration: 2000
+//     //     // callback: function () {
+//     //     //     vt.success("Validation cleared!");
+//     //     // }
+//     // });
+//      // $("#mobile-error").text("Please enter a valid 10-digit mobile number.");
+//      //                $("#Phonenumber").addClass("is-invalid");
+//                       //this.focus();
+//          // alert("Please enter a valid 10-digit mobile number.");
+//           $("#Phonenumber").val("");
+//           return;
+        
+//        }
+//     if (mobileNo.length > 0) {
+//         $.ajax({
+//             url: '@Url.Action("IsMobileNoExist", "CustomerManagement")',
+//             type: "GET",
+//             data: { phonenumber: mobileNo },
+//             success: function (response) {
+                 
+//                 if (response == false) {
+//                    // alert("Phone Number is already in use!");
+//                     vt.error("Phone Number is already in use!", {
+//         title: "Alert",
+//         position: "top-center",
+//         duration: 2000
+//         // callback: function () {
+//         //     vt.success("Validation cleared!");
+//         // }
+//     });
+//                      $("#Phonenumber").val("");
+//                    // $("#mobile-error").text("Phone Number is already in use!");
+//                     $("#Phonenumber").addClass("is-invalid");
+//                 } else {
+//                    // $("#mobile-error").text("");
+//                     $("#Phonenumber").removeClass("is-invalid").addClass("is-valid");
+//                 }
+//             },
+//             error: function () {
+//                 //alert("Error while checking phone number!");
+//                 vt.error("Error while checking phone number!", {
+//         title: "Alert",
+//         position: "top-center",
+//         duration: 2000
+//         // callback: function () {
+//         //     vt.success("Validation cleared!");
+//         // }
+//     });
+//             }
+//         });
+//     }
+// });
+
+       $("#regForm").on("submit", function (e) {
+    var response = grecaptcha.getResponse();
+    if (response.length === 0) {
+      e.preventDefault(); // stop form submission
+      //alert("Please complete the reCAPTCHA.");
+       vt.error("Please complete the reCAPTCHA.", {
+        title: "Alert",
+        position: "top-center",
+        duration: 5000
+        // callback: function () {
+        //     vt.success("Validation cleared!");
+        // }
+    });
+    }
+  });
+
+       $("#checkDefault").change(function () {
+        if ($(this).is(":checked")) {
+            $("#registerBtn").prop("disabled", false); // Enable button
+        } else {
+            $("#registerBtn").prop("disabled", true);  // Disable button
+        }
+    });
+       
+
+//      function isValidGstin(gstin) {
+//         if (!gstin) return false;
+//         gstin = gstin.toUpperCase().trim();
+//         const re = /^[0-9]{2}[A-Z]{5}[0-9]{4}[A-Z][1-9A-Z]Z[0-9A-Z]$/;
+//         return re.test(gstin);
+//     }
+
+//     document.getElementById("gstin").addEventListener("blur", function () {
+         
+//         const gstin = this.value.trim();
+
+//         if (gstin === ""){
+//              vt.warn("You did not enter any GSTIN.", {
+//             title: "Validation Warning",
+//             position: "top-center",
+//             duration: 2000
+//         });
+//         this.focus();
+//         return;
+//         }
+//         if (!isValidGstin(gstin)) {
+//             vt.error("Invalid GSTIN format. Please enter a valid one.", {
+//                 title: "Validation Error",
+//                 position: "top-center",
+//                 duration: 2000
+//             });
+//             this.value = ""; // clear field
+//             this.focus();    // focus again
+//         }
+//     });
+
+
+//         function isValidPAN(pan) {
+//         if (!pan) return false;
+//         pan = pan.toUpperCase().trim();
+//         const re = /^[A-Z]{5}[0-9]{4}[A-Z]{1}$/;
+//         return re.test(pan);
+//     }
+
+//     document.getElementById("panNumber").addEventListener("blur", function () {
+//         const pan = this.value.trim();
+
+//         // Case 1: Blank field
+//         if (pan === "") {
+//             vt.warn("You did not enter any PAN number.", {
+//                 title: "Validation Warning",
+//                 position: "top-center",
+//                 duration: 2000
+//             });
+//             this.focus();
+//             return;
+//         }
+
+//         // Case 2: Invalid format
+//         if (!isValidPAN(pan)) {
+//             vt.error("Invalid PAN format. Please enter a valid one (e.g., ABCDE1234F).", {
+//                 title: "Validation Error",
+//                 position: "top-center",
+//                 duration: 2000
+//             });
+//             this.value = "";  // clear field
+//             this.focus();
+//             return;
+//         }
+
+//         // Case 3: Valid PAN → do nothing
+//     });
+//    function closeAllToasts() {
+//     // Removes any UI toast from vanilla-toast versions
+//     document.querySelectorAll('.vt-toast, .vt-notification, .vt-wrapper, .toast-container').forEach(function (el) {
+//         el.remove();
+//     });
+// }
+//     $("#PostalCode").on("blur", function () {
+//         
+//     var postalCode = $(this).val().trim();
+//     closeAllToasts();
+   
+//     // Only validate if user entered something
+//     if (postalCode !== "") {
+//         var postalCodePattern = /^[1-9][0-9]{5}$/; // Indian PIN format (6 digits, not starting with 0)
+        
+
+//         if (!postalCodePattern.test(postalCode)) {
+           
+//             vt.error("Please enter a valid postal code.", {
+//                 title: "Invalid Postal Code",
+//                 position: "top-center",
+//                 duration: 2000
+//             });
+//             this.value = "";
+//             return;
+//         }
+//     }
+//     });
+//     $("#PostalCode").on("input", function () {
+//     // Remove non-numeric characters
+//     this.value = this.value.replace(/[^0-9]/g, '');
+
+//     // Limit to 6 digits
+//     if (this.value.length > 6) {
+//         this.value = this.value.substring(0, 6);
+//     }
+// });
+ });
+ </script>
+
+

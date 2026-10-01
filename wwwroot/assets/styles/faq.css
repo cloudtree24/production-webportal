@@ -1,0 +1,397 @@
+/* ==================================================
+   FAQ SECTION - EXTENDED WORKSPACE STYLING
+================================================== */
+
+.fw-black {
+  font-weight: 900;
+}
+
+.tracking-tight {
+  letter-spacing: -0.04em;
+}
+
+/* ---------- NEW WORKSPACE COMPONENT CARD ---------- */
+.ct-faq__content-card {
+  background-color: #f8fafc;
+  /* Sleek Pro SaaS Gray Base Surface */
+  border: 1px solid #e2e8f0;
+}
+
+/* ---------- FAQ NAVIGATION ---------- */
+.ct-faq__nav-wrapper .nav-link {
+  background: transparent;
+  color: #475569;
+  border: 1px solid transparent;
+  border-radius: 12px;
+  padding: 12px 16px;
+  transition: all 0.25s ease;
+}
+
+.ct-faq__nav-wrapper .nav-link:hover {
+  background: #f1f5f9;
+  color: var(--ct-primary);
+}
+
+.ct-faq__nav-wrapper .nav-link.active {
+  background: #ffffff !important;
+  border-color: rgba(95, 191, 115, 0.2);
+  color: var(--ct-primary) !important;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
+}
+
+.ct-faq__nav-wrapper .nav-link.active .ct-job-icon {
+  background: var(--ct-primary);
+  color: var(--ct-white);
+}
+
+/* ---------- FAQ FLUID ACCORDION ---------- */
+.ct-faq__fluid-row {
+  background: transparent !important;
+  border: none !important;
+  border-bottom: 1px solid #cbd5e1 !important;
+  /* Slightly enhanced border over gray base */
+  border-radius: 0 !important;
+}
+
+.ct-faq__fluid-row:last-child {
+  border-bottom: none !important;
+  /* Removes hanging border at card terminal */
+}
+
+.ct-faq__fluid-row .accordion-button {
+  background: transparent !important;
+  box-shadow: none !important;
+  padding: 30px 10px;
+  /* Refined compact height padding logic */
+  display: flex;
+  align-items: center;
+  justify-content: start;
+  gap: 0;
+}
+
+.ct-faq__fluid-row .accordion-button::after {
+  display: none !important;
+}
+
+/* ---------- FAQ TITLE ---------- */
+.ct-faq__row-title {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: #0f172a;
+  flex-grow: 1;
+  transition: all 0.25s ease;
+  letter-spacing: -0.01em;
+}
+
+/* ---------- FAQ SWITCH ICON ---------- */
+.ct-faq__row-switch {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: #e2e8f0;
+  /* Darker accent baseline icon background over gray panel */
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.ct-faq__row-switch::before,
+.ct-faq__row-switch::after {
+  content: '';
+  position: absolute;
+  background-color: #0f172a;
+  transition: transform 0.25s ease, background-color 0.25s ease;
+}
+
+.ct-faq__row-switch::before {
+  width: 10px;
+  height: 2px;
+}
+
+.ct-faq__row-switch::after {
+  width: 2px;
+  height: 10px;
+}
+
+.ct-faq__row-arrow {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: #e2e8f0;
+    color: #0f172a;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    flex-shrink: 0;
+    font-size: 14px;
+}
+
+.ct-faq__fluid-row:hover .ct-faq__row-arrow {
+    background: var(--ct-primary);
+    color: #fff;
+    transform: translateX(3px);
+}
+
+/* ---------- FAQ HOVER ---------- */
+.ct-faq__fluid-row:hover .ct-faq__row-title {
+    color: var(--ct-primary);
+    transform: translateX(2px);
+}
+
+.ct-faq__fluid-row:hover img {
+    filter: brightness(0) saturate(100%) invert(67%) sepia(28%) saturate(621%) hue-rotate(80deg) brightness(91%) contrast(89%);
+}
+
+
+.ct-faq__fluid-row:hover .ct-faq__row-switch {
+  background: #0f172a;
+}
+
+.ct-faq__fluid-row:hover .ct-faq__row-switch::before,
+.ct-faq__fluid-row:hover .ct-faq__row-switch::after {
+  background-color: #ffffff;
+}
+
+/* ---------- FAQ ACTIVE ---------- */
+.ct-faq__fluid-row .accordion-button:not(.collapsed) .ct-faq__row-title {
+  color: var(--ct-primary);
+}
+
+.ct-faq__fluid-row .accordion-button:not(.collapsed) .ct-faq__row-switch {
+  background: var(--ct-primary);
+  transform: rotate(45deg);
+}
+
+.ct-faq__fluid-row .accordion-button:not(.collapsed) .ct-faq__row-switch::before,
+.ct-faq__fluid-row .accordion-button:not(.collapsed) .ct-faq__row-switch::after {
+  background-color: #ffffff;
+}
+
+/* ---------- FAQ BODY ---------- */
+.ct-faq__fluid-row .accordion-body {
+  padding: 0 10px 30px 10px;
+}
+
+.ct-faq__fluid-row .accordion-body ul {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  font-size: 1.05rem;
+  line-height: 1.6;
+  color: #666;
+  padding: 0px;
+}
+
+.ct-faq__fluid-row .accordion-body p {
+  font-size: 1.05rem;
+  max-width: 95%;
+  color: #666;
+  line-height: 1.6;
+  animation: premiumFadeReveal 0.45s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+/* ---------- ANIMATION ---------- */
+@keyframes premiumFadeReveal {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ---------- MODERN FULL-WIDTH THEME GREEN BANNER ---------- */
+.ct-faq__banner-callout--modern {
+  background-color: var(--ct-primary);
+  box-shadow: 0 15px 35px -10px rgba(95, 191, 115, 0.4);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+/* ---------- PREMIUM DARK ACTION ELEMENT ---------- */
+.ct-faq__btn-dark--modern {
+  background-color: #0b1329 !important;
+  border: 1px solid #1e293b !important;
+  color: #ffffff !important;
+  box-shadow: 0 8px 20px -4px rgba(11, 19, 41, 0.3);
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1) !important;
+  letter-spacing: -0.01em;
+}
+
+.ct-faq__btn-dark--modern:hover {
+  background-color: #020617 !important;
+  border-color: #334155 !important;
+  transform: translateY(-2px);
+  box-shadow: 0 16px 30px -6px rgba(11, 19, 41, 0.5);
+}
+
+.ct-faq__btn-dark--modern:hover i {
+  transform: translateX(5px);
+  color: var(--ct-primary);
+}
+
+.ct-faq__btn-dark--modern i {
+  color: rgba(255, 255, 255, 0.6);
+  transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1), color 0.25s ease;
+}
+
+.py-2-5 {
+  padding-top: 0.625rem !important;
+  padding-bottom: 0.625rem !important;
+}
+
+
+
+
+/* ---------- MODERN FAQ SIDEBAR NAVIGATION ---------- */
+.ct-faq__nav-wrapper .card {
+  border: none !important;
+}
+
+.ct-faq__nav-wrapper .nav-link {
+  background: transparent !important;
+  color: #64748b;
+  /* Clean muted slate text */
+  border: none;
+  border-radius: 0;
+  padding: 10px 16px;
+  position: relative;
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* Left Indicator Line Graphic */
+.ct-faq__nav-wrapper .nav-link::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 3px;
+  height: 0px;
+  /* Start hidden */
+  background-color: var(--ct-primary);
+  border-radius: 0 4px 4px 0;
+  transition: height 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* Modern Icons styling */
+.ct-faq__nav-icon {
+  color: #94a3b8;
+  transition: color 0.3s ease, transform 0.3s ease;
+}
+
+.ct-faq__nav-text {
+  transition: color 0.3s ease;
+}
+
+/* Hover States */
+.ct-faq__nav-wrapper .nav-link:hover {
+  color: #1e293b;
+}
+
+.ct-faq__nav-wrapper .nav-link:hover .ct-faq__nav-icon {
+  color: #1e293b;
+  transform: scale(1.05);
+}
+
+/* Active State (Removes chunky boxes completely) */
+.ct-faq__nav-wrapper .nav-link.active {
+  background: transparent !important;
+  color: var(--ct-primary) !important;
+  box-shadow: none !important;
+}
+
+/* Activate the left premium tracking indicator line */
+.ct-faq__nav-wrapper .nav-link.active::before {
+  height: 70%;
+  /* Smooth sleek bar appearance */
+}
+
+.ct-faq__nav-wrapper .nav-link.active .ct-faq__nav-icon {
+  color: var(--ct-primary) !important;
+}
+
+.ct-faq__nav-wrapper .nav-link.active .ct-faq__nav-text {
+  color: #0f172a !important;
+  /* Bold deep color text for high contrast focus */
+}
+
+
+/* ---------- MODERN FAQ SIDEBAR NAVIGATION ---------- */
+.ct-faq__nav-wrapper .card {
+  border: none !important;
+}
+
+.ct-faq__nav-wrapper .nav-link {
+  background: transparent !important;
+  color: #64748b;
+  /* Clean muted slate text */
+  border: none;
+  border-radius: 0;
+  padding: 10px 16px;
+  position: relative;
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* Left Indicator Line Graphic */
+.ct-faq__nav-wrapper .nav-link::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 3px;
+  height: 0px;
+  /* Start hidden */
+  background-color: var(--ct-primary);
+  border-radius: 0 4px 4px 0;
+  transition: height 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* Modern Icons styling */
+.ct-faq__nav-icon {
+  color: #94a3b8;
+  transition: color 0.3s ease, transform 0.3s ease;
+}
+
+.ct-faq__nav-text {
+  transition: color 0.3s ease;
+}
+
+/* Hover States */
+.ct-faq__nav-wrapper .nav-link:hover {
+  color: #1e293b;
+}
+
+.ct-faq__nav-wrapper .nav-link:hover .ct-faq__nav-icon {
+  color: #1e293b;
+  transform: scale(1.05);
+}
+
+/* Active State (Removes chunky boxes completely) */
+.ct-faq__nav-wrapper .nav-link.active {
+  background: transparent !important;
+  color: var(--ct-primary) !important;
+  box-shadow: none !important;
+}
+
+/* Activate the left premium tracking indicator line */
+.ct-faq__nav-wrapper .nav-link.active::before {
+  height: 70%;
+  /* Smooth sleek bar appearance */
+}
+
+.ct-faq__nav-wrapper .nav-link.active .ct-faq__nav-icon {
+  color: var(--ct-primary) !important;
+}
+
+.ct-faq__nav-wrapper .nav-link.active .ct-faq__nav-text {
+  color: #0f172a !important;
+  /* Bold deep color text for high contrast focus */
+}

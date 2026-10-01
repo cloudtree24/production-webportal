@@ -1,0 +1,334 @@
+/* ---------- Font Size Utilities ---------- */
+.ct-fs-90 {
+    font-size: var(--ct-fs-90);
+}
+
+.ct-fs-80 {
+    font-size: var(--ct-fs-80);
+}
+
+.ct-fs-60 {
+    font-size: var(--ct-fs-60);
+}
+
+.ct-fs-48 {
+    font-size: var(--ct-fs-48);
+}
+
+.ct-fs-30 {
+    font-size: var(--ct-fs-30);
+}
+
+.ct-fs-24 {
+    font-size: var(--ct-fs-24);
+}
+
+.ct-fs-18 {
+    font-size: var(--ct-fs-18);
+}
+
+/* ---------- Background / Text Utilities ---------- */
+.ct-primary__bg {
+    background: var(--ct-primary);
+}
+
+.ct-primary__text {
+    color: var(--ct-primary);
+}
+
+.ct-dark__bg {
+    background-color: var(--ct-dark);
+}
+
+.ct-dark__text {
+    color: var(--ct-dark);
+}
+
+.ct-white__bg {
+    background: var(--ct-white);
+}
+
+.ct-white__text {
+    color: var(--ct-white);
+}
+
+.ct-gray__bg {
+    background: var(--ct-gray);
+}
+
+.ct-gray__text {
+    color: var(--ct-gray);
+}
+
+.ct-radius__sm {
+    border-radius: var(--ct-radius-sm);
+}
+
+.ct-radius__md {
+    border-radius: var(--ct-radius-md);
+}
+
+.ct-radius__lg {
+    border-radius: var(--ct-radius-lg);
+}
+
+.ct-border {
+    border-color: var(--ct-border);
+}
+
+.btn {
+    border-radius: var(--ct-radius-sm);
+}
+
+.ct-padding__60 {
+    padding: var(--ct-padding-60) 0px;
+}
+
+.ct-padding__120 {
+    padding: var(--ct-padding-120) 0px;
+}
+
+section {
+    padding: 100px 0;
+}
+
+.section-padding {
+    padding: 100px 0;
+}
+
+
+.ct-heading__section .bar {
+    height: 3px;
+    width: 100px;
+    background: var(--ct-primary);
+    position: relative;
+    border-radius: var(--ct-radius-sm);
+    overflow: hidden;
+    margin: 15px auto;
+}
+
+    .ct-heading__section .bar::before {
+        content: '';
+        position: absolute;
+        left: 0;
+        top: 0;
+        height: 100%;
+        width: 7px;
+        background: var(--ct-white);
+        animation: MOVE-BG 2s linear infinite;
+    }
+
+.ct-features {
+    display: flex;
+    align-items: start;
+    gap: 12px;
+    white-space: normal;
+    line-height: 18px;
+}
+
+    /* Base icon style */
+    .ct-features .icons {
+        width: 32px;
+        height: 32px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 14px;
+        min-width: 32px;
+    }
+
+/* GREEN */
+.green .ct-features .icons {
+    background-color: #d1e7dd;
+    color: #0f5132;
+}
+
+/* BLUE */
+.blue .ct-features .icons {
+    background-color: #cfe2ff;
+    color: #084298;
+}
+
+/* PURPLE */
+.purple .ct-features .icons {
+    background-color: #e2d9f3;
+    color: #4b2e83;
+}
+
+/* ORANGE */
+.orange .ct-features .icons {
+    background-color: #ffe5d0;
+    color: #7a3e00;
+}
+
+/* TEAL */
+.teal .ct-features .icons {
+    background-color: #d1ecf1;
+    color: #055160;
+}
+
+/* RED */
+.red .ct-features .icons {
+    background-color: #f8d7da;
+    color: #842029;
+}
+
+/* DARK */
+.dark .ct-features .icons {
+    background-color: #e2e3e5;
+    color: #41464b;
+}
+
+/* Title */
+.ct-features .title p {
+    font-size: 16px;
+    font-weight: 600;
+    margin-bottom: 2px;
+    transition: color 0.2s;
+}
+
+/* Sub text */
+.ct-features .title span {
+    font-size: 14px;
+    color: #6c757d;
+}
+
+/* GREEN hover */
+.ct-nav__menu .dropdown-item.green:hover {
+    background-color: #d1e7dd;
+}
+
+    .ct-nav__menu .dropdown-item.green:hover .title p {
+        color: #0f5132;
+    }
+
+
+/* BLUE */
+.ct-nav__menu .dropdown-item.blue:hover {
+    background-color: #cfe2ff;
+}
+
+    .ct-nav__menu .dropdown-item.blue:hover .title p {
+        color: #084298;
+    }
+
+/* PURPLE */
+.ct-nav__menu .dropdown-item.purple:hover {
+    background-color: #e2d9f3;
+}
+
+    .ct-nav__menu .dropdown-item.purple:hover .title p {
+        color: #4b2e83;
+    }
+
+/* ORANGE */
+.ct-nav__menu .dropdown-item.orange:hover {
+    background-color: #ffe5d0;
+}
+
+    .ct-nav__menu .dropdown-item.orange:hover .title p {
+        color: #7a3e00;
+    }
+
+/* TEAL */
+.ct-nav__menu .dropdown-item.teal:hover {
+    background-color: #d1ecf1;
+}
+
+    .ct-nav__menu .dropdown-item.teal:hover .title p {
+        color: #055160;
+    }
+
+/* RED */
+.ct-nav__menu .dropdown-item.red:hover {
+    background-color: #f8d7da;
+}
+
+    .ct-nav__menu .dropdown-item.red:hover .title p {
+        color: #842029;
+    }
+
+/* DARK */
+.ct-nav__menu .dropdown-item.dark:hover {
+    background-color: #e2e3e5;
+}
+
+    .ct-nav__menu .dropdown-item.dark:hover .title p {
+        color: #41464b;
+    }
+
+
+/* COMMON BASE */
+.ct-arrow__primary,
+.ct-arrow__dark {
+    position: relative;
+    overflow: hidden;
+    transition: all 0.45s cubic-bezier(0.4, 0, 0.2, 1);
+    /* smoother */
+}
+
+    /* ARROW */
+    .ct-arrow__primary span,
+    .ct-arrow__dark span {
+        display: inline-block;
+        transition: transform 0.4s ease;
+    }
+
+    .ct-arrow__primary:hover span,
+    .ct-arrow__dark:hover span {
+        transform: translateX(8px);
+        /* slightly more smooth movement */
+    }
+
+    /* FLASH EFFECT (SOFTER) */
+    .ct-arrow__primary::before,
+    .ct-arrow__dark::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: -80%;
+        width: 60%;
+        /* wider = softer sweep */
+        height: 100%;
+        background: linear-gradient(120deg, transparent, rgba(255, 255, 255, 0.35), transparent);
+        /* smoother than solid */
+        transform: skewX(-25deg);
+        transition: left 0.7s ease;
+        /* slower = smoother */
+    }
+
+    .ct-arrow__primary:hover::before,
+    .ct-arrow__dark:hover::before {
+        left: 130%;
+    }
+
+/* =========================
+   PRIMARY (WHITE → BLACK)
+========================= */
+.ct-arrow__primary {
+    background-color: #fff;
+    color: #000;
+    border: 1px solid #fff;
+}
+
+    .ct-arrow__primary:hover {
+        background-color: #000 !important;
+        color: #fff !important;
+        border-color: #000 !important;
+    }
+
+/* =========================
+   DARK (BLACK → GREEN)
+========================= */
+.ct-arrow__dark {
+    background-color: #000;
+    color: #fff;
+    border: 1px solid #000;
+}
+
+    .ct-arrow__dark:hover {
+        background-color: var(--ct-primary) !important;
+        color: #fff !important;
+        border-color: var(--ct-primary) !important;
+    }

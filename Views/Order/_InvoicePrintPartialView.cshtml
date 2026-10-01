@@ -1,0 +1,443 @@
+﻿@model HCMPortal.ViewModel.InvoicePrintDetailsViewModel
+@using HCMPortal.Helper
+@{
+    // Initialize variables used for calculations (retained from Code-1)
+    decimal totalTaxableAmount = 0;
+    decimal totalTaxAmount = 0;
+    decimal totalPaybleAmount = 0;
+    decimal totalDiscountValue = 0;
+}
+<style>
+    *,
+    *::before,
+    *::after {
+        box-sizing: border-box;
+    }
+
+    * {
+        margin: 0;
+        padding: 0;
+        border: 0;
+    }
+
+    html {
+        -webkit-text-size-adjust: 100%;
+    }
+
+    body {
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+        font-family: Arial, sans-serif;
+        font-size: 16px;
+        line-height: 1.5;
+    }
+
+    /* === TABLES === */
+    table,
+    tr,
+    td,
+    th {
+        page-break-inside: avoid !important;
+    }
+
+    table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+
+    th,
+    td {
+        text-align: center;
+        vertical-align: middle;
+        word-wrap: break-word;
+        white-space: normal;
+        padding: 15px 5px;
+    }
+
+    .tableBorder th,
+    .tableBorder td {
+        border: 1px solid #000;
+    }
+
+    .text-left {
+        text-align: left;
+    }
+
+    .text-right {
+        text-align: right;
+    }
+
+    .no-padding {
+        padding: 0px;
+    }
+
+    .gray-bg {
+        background: rgba(0, 0, 0, 0.05);
+    }
+
+    p {
+        margin: 0;
+    }
+
+    .invoice-container {
+        width: 100%;
+        margin: 0 auto;
+        box-sizing: border-box;
+        padding: 0px;
+    }
+
+        .invoice-container .modal-content {
+            position: relative;
+            padding: 0;
+            box-shadow: none !important;
+            border: none !important;
+        }
+
+        .invoice-container .logo {
+            width: 260px;
+        }
+
+    @@page {
+        size: A4 portrait;
+        margin: 15mm;
+    }
+</style>
+<div class="invoice-container" id="invoiceToPrint">
+
+    <table style="margin-top: 10px">
+        <tr>
+            <td style="width:50%; text-align: left; vertical-align:middle;">
+                <img src="~/assets/images/logos/cloudtree-logo.webp" alt="theCloudtreeAI" title="theCloudtreeAI" class="logo">
+            </td>
+
+            <td style="width:50%; text-align: left; vertical-align:middle;">
+                @{
+                    if (!string.IsNullOrEmpty(Model.InvoiceNumber))
+                    {
+                        <p style="font-size: 18px;"><strong><u>Tax Invoice</u></strong></p>
+                    }
+                    else
+                    {
+                        <p style="font-size: 18px;"><strong><u>Order Invoice</u></strong></p>
+                    }
+                }
+            </td>
+        </tr>
+    </table>
+
+    <table style="margin-bottom: 10px">
+        <tbody>
+            <tr>
+                <td class="text-left" style="vertical-align: top;">
+                    <p><strong>@(Model.SelfDetails?.OrgName ?? "CLOUDTREE® AI INDIA PRIVATE LIMITED")</strong></p>
+                    <p>@(Model.SelfDetails?.AddressLine1 ?? "Plot No-532/1026, P.S Plaza")</p>
+                    <p>@(Model.SelfDetails?.City ?? "Rasulgarh"), @(Model.SelfDetails?.StateName ?? "Bhubaneswar, India"), @(Model.SelfDetails?.PostalCode ?? "751 010")</p>
+                    <p>Email: @Model.SelfDetails?.PrimaryEmail</p>
+                    <p><strong>PAN NO: </strong>@Model.SelfDetails?.Pan</p>
+                    <p><strong>GSTIN: </strong>@Model.SelfDetails?.Gstin</p>
+                    <p><strong>CIN No: </strong>U62091OD2023PTC043496</p>
+                </td>
+
+                <td class="text-right" style="vertical-align: top;">
+                    @{
+                        if (!string.IsNullOrEmpty(Model.InvoiceNumber))
+                        {
+                            <p><strong>Invoice No:</strong> @Model.InvoiceNumber</p>
+                            <p><strong>Invoice Date:</strong> @Model.InvoiceDate.ToString("dd-MM-yyyy")</p>
+                        }
+                        else
+                        {
+                            <p><strong>Order No:</strong> @Model.OrderNumber</p>
+                            <p><strong>Order Date:</strong> @Model.CreatedDate.ToString("dd-MM-yyyy")</p>
+                        }
+                    }
+                    <br />
+                    <p><strong>Banking Details</strong></p>
+                    <p>Bank: @Model.SelfDetails?.BankName</p>
+                    <p>A/c No: @Model.SelfDetails?.AccountNumber</p>
+                    <p>IFSC: @Model.SelfDetails?.IFSCCode</p>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+
+    <table style="width:100%; margin-bottom:20px; table-layout: fixed; border-collapse: collapse;">
+        <tbody>
+            <tr>
+                <th style="width:50%; padding:10px; border:1px solid #000; text-align:left; background:#f0f0f0;">
+                    Billing To
+                </th>
+
+                <th style="width:50%; padding:10px; border:1px solid #000; text-align:left; background:#f0f0f0;">
+                    Shipping To
+                </th>
+            </tr>
+
+            <tr>
+                <td style="width:50%; padding:10px; border:1px solid #000; vertical-align: top; text-align:left;">
+                    <strong>@Model.customerDetails?.CompanyName</strong><br>
+                    @Model.customerDetails?.Address<br>
+                    <p>Phone No: @Model.customerDetails?.Phonenumber</p>
+                    <p>Email: @Model.customerDetails?.EmailAddress</p>
+                    <p>GSTIN: <strong>@((!String.IsNullOrEmpty(Model.customerDetails?.Gstinnumber)) ? Model.customerDetails.Gstinnumber : "NOT AVAILABLE")</strong></p>
+                     <p>Pan No: <strong>@((!String.IsNullOrEmpty(Model.customerDetails?.Pancard)) ? Model.customerDetails.Pancard : "NOT AVAILABLE")</strong></p>
+                </td>
+
+                <td style="width:50%; padding:10px; border:1px solid #000; vertical-align: top; text-align:left;">
+                    <strong>@Model.customerDetails?.CompanyName</strong><br>
+                    @Model.customerDetails?.Address<br>
+                    <p>Phone No: @Model.customerDetails?.Phonenumber</p>
+                    <p>Email: @Model.customerDetails?.EmailAddress</p>
+                    <p>GSTIN: <strong>@((!String.IsNullOrEmpty(Model.customerDetails?.Gstinnumber)) ? Model.customerDetails.Gstinnumber : "NOT AVAILABLE")</strong></p>
+                    <p>Pan No: <strong>@((!String.IsNullOrEmpty(Model.customerDetails?.Pancard)) ? Model.customerDetails.Pancard : "NOT AVAILABLE")</strong></p>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+
+    <table class="tableBorder" style="margin-bottom: 30px; table-layout: fixed; width: 100%;">
+        <thead>
+            <tr class="gray-bg">
+                <th rowspan="2" class="gray-bg text-left" style="width: 22%;">Service Details</th>
+                <th rowspan="2" class="text-left" style="width: 6%;">HSN/SAC</th>
+                <th rowspan="2" style="width: 4%;">Qty</th>
+                <th rowspan="2" style="width: 4%;">UM</th>
+                <th rowspan="2" style="width: 8%;">Rate(INR)</th>
+                <th colspan="2" style="width: 12%;">Discount</th>
+                <th colspan="2" style="width: 12%;">CGST</th>
+                <th colspan="2" style="width: 12%;">SGST</th>
+                <th colspan="2" style="width: 12%;">IGST</th>
+                <th rowspan="2" style="width: 8%;">Total</th>
+            </tr>
+
+            <tr class="gray-bg">
+                <th>Rate(%)</th>
+                <th>Amount</th>
+                <th>Rate(%)</th>
+                <th>Amount</th>
+                <th>Rate(%)</th>
+                <th>Amount</th>
+                <th>Rate(%)</th>
+                <th>Amount</th>
+            </tr>
+        </thead>
+
+        <tbody>
+            @if (Model.invoiceItems != null)
+            {
+                int index = 0;
+                foreach (var item in Model.invoiceItems)
+                {
+                    index++;
+                    // RoundSmart function retained from Code-1
+                    decimal RoundSmart(decimal value)
+                    {
+                        decimal rounded = Math.Round(value, 1, MidpointRounding.AwayFromZero);
+                        decimal nearestInt = Math.Round(rounded, 0, MidpointRounding.AwayFromZero);
+                        if (Math.Abs(rounded - nearestInt) <= 0.05m)
+                            return nearestInt;
+                        return rounded;
+                    }
+
+                    // Calculations (retained from Code-1)
+                    decimal discountAmount = Math.Round(Convert.ToDecimal((item.ServiceAmount * item.DiscountPercentage / 100)), 2);
+                    decimal taxableAmount = Math.Round(item.ServiceAmount - discountAmount, 2);
+                    decimal cgstrate = (item.Cgstamount > 0) ? RoundSmart(Convert.ToDecimal((item.Cgstamount / taxableAmount)) * 100) : 0;
+                    decimal sgstrate = (item.Sgstamount > 0) ? RoundSmart(Convert.ToDecimal((item.Sgstamount / taxableAmount)) * 100) : 0;
+                    decimal igstrate = (item.Igstamount > 0) ? RoundSmart(Convert.ToDecimal((item.Igstamount / taxableAmount)) * 100) : 0;
+
+                    decimal netAmount = (item.Igstamount > 0)
+                    ? Math.Round(Convert.ToDecimal(taxableAmount + item.Igstamount), 2)
+                    : Math.Round(Convert.ToDecimal(taxableAmount + item.Cgstamount + item.Sgstamount), 2);
+
+                    // Accumulate totals (retained from Code-1)
+                    totalTaxableAmount += taxableAmount;
+                    totalPaybleAmount += netAmount;
+                    totalDiscountValue += discountAmount;
+                    totalTaxAmount += (item.Igstamount > 0)
+                    ? Convert.ToDecimal(item.Igstamount)
+                    : Convert.ToDecimal(item.Cgstamount + item.Sgstamount);
+
+                    // UM (Unit of Measurement) logic (retained from Code-1)
+                    string[] serviceName = item.ServiceName.Split("-");
+                    string um = (serviceName.Length > 1) ? item.ServiceName.Split("-")[1] : "Add-On";
+
+                    <tr>
+                        <td class="text-left" style="word-wrap: break-word; overflow-wrap: break-word; white-space: normal;">
+                            @item.ServiceName
+                        </td>
+                        <td>@item.Hsncode</td>
+                        @* <td>1</td> *@
+                        <td>@item.Qty</td>
+                        <td>@um</td>
+                        <td>@Math.Round(item.ServiceAmount, 2).ToString("N2")</td>
+                        <td>@item.DiscountPercentage</td>
+                        <td>@discountAmount.ToString("N2")</td>
+                        <td>@cgstrate</td>
+                        <td>@Math.Round(Convert.ToDecimal(item.Cgstamount), 2).ToString("N2")</td>
+                        <td>@sgstrate</td>
+                        <td>@Math.Round(Convert.ToDecimal(item.Sgstamount), 2).ToString("N2")</td>
+                        <td>@igstrate</td>
+                        <td>@Math.Round(Convert.ToDecimal(item.Igstamount), 2).ToString("N2")</td>
+                        <td class="fw-bold">@netAmount.ToString("N2")</td>
+                    </tr>
+                }
+            }
+        </tbody>
+    </table>
+
+    <table>
+        <tbody>
+            <tr>
+                <td class="no-border no-padding text-left" style="width: 65%; vertical-align: top; padding-right:10px;">
+                    <p><strong>Notes:</strong></p>
+                    <p>- The customer is not authorized to alter Terms & Conditions of this invoice.</p>
+                    <p>- Any purported amendment is a legal offence.</p>
+                    <p>- All disputes are subject to Bhubaneswar Jurisdiction Only.</p>
+                    <p>- Tax on the invoice is not payable under Reverse Charge Mechanism.</p>
+                </td>
+
+                <td class="no-padding" style="width: 35%">
+                    <table class="tableBorder">
+                        <tbody>
+                            <tr>
+                                <td>Taxable Value(Amount)</td>
+                                <td>₹@totalTaxableAmount.ToString("N2")</td>
+                            </tr>
+                            <tr>
+                                <td>Tax Value(Amount)</td>
+                                <td>₹@totalTaxAmount.ToString("N2")</td>
+                            </tr>
+                            <tr>
+                                <td>Discount(Amount)</td>
+                                <td>₹@totalDiscountValue.ToString("N2")</td>
+                            </tr>
+                            <tr>
+                                <td>Round Off(Amount)</td>
+                                @{
+                                    // Calculate the final rounded total and the round-off amount
+                                    decimal actualTotal = totalTaxableAmount + totalTaxAmount;
+                                    decimal roundedTotal = Math.Round(actualTotal);
+                                    decimal roundOff = roundedTotal - actualTotal;
+
+                                    // Update totalPaybleAmount for final Invoice Value display
+                                    totalPaybleAmount = roundedTotal;
+                                }
+                                <td>₹@roundOff.ToString("N2")</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Invoice Value</strong></td>
+                                <td><strong>₹@totalPaybleAmount.ToString("N2")</strong></td>
+                            </tr>
+                            <tr>
+                                <td colspan="2" class="text-center">
+                                    <p><strong>In Words: INR @NumberToWordsConverter.NumberToWords(Convert.ToInt64(totalPaybleAmount)) Only</strong></p>
+                                    <p><strong>For Cloudtree AI India Pvt. Ltd</strong></p>
+                                </td>
+                            </tr>
+
+                            <tr>
+                                <td colspan="2" style="text-align: right;">
+                                    <img src="~/assets/images/signature.png" alt="Authorized Signatory" style="width:200px; height:auto; margin-top:20px;"><br>
+                                    <strong>Authorized Signatory</strong>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+
+    <table style="width: 100%; margin-top: 20px; table-layout: fixed; border-collapse: collapse;">
+        <tbody>
+            <tr>
+                <td class="no-padding" style="text-align: left; vertical-align: middle;">
+                    <img src="@Model.QrCodeBase64Image" alt="QR Code"
+                         style="width:120px; height:120px; vertical-align: middle; margin-right: 10px;">
+                    <span style="vertical-align: middle;">
+                        Scan the QR code to view the configured information.
+                    </span>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+
+    <div class="justify-content-center" style="margin-top: 10px; text-align:center;">
+        <button id="downloadPdf" class="btn btn-light border text-black-50 shadow-none mx-1">
+            <i class="fa fa-file-pdf"></i> Download PDF
+        </button>
+    </div>
+
+</div>
+
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
+<script>
+    document.getElementById("downloadPdf").addEventListener("click", async function () {
+      const { jsPDF } = window.jspdf;
+
+      const invoice = document.querySelector("#invoiceToPrint");
+      const downloadBtn = document.getElementById("downloadPdf");
+
+      @{
+          // If InvoiceNumber is present, use it; otherwise fallback to OrderNumber
+          string invoiceOrOrderNo = !string.IsNullOrEmpty(Model.InvoiceNumber) 
+              ? Model.InvoiceNumber 
+              : (!string.IsNullOrEmpty(Model.OrderNumber) ? Model.OrderNumber : "Document");
+
+          // Prefix with Invoice_ or Order_
+          string prefix = !string.IsNullOrEmpty(Model.InvoiceNumber) ? "Invoice_" : "Order_";
+
+          string rawFileName = $"{prefix}{invoiceOrOrderNo}.pdf";
+
+          // Sanitize special characters (like / or \) to avoid broken downloads
+          string pdfFileName = System.Text.RegularExpressions.Regex.Replace(rawFileName, @"[\\/:*?""<>|]", "_");
+      }
+      const fileName = "@pdfFileName";
+
+      try {
+        // 1. Hide the download button so it isn't included in the PDF
+        downloadBtn.style.display = "none";
+
+        // 2. Capture canvas with scale: 2 (Prevents memory crashes & corrupt PNG errors)
+        const canvas = await html2canvas(invoice, { 
+            scale: 2, 
+            useCORS: true, 
+            allowTaint: true,
+            logging: false
+        });
+
+        // 3. Convert to JPEG image
+        const imgData = canvas.toDataURL("image/jpeg", 0.98);
+
+        const pdf = new jsPDF("p", "mm", "a4");
+
+        const pageWidth = pdf.internal.pageSize.getWidth();
+        const pageHeight = pdf.internal.pageSize.getHeight();
+
+        const margin = 5; // mm
+        const imgWidth = pageWidth - margin * 2;
+        const imgHeight = (canvas.height * imgWidth) / canvas.width;
+
+        let positionY = margin;
+        if (imgHeight < pageHeight - margin * 2) {
+          positionY = (pageHeight - imgHeight) / 4;
+        }
+
+        pdf.addImage(imgData, "JPEG", margin, positionY, imgWidth, imgHeight);
+
+        // 4. Download PDF using the dynamic filename
+        pdf.save(fileName);
+
+      } catch (error) {
+        console.error("PDF Generation Error:", error);
+        alert("Failed to generate PDF. Check console for details.");
+      } finally {
+        // Restore download button
+        downloadBtn.style.display = "inline-block";
+      }
+    });
+</script>

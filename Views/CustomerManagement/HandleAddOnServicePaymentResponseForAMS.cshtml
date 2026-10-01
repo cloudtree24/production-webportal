@@ -1,0 +1,262 @@
+﻿@model HCMPortal.ViewModel.InvoicePrintDetailsViewModel
+
+@{
+	// The model (if you're using a specific model) or ViewBag/ViewData
+	ViewData["Title"] = "Service Purchase Confirmation";
+	Layout = null;
+	// Assuming the controller sets ViewBag.paymentStatus = "Success" or "Failed"
+	var data = Model;
+	string paymentStatus = ViewBag.paymentStatus;
+	
+}
+<style>
+	.modern-success-alert {
+		background: white;
+		border: 1px solid #e2e8f0;
+		border-radius: 16px;
+		padding: 2.5rem;
+		box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+		text-align: center;
+		position: relative;
+		transition: all 0.3s ease;
+	}
+
+	.success-icon {
+		width: 80px;
+		height: 80px;
+		background: linear-gradient(135deg, #10b981, #34d399);
+		border-radius: 50%;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		margin: 0 auto 1.5rem;
+		box-shadow: 0 10px 25px rgba(16, 185, 129, 0.3);
+	}
+
+		/* NOTE: If Font Awesome is not loaded via CDN/local file, the <i> tag below will not show an icon.
+			   A fallback Unicode checkmark is added in the HTML block below for safety, but the <i> tag
+			   from the original CSS is kept here for consistency. */
+		.success-icon i {
+			font-size: 2.5rem;
+			color: white;
+		}
+
+	.modern-alert-title {
+		color: #1e293b;
+		font-size: 1.5rem;
+		font-weight: 700;
+		margin-bottom: 0.5rem;
+	}
+
+	.modern-lead-text {
+		color: #64748b;
+		font-size: 1.1rem;
+		font-weight: 500;
+		margin-bottom: 1rem;
+	}
+
+	.modern-alert-text {
+		color: #475569;
+		margin-bottom: 1.5rem;
+		line-height: 1.6;
+	}
+
+	.transaction-box {
+		background: #f1f5f9;
+		border: 1px solid #e2e8f0;
+		border-radius: 8px;
+		padding: 0.75rem 1rem;
+		margin-bottom: 1.5rem;
+		display: inline-block;
+		font-family: 'SF Mono', Monaco, monospace;
+		font-size: 0.875rem;
+		color: #334155;
+	}
+
+	/* Removed .modern-dashboard-btn and .modern-invoice-btn CSS as the buttons are removed */
+
+
+	.modern-failed-alert {
+		background: white;
+		border: 1px solid #fee2e2;
+		border-radius: 16px;
+		padding: 2.5rem;
+		box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+		text-align: center;
+		position: relative;
+		transition: all 0.3s ease;
+	}
+
+	.failed-icon {
+		width: 80px;
+		height: 80px;
+		background: #dc2626;
+		border-radius: 50%;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		margin: 0 auto 1.5rem;
+		box-shadow: 0 10px 25px rgba(239, 68, 68, 0.3);
+	}
+
+		.failed-icon i {
+			font-size: 2.5rem;
+			color: white;
+		}
+
+	.modern-failed-title {
+		color: #1e293b;
+		font-size: 1.5rem;
+		font-weight: 700;
+		margin-bottom: 1rem;
+	}
+
+	.modern-failed-lead {
+		color: #dc2626;
+		font-size: 1.1rem;
+		font-weight: 500;
+		margin-bottom: 1rem;
+	}
+
+	.modern-failed-text {
+		color: #475569;
+		line-height: 1.6;
+		margin-bottom: 1rem;
+	}
+
+	.error-box {
+		background: #fee2e2;
+		border: 1px solid #fecaca;
+		border-radius: 8px;
+		padding: 0.75rem 1rem;
+		margin: 1.5rem 0;
+		display: inline-block;
+		font-family: 'SF Mono', Monaco, monospace;
+		font-size: 0.875rem;
+		color: #dc2626;
+	}
+
+	.modern-retry-btn {
+		background: #ef4444;
+		color: white;
+		font-weight: 600;
+		display: inline-flex;
+		align-items: center;
+		gap: 0.5rem;
+		transition: all 0.2s ease;
+		box-shadow: 0 4px 14px rgba(239, 68, 68, 0.4);
+	}
+
+		.modern-retry-btn:hover {
+			background: #f25a5a;
+			box-shadow: 0 8px 25px rgba(239, 68, 68, 0.4);
+			color: white;
+		}
+
+	.modern-support-btn {
+		background: white;
+		border: 2px solid #ef4444;
+		color: #ef4444;
+		font-weight: 600;
+		display: inline-flex;
+		align-items: center;
+		gap: 0.5rem;
+		transition: all 0.2s ease;
+	}
+
+		.modern-support-btn:hover {
+			background: #ef4444;
+			color: white;
+			box-shadow: 0 4px 14px rgba(239, 68, 68, 0.3);
+		}
+</style>
+<div class="container">
+	<div class="d-flex align-items-center justify-content-center min-vh-100">
+		@if (paymentStatus == "Success")
+		{
+			<div id="successContent" class="alert alert-success border-3 modern-success-alert w-75" role="alert">
+
+				<div class="success-icon">
+					<i class="fa-solid fa-circle-check"></i>
+				</div>
+
+				<h4 class="alert-heading modern-alert-title">
+					Payment Successful!
+				</h4>
+				<p lead mb-0 modern-lead-text>
+					Your subscription has been successfully <span class="fw-bold text-success">Active</span>, and all services associated with your plan remain active. 🎉
+				</p>
+
+				<p class="modern-alert-text mb-1">
+					A confirmation email has been sent to your registered email address.
+				</p>
+				<p class="modern-alert-text mb-1">
+					If you have any questions or concerns regarding your subscription, please don’t hesitate to contact our
+					support team.
+				</p>
+
+				<div class="transaction-box mt-3">
+					<strong>Transaction ID:</strong> @ViewBag.TransactionId
+				</div>
+
+				<p class="modern-alert-text mb-1 mt-4">
+					We appreciate your continued trust in our services.
+				</p>
+
+			</div>
+		}
+
+		else if (paymentStatus == "Failed")
+		{
+			<div id="failedContent" class="alert alert-danger border-3 modern-failed-alert w-75" role="alert">
+				<div class="failed-icon mb-4">
+					<i class="fa-solid fa-circle-xmark"></i>
+				</div>
+
+				<h4 class="alert-heading modern-failed-title">
+					Payment Attempt Failed!
+				</h4>
+
+				<p class="lead mb-0 modern-failed-lead mb-1">
+					We were unable to process your payment.
+				</p>
+
+				<p class="modern-failed-text mb-1">
+					Please verify your payment details and try again. This may have occurred due to an issue with your card,
+					insufficient funds, or a temporary bank restriction.
+				</p>
+
+				<p class="modern-failed-text mb-1">
+					To avoid any disruption to your service, please update your payment method or retry the transaction.
+				</p>
+
+				<div class="error-box">
+					<strong>Error Code:</strong> GEN-FAIL<br>
+					<strong>Reason:</strong> There was an issue with your payment method or bank authorization.
+				</div>
+
+				<p class="modern-failed-text mb-1">
+					If the issue persists, feel free to contact our support team for further assistance.
+				</p>
+
+				<hr>
+
+				<div class="d-flex flex-wrap justify-content-center gap-2">
+					<a href="@Url.Action("PaymentRequestHandleFromAMS", "CustomerManagement", new { invoiceNumber = Model.InvoiceNumber, csid = Model.customerDetails?.Csid, orderType = Model.RecordType })" class="btn-primary-custom"><span class="icon-redo">&#x21BB;</span> Try Again</a>
+					<a href="#" class="modern-support-btn btn btn-lg">
+						<i class="bi bi-chat-dots"></i> Contact Support
+					</a>
+				</div>
+			</div>
+		}
+
+		else
+		{
+			<div class="alert alert-info" role="alert">
+				<h4 class="alert-heading">Status Unknown</h4>
+				<p>We are currently unable to display your transaction status. Please check your **registered email** for confirmation details or contact our support team with your expected **Service Name** and **Order Date**.</p>
+			</div>
+		}
+	</div>
+</div>
+

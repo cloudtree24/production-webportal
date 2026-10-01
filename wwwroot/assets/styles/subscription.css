@@ -1,0 +1,396 @@
+﻿/* ==========================================================================
+   Modern Corporate Tech Pricing System
+   ========================================================================== */
+
+/* Typography & Layout Fundamentals */
+
+.pricing-page-section {
+    background: radial-gradient(circle at top left, rgba(0, 59, 179, 0.08), transparent 28%), radial-gradient(circle at top right, rgba(255, 212, 85, 0.10), transparent 24%), #ffffff;
+}
+
+.trust-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    background: #fff;
+    border: 1px solid #e8edf5;
+    /* box-shadow: 0 12px 35px rgba(15, 23, 42, 0.06); */
+    padding: 12px 18px;
+    border-radius: 999px;
+    color: #1e293b;
+    font-weight: 600;
+    font-size: 14px;
+}
+
+    .trust-pill.red {
+        background-color: rgba(255, 107, 53, .2);
+    }
+
+    .trust-pill.green {
+        background-color: rgba(116, 181, 27, .2);
+    }
+
+    .trust-pill.blue {
+        background-color: rgba(23, 92, 255, .2);
+    }
+
+.pricing-title {
+    color: #000000;
+    font-weight: 800;
+    letter-spacing: -0.5px;
+    font-size: 2.5rem;
+}
+
+.pricing-desc {
+    max-width: 800px;
+    font-size: 1rem;
+    color: #555555 !important;
+}
+
+.trust-item {
+    display: flex;
+    align-items: center;
+    font-size: 0.85rem;
+}
+
+.trust-icon {
+    width: 55px;
+    height: 55px;
+    font-size: 22px;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-right: 10px;
+}
+
+    .trust-icon.blue {
+        background-color: rgba(23, 92, 255, .2);
+    }
+
+    .trust-icon.green {
+        background-color: rgba(116, 181, 27, .2);
+    }
+
+    .trust-icon.red {
+        background-color: rgba(255, 107, 53, .2);
+    }
+
+
+.plan-toggle-group {
+    background: #f6f6f6;
+    padding: 6px;
+    border-radius: 50px;
+    display: inline-flex;
+    align-items: center;
+    border: 1px solid rgba(0, 0, 0, 0.08);
+}
+
+.plan-btn {
+    padding: 8px 24px;
+    font-weight: 600;
+    font-size: 0.9rem;
+    color: #555555;
+    border-radius: 50px !important;
+    border: none !important;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    background: transparent;
+}
+
+.btn-check:checked + .plan-btn {
+    background: #5fbf73;
+    color: #ffffff !important;
+    box-shadow: 0 4px 12px rgba(16, 185, 129, 0.2);
+}
+
+/* 3. Pricing Cards Core Styles */
+.productPlan_body .card {
+    /*! border-radius: 18px !important; */
+    border: 1px solid rgba(0, 0, 0, 0.08) !important;
+    background-color: #ffffff !important;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.02);
+    transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+    position: relative;
+}
+
+    .productPlan_body .card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 15px 35px rgba(0, 0, 0, 0.06);
+        border-color: rgba(16, 185, 129, 0.3) !important;
+    }
+
+    /* Featured Interactive Card Accentuation */
+    .productPlan_body .card.active {
+        border: 2px solid #5fbf73 !important;
+        box-shadow: 0 20px 40px rgba(6, 78, 59, 0.06);
+        background: #f8f9fa !important;
+    }
+
+.productPlan_body .card-header {
+    min-height: 266px;
+}
+
+/* Modern Card Top Accent Tag Badge */
+.badge-top {
+    position: absolute;
+    top: 16px;
+    right: 16px;
+    /*! background: linear-gradient(135deg, #064e3b, #10b981); */
+    /*! color: #ffffff !important; */
+    padding: 4px 12px;
+    font-size: 0.75rem;
+    font-weight: 700;
+    border-radius: 6px;
+    background-color: #FFB300 !important;
+    color: #ffffff;
+    position: absolute;
+    right: 10px;
+    top: -15px;
+}
+
+
+.plan-name {
+    /*! color: #064e3b; */
+    /*! font-weight: 700; */
+    font-size: 1.3rem;
+    letter-spacing: -0.2px;
+}
+
+.pricing-amount {
+    /*! color: #000000; */
+    display: flex;
+    align-items: baseline;
+}
+
+    .pricing-amount .currency {
+        font-size: 2.2rem;
+        font-weight: 700;
+        margin-right: 2px;
+    }
+
+    .pricing-amount .price-value {
+        font-size: 2.2rem;
+        font-weight: 600;
+        line-height: 1;
+        letter-spacing: -1px;
+    }
+
+    .pricing-amount .duration {
+        font-size: 0.95rem;
+        color: #666666;
+        font-weight: 500;
+        margin-left: 4px;
+    }
+
+
+.rounded-custom .btn-primary {
+    color: #ffffff;
+    border: none;
+    font-weight: 600;
+    font-size: 0.95rem;
+    padding: 13px;
+    border-radius: 10px;
+    background: #1e662c;
+    transition: all 0.2s ease;
+}
+
+    .rounded-custom .btn-primary:hover {
+        background: #5fbf73;
+        color: #ffffff;
+    }
+
+.productPlan {
+    margin: 50px 0;
+}
+
+.plan-toggle-group {
+    display: flex;
+    background: #f1f5f9;
+    padding: 0.5rem;
+    border-radius: 50px;
+    gap: 0.5rem;
+}
+
+
+    .plan-toggle-group .plan-btn {
+        padding: 0.6rem 1.4rem;
+        border-radius: 30px;
+        font-weight: 600;
+        font-size: 0.95rem;
+        color: #444;
+        cursor: pointer;
+        border: none;
+        background: #fff;
+        transition: all 0.35s ease;
+    }
+
+
+        .plan-toggle-group .plan-btn:hover {
+            /*! background: #fff; */
+            /*! color: #0d6efd; */
+        }
+
+
+.rounded-custom.active .btn-primary {
+    background: #5fbf73;
+    /*! border: 1px solid #064e3b; */
+}
+
+    .rounded-custom.active .btn-primary:hover {
+    }
+
+
+.pricing-check i {
+    color: #1e662c;
+    font-size: 1.1rem;
+    display: flex;
+}
+
+.active .pricing-check i {
+    color: #5fbf73;
+}
+
+
+.bg-primary-soft {
+    background-color: rgba(6, 78, 59, 0.06) !important;
+}
+
+.text-primary {
+    color: #0d6efd !important;
+}
+
+.bg-success-soft {
+    background-color: rgba(95, 191, 115, 0.12) !important;
+}
+
+.text-success {
+    color: #10b981 !important;
+}
+
+.bg-danger-soft {
+    background-color: rgba(239, 68, 68, 0.06) !important;
+}
+
+.text-danger {
+    color: #ef4444 !important;
+}
+
+
+
+
+
+
+
+
+
+
+/* =========================================================
+   CINEMATIC 3D TRANSITION EFFECT
+   (WITHOUT kinetic-stage CLASS)
+========================================================= */
+
+/* ---------------------------------------------------------
+   PLAN BODY
+--------------------------------------------------------- */
+
+.productPlan_body {
+    opacity: 0;
+    transform: translateY(30px);
+    transition: opacity .45s ease, transform .6s ease;
+    /* 3D Perspective moved here */
+    perspective: 1800px;
+    perspective-origin: 50% 50%;
+    transform-style: preserve-3d;
+}
+
+    .productPlan_body.plan-active {
+        opacity: 1;
+        transform: translateY(0);
+    }
+
+    .productPlan_body.plan-hide {
+        opacity: 0;
+        transform: translateY(40px);
+    }
+
+    /* ---------------------------------------------------------
+   CARD BASE
+--------------------------------------------------------- */
+
+    .productPlan_body .card {
+        position: relative;
+        transform-style: preserve-3d;
+        backface-visibility: hidden;
+        will-change: transform, opacity;
+        transition: transform .85s cubic-bezier(0.16, 1, 0.3, 1), box-shadow .85s cubic-bezier(0.16, 1, 0.3, 1), opacity .55s ease, border-color .3s ease;
+        transform: translateZ(0px) rotateX(0deg) translateY(0px);
+        opacity: 1;
+    }
+
+/* ---------------------------------------------------------
+   INNER CONTENT
+--------------------------------------------------------- */
+
+.card-inner-canvas {
+    width: 100%;
+    height: 100%;
+    transform-style: preserve-3d;
+    backface-visibility: hidden;
+    transition: opacity .25s ease;
+}
+
+/* ---------------------------------------------------------
+   EXIT EFFECT
+--------------------------------------------------------- */
+
+.productPlan_body.plan-hide .card {
+    transform: translateZ(-200px) rotateX(-20deg) translateY(150px) scale(.92);
+    opacity: 0;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.01);
+}
+
+/* ---------------------------------------------------------
+   ENTRY EFFECT
+--------------------------------------------------------- */
+
+.productPlan_body.plan-active .card {
+    animation: cinematicRise .9s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+/* ---------------------------------------------------------
+   STAGGER EFFECT
+--------------------------------------------------------- */
+
+.productPlan_body.plan-active .col-lg-4:nth-child(1) .card {
+    animation-delay: .05s;
+}
+
+.productPlan_body.plan-active .col-lg-4:nth-child(2) .card {
+    animation-delay: .15s;
+}
+
+.productPlan_body.plan-active .col-lg-4:nth-child(3) .card {
+    animation-delay: .25s;
+}
+
+.productPlan_body.plan-active .col-lg-4:nth-child(4) .card {
+    animation-delay: .35s;
+}
+
+/* ---------------------------------------------------------
+   CINEMATIC RISE
+--------------------------------------------------------- */
+
+@keyframes cinematicRise {
+
+    0% {
+        opacity: 0;
+        transform: translateZ(-150px) rotateX(25deg) translateY(-150px) scale(.9);
+    }
+
+    100% {
+        opacity: 1;
+        transform: translateZ(0px) rotateX(0deg) translateY(0px) scale(1);
+    }
+}

@@ -1,0 +1,454 @@
+﻿@* @model HCMPortal.ViewModel.GenerateInvoiceViewModel *@
+@model HCMPortal.ViewModel.InvoicePrintDetailsViewModel
+@using HCMPortal.Helper
+
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <title>Tax Invoice - @Model.InvoiceId</title>
+
+    <style>
+        /* BASE STYLES - Print safe defaults */
+        body {
+            font-family: Arial, sans-serif;
+            font-size: 10pt;
+            margin: 0;
+            padding: 0;
+        }
+
+        .invoice-container {
+            width: 98%;
+            margin: 0 auto;
+        }
+
+        /* GENERAL TEXT STYLES */
+        .mb-0 {
+            margin-bottom: 0 !important;
+        }
+
+        .mt-2 {
+            margin-top: 0.5rem !important;
+        }
+
+        .p-2 {
+            padding: 0.5rem !important;
+        }
+
+        .text-center {
+            text-align: center !important;
+        }
+
+        .text-right {
+            text-align: right !important;
+        }
+
+        .fw-bold {
+            font-weight: bold !important;
+        }
+
+        /* LAYOUT - Use simple floats */
+        .clearfix::after {
+            content: "";
+            display: table;
+            clear: both;
+        }
+
+        .col-4 {
+            width: 33.3333%;
+            float: left;
+            box-sizing: border-box;
+        }
+
+        .col-9 {
+            width: 75%;
+            float: left;
+            box-sizing: border-box;
+        }
+
+        .col-3 {
+            width: 25%;
+            float: left;
+            box-sizing: border-box;
+        }
+
+        .col-8 {
+            width: 66.6666%;
+            float: left;
+            box-sizing: border-box;
+        }
+
+        /* LOGO & HEADING */
+        #logo {
+            max-width: 180px;
+            height: auto;
+            display: block;
+        }
+
+        .tax-invoice-heading {
+            font-size: 1.1rem;
+            text-decoration: underline;
+            line-height: 1.2;
+        }
+
+        /* HORIZONTAL RULE */
+        hr {
+            border: 0;
+            border-top: 1px solid #ccc;
+            margin: 0.2rem 0 !important;
+        }
+
+        /* TABLE STYLES - CRITICAL FOR PDF */
+        .table-bordered {
+            border-collapse: collapse;
+            width: 100%;
+            table-layout: fixed;
+        }
+
+            .table-bordered td, .table-bordered th {
+                border: 1px solid #000 !important;
+                padding: 4px 6px !important;
+                vertical-align: top;
+                font-size: 9pt;
+                line-height: 1.1;
+                word-wrap: break-word;
+            }
+
+            .table-bordered thead td {
+                background-color: #f0f0f0;
+                font-weight: bold;
+            }
+
+        /* Explicit Column Widths (Must sum up to 100% or slightly less) */
+        .table-responsive .table-bordered {
+            width: 100%;
+        }
+        /* Adjusted widths to match the 15 columns of your service table */
+        .service-table-wrapper table thead td:nth-child(1), .service-table-wrapper table tbody td:nth-child(1) {
+            width: 3%;
+        }
+        /* Sl No. */
+        .service-table-wrapper table thead td:nth-child(2), .service-table-wrapper table tbody td:nth-child(2) {
+            width: 20%;
+        }
+        /* Service Details */
+        .service-table-wrapper table thead td:nth-child(3), .service-table-wrapper table tbody td:nth-child(3) {
+            width: 6%;
+        }
+        /* HSN/SAC */
+        .service-table-wrapper table thead td:nth-child(4), .service-table-wrapper table tbody td:nth-child(4) {
+            width: 4%;
+        }
+        /* Qty */
+        .service-table-wrapper table thead td:nth-child(5), .service-table-wrapper table tbody td:nth-child(5) {
+            width: 3%;
+        }
+        /* UM */
+        .service-table-wrapper table thead td:nth-child(6), .service-table-wrapper table tbody td:nth-child(6) {
+            width: 6%;
+        }
+        /* Rate */
+
+        /* Discount (2 cols: 4% each) */
+        .service-table-wrapper table thead td:nth-child(7), .service-table-wrapper table tbody td:nth-child(7),
+        .service-table-wrapper table thead td:nth-child(8), .service-table-wrapper table tbody td:nth-child(8) {
+            width: 4%;
+        }
+
+        /* CGST (2 cols: 4% each) */
+        .service-table-wrapper table thead td:nth-child(9), .service-table-wrapper table tbody td:nth-child(9),
+        .service-table-wrapper table thead td:nth-child(10), .service-table-wrapper table tbody td:nth-child(10) {
+            width: 4%;
+        }
+
+        /* SGST (2 cols: 4% each) */
+        .service-table-wrapper table thead td:nth-child(11), .service-table-wrapper table tbody td:nth-child(11),
+        .service-table-wrapper table thead td:nth-child(12), .service-table-wrapper table tbody td:nth-child(12) {
+            width: 4%;
+        }
+
+        /* IGST (2 cols: 4% each) */
+        .service-table-wrapper table thead td:nth-child(13), .service-table-wrapper table tbody td:nth-child(13),
+        .service-table-wrapper table thead td:nth-child(14), .service-table-wrapper table tbody td:nth-child(14) {
+            width: 4%;
+        }
+
+        .service-table-wrapper table thead td:nth-child(15), .service-table-wrapper table tbody td:nth-child(15) {
+            width: 8%;
+        }
+        /* Total */
+
+        /* Total width: 3+20+6+4+3+6 + (4*8) + 8 = 78%. Ensure you adjust the remaining columns if your calculation is off. I've preserved your percentages where possible. */
+    </style>
+</head>
+<body>
+    <div class="invoice-container" >
+        <header class="clearfix">
+            <div class="col-4">
+                <img id="logo" src="@Model.Base64LogoString" title="theCloudtreeAI" alt="theCloudtreeAI">
+            </div>
+            <div class="col-4 text-center">
+                <p class="fw-bold tax-invoice-heading">Tax Invoice</p>
+            </div>
+            <div class="col-4">
+            </div>
+        </header>
+
+        <main>
+            <div class="clearfix">
+                <div class="col-9">
+                    <p class="mb-0"><strong>@(Model.SelfDetails?.OrgName ?? "NOT AVAILABLE")</strong></p>
+                    <p class="mb-0">@(Model.SelfDetails?.AddressLine1 ?? "NOT AVAILABLE")</p>
+                    <p class="mb-0">@(Model.SelfDetails?.City ?? "NOT AVAILABLE"),@(Model.SelfDetails?.StateName ?? "NOT AVAILABLE"),@(Model.SelfDetails?.PostalCode ?? "NOT AVAILABLE")</p>
+                    <p class="mb-0">State Code:@Model.SelfDetails?.StateCode</p>
+                    <p class="mb-0"><strong>PAN NO: </strong>@Model.SelfDetails?.Pan</p>
+                    <p class="mb-0"><strong>GSTIN: </strong>@Model.SelfDetails?.Gstin</p>
+                    <p>Tan No: @Model.SelfDetails?.Tannumber</p>
+                </div>
+                <div class="col-3">
+                    @{
+                        if (Model.InvoiceStatus == "final")
+                        {
+                            <p class="mb-0">Invoice No.: @Model.InvoiceNumber</p>
+                            <p class="mb-0">Invoice Date: @Model.InvoiceDate.ToString("dd-MM-yyyy")</p>
+                        }
+                        else
+                        {
+                            <p class="mb-0">Order No.: @Model.OrderNumber</p>
+                            <p class="mb-0">Order Date: @Model.CreatedDate.ToString("dd-MM-yyyy")</p>
+                        }
+                    }
+                    <br />
+                    <p><strong>Banking Details</strong></p>
+                    <p>Bank: @Model.SelfDetails?.BankName</p>
+                    <p>A/c No: @Model.SelfDetails?.AccountNumber, IFSC: @Model.SelfDetails?.IFSCCode</p>
+                </div>
+            </div>
+            <hr>
+            <div class="clearfix mb-0">
+                <div class="col-9">
+                    <p class="mb-0"><strong>Billing Address</strong></p>
+                    <p class="mb-0"><strong>@Model.customerDetails?.CompanyName</strong></p>
+                    <p class="mb-0">@Model.customerDetails?.Address</p>
+                    <p class="mb-0">State Code: @(Model.customerDetails?.Gstinnumber?.Substring(0, 2) ?? "NOT AVAILABLE")</p>
+                    <p class="mb-0">Phone No: @Model.customerDetails?.Phonenumber</p>
+                    <p class="mb-0">Email: @Model.customerDetails?.EmailAddress</p>
+                    <p class="mb-0">GSTIN: <strong>@((String.IsNullOrEmpty(Model.customerDetails?.Gstinnumber)) ? "NOT AVAILABLE" : Model.customerDetails?.Gstinnumber)</strong></p>
+                </div>
+                <div class="col-3">
+                    <p class="mb-0"><strong>Shipping Address</strong></p>
+                    <p class="mb-0"><strong>@Model.customerDetails?.CompanyName</strong></p>
+                    <p class="mb-0">@Model.customerDetails?.Address</p>
+                    <p class="mb-0">State Code: @(Model.customerDetails?.Gstinnumber?.Substring(0, 2) ?? "NOT AVAILABLE")</p>
+                    <p class="mb-0">Phone No: @Model.customerDetails?.Phonenumber</p>
+                    <p class="mb-0">Email: @Model.customerDetails?.EmailAddress</p>
+                    <p class="mb-0">GSTIN: <strong>@((String.IsNullOrEmpty(Model.customerDetails?.Gstinnumber) ? "NOT AVAILABLE" : Model.customerDetails?.Gstinnumber))</strong></p>
+                </div>
+            </div>
+
+            <div class="service-table-wrapper">
+                <table class="table-bordered table mb-0 text-center">
+                    <thead>
+                        <tr>
+                            <td colspan="15" class="text-center fw-bold">Service Details</td>
+                        </tr>
+                        <tr>
+                            <td rowspan="2">Sl No.</td>
+                            <td rowspan="2">Service Details</td>
+                            <td rowspan="2">HSN/SAC</td>
+                            <td rowspan="2">Qty</td>
+                            <td rowspan="2">UM</td>
+                            <td rowspan="2">Rate</td>
+                            <td colspan="2">Discount</td>
+                            <td colspan="2">CGST</td>
+                            <td colspan="2">SGST</td>
+                            <td colspan="2">IGST</td>
+                            <td rowspan="2">Total</td>
+                        </tr>
+                        <tr>
+                            <td>Rate(%)</td>
+                            <td>Amount</td>
+                            <td>Rate(%)</td>
+                            <td>Amount</td>
+                            <td>Rate(%)</td>
+                            <td>Amount</td>
+                            <td>Rate(%)</td>
+                            <td>Amount</td>
+                        </tr>
+                    </thead>
+                    @{
+                        decimal totalTaxableAmount = 0;
+                        decimal totalTaxAmount = 0;
+                        decimal totalPaybleAmount = 0;
+                    }
+                    <tbody>
+                        @if (Model.invoiceItems != null)
+                        {
+                            int index = 0;
+                            foreach (var item in Model.invoiceItems)
+                            {
+
+                                index++;
+                                <tr>
+                                    <td class="col-1">@index</td>
+                                    <td class="col-3">@item.ServiceName</td>
+                                    <td class="col-1">@item.Hsncode</td>
+                                    <td class="col-1">1</td>
+                                    @{
+                                        string[] serviceName = item.ServiceName.Split("-");
+                                        string um = (serviceName.Length > 2) ? item.ServiceName.Split("-")[1] : "Add-On";
+                                    }
+                                    <td class="col-1">@um</td>
+                                    <td class="col-1">@Math.Round(item.ServiceAmount, 2)</td>
+
+                                    @{
+                                        decimal discountAmount = Math.Round(Convert.ToDecimal((item.ServiceAmount * item.DiscountPercentage / 100)), 2);
+                                        decimal taxableAmount = Math.Round(item.ServiceAmount - discountAmount, 2);
+                                        decimal cgstrate = (item.Cgstamount > 0) ? RoundSmart(Convert.ToDecimal((item.Cgstamount / taxableAmount)) * 100) : 0;
+                                        decimal sgstrate = (item.Sgstamount > 0) ? RoundSmart(Convert.ToDecimal((item.Sgstamount / taxableAmount)) * 100) : 0;
+                                        decimal igstrate = (item.Igstamount > 0) ? RoundSmart(Convert.ToDecimal((item.Igstamount / taxableAmount)) * 100) : 0;
+
+                                        decimal RoundSmart(decimal value)
+                                        {
+                                            // Round to 1 decimal place first
+                                            decimal rounded = Math.Round(value, 1, MidpointRounding.AwayFromZero);
+
+                                            // Nearest integer
+                                            decimal nearestInt = Math.Round(rounded, 0, MidpointRounding.AwayFromZero);
+
+                                            // If difference is <= 0.05, snap to integer
+                                            if (Math.Abs(rounded - nearestInt) <= 0.05m)
+                                                return nearestInt;
+
+                                            return rounded;
+                                        }
+
+                                        decimal netAmount = (item.Igstamount > 0)
+                                        ? Math.Round(Convert.ToDecimal(taxableAmount + item.Igstamount), 2)
+                                        : Math.Round(Convert.ToDecimal(taxableAmount + item.Cgstamount + item.Sgstamount), 2);
+                                        totalTaxableAmount += taxableAmount;
+                                        totalPaybleAmount += netAmount;
+                                        totalTaxAmount += (item.Igstamount > 0)
+                                        ? Convert.ToDecimal(item.Igstamount)
+                                        : Convert.ToDecimal(item.Cgstamount + item.Sgstamount);
+                                    }
+
+                                    <td class="col-1">@item.DiscountPercentage</td>
+                                    <td class="col-1">@discountAmount</td>
+                                    <td class="col-1">@cgstrate</td>
+                                    <td class="col-1">@Math.Round(Convert.ToDecimal(item.Cgstamount), 2)</td>
+                                    <td class="col-1">@sgstrate</td>
+                                    <td class="col-1">@Math.Round(Convert.ToDecimal(item.Sgstamount), 2)</td>
+                                    <td class="col-1">@igstrate</td>
+                                    <td class="col-1">@Math.Round(Convert.ToDecimal(item.Igstamount), 2)</td>
+                                    <td class="col-1 fw-bold">@Math.Round(totalPaybleAmount, 2)</td>
+                                </tr>
+                            }
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </main>
+
+        <div class="mt-2 clearfix">
+            <div class="col-8">
+                <p class="mb-0"><strong>In Words: </strong>INR @NumberToWordsConverter.NumberToWords((long)Math.Round(totalPaybleAmount)) Only.</p>
+                <p class="mb-0"><strong>Invoice Terms: </strong></p>
+                <p class="mb-0">-Payments are to be made in INR. Cloudtree AI India Pvt Ltd. Reserves the right to place a service charge on past dues at the highest rate permitted by law.</p>
+                <p class="mb-0">-The customer being provided with this Invoice is not authorized to add to, from, or otherwise, vary thse Terms and conditions and any such purported amendment.</p>
+                <p class="mb-0">-Any legal issues will be under Bhubaneswar jurisdiction only.</p>
+            </div>
+            <div class="col-4">
+                <div class="table-responsive">
+                    <table class="table table-bordered mb-0">
+                        <tbody>
+                            <tr>
+                                <td>Taxable Value</td>
+                                <td>₹@totalTaxableAmount</td>
+                            </tr>
+                            <tr>
+                                <td>Tax Value</td>
+                                <td>₹@totalTaxAmount</td>
+                            </tr>
+                            <tr>
+                                <td>Round Off</td>
+                                @{
+                                    decimal fraction = totalPaybleAmount - Math.Floor(totalPaybleAmount);
+                                    decimal roundOff;
+
+                                    if (fraction >= 0.5m)
+                                    {
+                                        // round up → difference = ceiling - amount
+                                        roundOff = Math.Round(Math.Ceiling(totalPaybleAmount) - totalPaybleAmount, 2);
+                                    }
+                                    else
+                                    {
+                                        // round down → difference = amount - floor
+                                        roundOff = Math.Round(totalPaybleAmount - Math.Floor(totalPaybleAmount), 2);
+                                    }
+                                }
+                                <td>₹@roundOff</td>
+
+
+
+                            </tr>
+                            <tr>
+                            <tr>
+                                <td>Invoice Value</td>
+                                <td>₹@Math.Round(totalPaybleAmount)</td>
+                            </tr>
+                            <tr>
+                                <td colspan="2">
+                                    <p class="p-2 mb-0 text-center"><strong>For Cloudtree AI India Pvt.Ltd</strong></p>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        @* <div class="d-flex justify-content-center" id="printdiv">
+            <a href="javascript:void(0);" class="btn btn-light border text-black-50 shadow-none mx-1" id="printDownloadButton"><i class="fa fa-print"></i> Print &amp; Download</a>
+        </div> *@
+    </div>
+</body>
+</html>
+
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
+<script>
+    document.getElementById("downloadPdf").addEventListener("click", async function () {
+      const { jsPDF } = window.jspdf;
+
+      const invoice = document.querySelector(".invoice-container");
+
+      // Capture with better quality
+      const canvas = await html2canvas(invoice, { scale: 4, useCORS: true });
+      const imgData = canvas.toDataURL("image/png");
+
+      const pdf = new jsPDF("p", "mm", "a4");
+
+      const pageWidth = pdf.internal.pageSize.getWidth();
+      const pageHeight = pdf.internal.pageSize.getHeight();
+
+      // 🔸 Add custom margin
+      const margin = 5; // mm
+      const imgWidth = pageWidth - margin * 2;
+      const imgHeight = (canvas.height * imgWidth) / canvas.width;
+
+      // Center content vertically if smaller than page
+      let positionY = margin;
+      if (imgHeight < pageHeight - margin * 2) {
+        positionY = (pageHeight - imgHeight) / 4;
+      }
+
+      pdf.addImage(imgData, "PNG", margin, positionY, imgWidth, imgHeight);
+
+      pdf.save("Invoice_CT_2025-26-006.pdf");
+    });
+</script>

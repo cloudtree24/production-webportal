@@ -1,0 +1,920 @@
+﻿@using HCMPortal.ViewModel
+@model List<HCMPortal.ViewModel.CustomerOrderDetails>
+@{
+	ViewData["Title"] = "BillingDetails";
+	Layout = "~/Views/Shared/_customerDashboardLayout.cshtml";
+}
+
+<section class="breadcumnd__banner">
+	<!--Container-->
+	<div class="container">
+		<div class="d-flex justify-content-start gap-4">
+			<h2 class="bread__title">
+				Billing & Invoicing
+			</h2>
+			<ul class="breadcumnd__link">
+				<li>
+					<a asp-controller="CustomerManagement" asp-action="PortalDashboard">Dashboard</a>
+				</li>
+				<li><i class="bi bi-chevron-right"></i></li>
+				<li class="active">
+					<a href="javascript:void(0)">Billing & Invoicing</a>
+				</li>
+			</ul>
+		</div>
+	</div>
+	<!--Container-->
+</section>
+
+<div class="section_gap_large">
+
+	<section class="dashboad_center billing-section">
+
+		<div class="container-fluid px-4">
+			<div class="row g-4">
+				@{
+					int userid = Convert.ToInt32(Context.Session.GetInt32("UserId"));
+				}
+
+				@{
+					List<CustomerOrderDetails> renewalData = new List<CustomerOrderDetails>();
+
+					renewalData =
+					
+					//for check already customer renew or Upgrade a new one--Anshuman 23.09.2026
+					(Model.Any(e=>e.RecordType=="Renewal"))?new List<CustomerOrderDetails>()
+							:Model.Where(e =>
+					e.SubscriptionEndDate.HasValue && (
+
+					(e.RecordType == "Subscription"
+					&& e.SubscriptionEndDate.Value.Date.AddDays(
+					(e.BillingName == "Monthly") ? -7 :
+					(e.BillingName == "Yearly") ? -30 : -15
+					) <= DateTime.Now.Date
+					&& DateTime.Now.Date < e.SubscriptionEndDate.Value.Date)
+
+					||
+
+					(e.RecordType == "Renewal"
+					&& e.SubscriptionEndDate.Value.Date.AddDays(
+					(e.BillingName == "Monthly") ? -7 :
+					(e.BillingName == "Yearly") ? -30 : -15
+					) <= DateTime.Now.Date
+					&& DateTime.Now.Date < e.SubscriptionEndDate.Value.Date)
+
+					||
+
+					((e.RecordType == "Subscription" || e.RecordType == "Renewal")
+					&& DateTime.Now.Date >= e.SubscriptionEndDate.Value.Date)
+
+					)
+					).ToList();
+
+					var renewedPreviousOrderIds = Model
+					.Where(e =>
+					e.RecordType == "Renewal" &&
+					e.SubscriptionStartDate.HasValue &&
+					e.SubscriptionStartDate.Value.Date > DateTime.Now.Date
+					)
+					.Select(e => e.CsorderId)
+					.Distinct()
+					.ToList()
+					;
+
+					renewalData = renewalData
+					.Where(e => !renewedPreviousOrderIds.Contains(e.CsorderId))
+					.ToList();
+				}
+
+				@if (Model.Any(e => e.OrderStatus == "Pending") || renewalData.Count() > 0)
+				{
+					<div class="col-xl-4 col-lg-5 col-md-12 mb-4">
+
+						<h4 class="mb-4">Pending Info</h4>
+
+						<div class="card shadow-sm">
+							<div class="card-body p-3 style=" overflow-x: auto;"">
+								<table class="table align-middle custom-table mb-0" style="width: 100%; min-width: 300px;">
+
+									<thead>
+										<tr>
+											<th>Service/s</th>
+											<th>Amount</th>
+											<th>Renewal Date</th>
+											<th class="text-end">Action</th>
+										</tr>
+									</thead>
+
+									<tbody>
+
+										@foreach (var item in Model.Where(e => e.OrderStatus == "Pending"))
+										{
+											string[] subscription = item.SubscriptionName?.Split("-") ?? new string[] { "NA" };
+
+											string PlanName = "";
+											string BillingName = "";
+
+											if (subscription.Length > 1)
+											{
+												PlanName = subscription[0];
+												BillingName = subscription[1];
+											}
+											else
+											{
+												PlanName = item.SubscriptionName ?? "";
+											}
+
+											string renewalDate = item.SubscriptionEndDate.HasValue
+											? item.SubscriptionEndDate.Value.ToString("dd-MM-yyyy")
+											: "Not Available";
+
+											<tr>
+
+												<td>
+													@PlanName@(!String.IsNullOrEmpty(BillingName) ? "/" + BillingName : "")
+												</td>
+
+												<td>
+													₹@item.NetAmount
+												</td>
+
+												<td>
+													@renewalDate
+												</td>
+
+												<td class="text-end">
+
+													@Html.ActionLink(
+													"Pay Now",
+																						"PaymentRequestHandleFromAMS",
+																						"CustomerManagement",
+																						new
+																						{
+																							orderNumber = item.OrderId,
+																							invoiceNumber = item.InvoiceId,
+																							csid = userid,
+																							orderType = item.OrderType
+																						},
+																						new
+																						{
+																							@class = "btn btn-primary btn-sm no-print text-nowrap" // Text overlap na ho isliye text-nowrap use kiya
+																						})
+
+										</td>
+
+									</tr>
+																		}
+
+										@foreach (var item in renewalData)
+										{
+											string[] subscription = item.SubscriptionName?.Split("-") ?? new string[] { "NA" };
+
+											string PlanName = "";
+											string BillingName = "";
+
+											if (subscription.Length > 1)
+											{
+												PlanName = subscription[0];
+												BillingName = subscription[1];
+											}
+											else
+											{
+												PlanName = item.SubscriptionName ?? "";
+											}
+
+											string renewalDate = item.SubscriptionEndDate.HasValue
+											? item.SubscriptionEndDate.Value.ToString("dd-MM-yyyy")
+											: "Not Available";
+
+											string ExpiredStatus =
+											(item.SubscriptionEndDate.HasValue &&
+											item.SubscriptionEndDate.Value.Date < DateTime.Now.Date)
+											? "Expired"
+											: "";
+
+											<tr>
+
+												<td>
+													@PlanName@(!String.IsNullOrEmpty(BillingName) ? "/" + BillingName : "")
+												</td>
+
+												<td>
+													₹@item.NetAmount
+												</td>
+
+												<td>
+													@renewalDate
+
+													@if (!String.IsNullOrEmpty(ExpiredStatus))
+													{
+														<br />
+														<span class="badge bg-danger mt-1">
+															@ExpiredStatus
+														</span>
+													}
+
+												</td>
+
+												<td class="text-end">
+
+													@if (!String.IsNullOrEmpty(BillingName))
+													{
+														<a href="#"
+														   class="btn btn-primary btn-sm no-print btn-renew text-nowrap"
+														   data-bs-toggle="modal"
+														   data-bs-target="#renewalModal"
+														   data-order-id="@item.CsorderId"
+														   data-renewal-id="@item.SubscriptionRenewalId">
+
+															Renew Now
+
+														</a>
+													}
+													else
+													{
+														@Html.ActionLink(
+														"Pay Now",
+																						"PaymentRequestHandleFromAMS",
+																						"CustomerManagement",
+																						new
+																						{
+																							orderNumber = item.OrderId,
+																							invoiceNumber = item.InvoiceId,
+																							csid = userid,
+																							orderType = item.RecordType
+																						},
+																						new
+																						{
+																							@class = "btn btn-primary btn-sm no-print text-nowrap"
+																						})
+																						}
+
+												</td>
+
+											</tr>
+										}
+
+									</tbody>
+
+								</table>
+
+							</div>
+
+						</div>
+
+					</div>
+				}
+
+				<div class="@((Model.Any(e => e.OrderStatus == "Pending") || renewalData.Count() > 0) ? "col-xl-8 col-lg-7 col-md-12" : "col-12")">
+
+					<h4 class="mb-4">Transaction History</h4>
+
+					<div class="card shadow-sm">
+
+						<div class="card-body p-3" style="overflow-x: auto;">
+							<table class="table align-middle custom-table mb-0" style="width: 100%; min-width: 600px;">
+
+								<thead>
+									<tr>
+										<th>Invoice Number</th>
+										<th>Service/s</th>
+										<th>Amount</th>
+										<th>Invoice Date</th>
+										<th>Order Status</th>
+										<th class="text-end">Action</th>
+									</tr>
+								</thead>
+
+								<tbody>
+
+									@if (Model != null)
+									{
+										foreach (var item in Model.Where(e => e.OrderStatus == "Completed"))
+										{
+											<tr>
+
+												<td>
+													@item.InvoiceId
+												</td>
+
+												<td>
+													@item.SubscriptionName
+												</td>
+
+												<td>
+													₹@item.NetAmount
+												</td>
+
+												<td>
+													@((item.TransactionDate.HasValue)
+																								? item.TransactionDate.Value.ToString("dd-MM-yyyy")
+																								: "NA")
+										</td>
+
+												<td>
+
+											@if (item.OrderStatus == "Completed")
+													{
+														<span class="badge bg-success">
+															Paid
+														</span>
+													}
+													else if (item.OrderStatus == "Pending")
+													{
+														<span class="badge bg-info">
+															Pending
+														</span>
+													}
+													else
+													{
+														<span class="badge bg-warning">
+															Failed
+														</span>
+													}
+
+												</td>
+
+												<td class="text-end">
+
+													<a href="javascript:void(0);"
+													   class="btn btn-outline-primary btn-sm generate-invoice-btn text-nowrap"
+													   data-csorder-id="@item.CsorderId"
+													   data-record-type="@item.RecordType">
+
+														<i class="bi bi-printer"></i>
+														Print Invoice
+
+													</a>
+
+												</td>
+
+											</tr>
+										}
+									}
+
+								</tbody>
+
+							</table>
+
+						</div>
+
+					</div>
+
+				</div>
+
+			</div>
+
+		</div>
+
+	</section>
+
+</div>
+
+
+<div class="main">
+	<div class="green-line"></div>
+</div>
+
+
+<!-------------Invoice Popup------------>
+<div class="modal fade" id="paid_invoice_modal" tabindex="-1" role="dialog" aria-labelledby="generateInvoiceModalLabel" aria-hidden="true">
+	<div class="modal-dialog modal-xl" role="document">
+		<div class="modal-content">
+			<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+			<div class="modal-body">
+				<div class="invoice-container">
+					<!-- Header -->
+					<div class="header">
+						<div class="row">
+							<div class="col-sm-12">
+								<img id="logo" src="~/assets/images/Cloudtree_final_Logo.png"
+									 title="theCloudtreeAI" alt="theCloudtreeAI" width="250">
+							</div>
+						</div>
+						<div class="d-flex justify-content-center">
+							<p class="fs-5 fw-bold text-decoration-underline mb-3">Tax Invoice</p>
+						</div>
+					</div>
+
+					<!-- Main Content -->
+					<main>
+						<div class="row">
+							<div class="col-md-8">
+								<p class="mb-0"><strong>CLOUDTREE® AI INDIA PRIVATE LIMITED</strong></p>
+								<p class="mb-0">Plot No-532/1026, P.S Plaza</p>
+								<p class="mb-0">Rasulgarh, Bhubaneswar, Odisha-751010</p>
+								<p class="mb-0">State Code: 21</p>
+								<p class="mb-0"><strong>PAN NO: </strong>AALCC2539C</p>
+								<p class="mb-0"><strong>GSTIN: </strong>21AALCC2539C1Z5</p>
+								<strong>Date:</strong> 05/12/2020
+							</div>
+							<div class="col-md-4">
+								<p class="mb-0">Invoice No: CT/2025-26-006</p>
+								<p class="mb-0">Invoice Date: 06/08/2025</p>
+								<p class="mb-0"><strong>Banking Details</strong></p>
+								<p class="mb-0">Bank: ICICI BANK LIMITED</p>
+								<p class="mb-0">A/c No: 150005501591</p>
+								<p class="mb-0"><strong>IFSC: </strong>ICIC0001500</p>
+							</div>
+
+						</div>
+						<hr>
+						<div class="row mb-2">
+							<div class="col-md-8">
+								<p class="mb-0"><strong>Billing Address</strong></p>
+								<p class="mb-0"><strong>NEIGHBRSNOOK PRIVATE LIMITED</strong></p>
+								<p class="mb-0">Flat No-2016, Block-D, Falcon Residency, Patia</p>
+								<p class="mb-0">GDS, Bhubaneswar, Odisha</p>
+								<br />
+								<p class="mb-0">State Code: 21</p>
+								<p class="mb-0">Phone No: 9940640675</p>
+								<p class="mb-0">Email: pallavi@neighbrsnook.com</p>
+								<p class="mb-0">GSTIN: <strong>21AAJCN0009J1ZW</strong></p>
+							</div>
+							<div class="col-md-4">
+								<p class="mb-0"><strong>Shipping Address</strong></p>
+								<p class="mb-0"><strong>NEIGHBRSNOOK PRIVATE LIMITED</strong></p>
+								<p class="mb-0">Flat No-2016, Block-D, Falcon Residency, Patia</p>
+								<p class="mb-0">GDS, Bhubaneswar, Odisha</p>
+								<br />
+								<p class="mb-0">State Code: 21</p>
+								<p class="mb-0">Phone No: </p>
+								<p class="mb-0">Email: </p>
+							</div>
+						</div>
+						<div class="table-responsive">
+							<table class="table table-bordered mb-0">
+								<tbody>
+									<tr>
+										<td colspan="10" class="text-center"><strong>Service Details</strong></td>
+									</tr>
+								</tbody>
+							</table>
+						</div>
+						<div class="table-responsive">
+							<table class="table table-bordered mb-0 text-center">
+								<tbody>
+									<tr class="bg-light">
+										<td class="col-1">Sl No.</td>
+										<td class="col-3">Service Details</td>
+										<td class="col-2">HSN/SAC</td>
+										<td class="col-1">Qty</td>
+										<td class="col-1">UM</td>
+										<td class="col-1">Rate</td>
+										<td class="col-1">Total</td>
+										<td class="col-1" colspan="2">CGST</td>
+										<td class="col-1" colspan="2">SGST</td>
+										<td class="col-1" colspan="2">IGST</td>
+									</tr>
+									<tr>
+										<td colspan="7"></td> <!-- Blank cells -->
+										<td class="col-1">Rate(%)</td>
+										<td class="col-1">Amount</td>
+										<td class="col-1">Rate(%)</td>
+										<td class="col-1">Amount</td>
+										<td class="col-1">Rate(%)</td>
+										<td class="col-1">Amount</td>
+									</tr>
+									<tr>
+										<td class="col-1">1</td>
+										<td class="col-3">Premium Subscription</td>
+										<td class="col-2">998315</td>
+										<td class="col-1">&nbsp</td>
+										<td class="col-1">&nbsp</td>
+										<td class="col-1">5000.00</td>
+										<td class="col-1">5000.00</td>
+										<td class="col-1">9</td>
+										<td class="col-1">450.00</td>
+										<td class="col-1">9</td>
+										<td class="col-1">450.00</td>
+										<td class="col-1">0</td>
+										<td class="col-1">0</td>
+									</tr>
+									<tr>
+										<td class="col-1">2</td>
+										<td class="col-3">Consulting Service</td>
+										<td class="col-2">998312</td>
+										<td class="col-1">&nbsp</td>
+										<td class="col-1">&nbsp</td>
+										<td class="col-1">2000.00</td>
+										<td class="col-1">2000.00</td>
+										<td class="col-1">9</td>
+										<td class="col-1">180.00</td>
+										<td class="col-1">9</td>
+										<td class="col-1">180.00</td>
+										<td class="col-1">0</td>
+										<td class="col-1">0</td>
+									</tr>
+								</tbody>
+							</table>
+						</div>
+					</main>
+					<!-- Footer -->
+					<div class="footer mt-4">
+
+						<div class="row mb-4">
+							<div class="col-md-8">
+								<p class=""><strong>In Words: </strong>INR Seventeen Thousand Seven Hundred Only.</p>
+								<p class="mb-0"><strong>Invoice Terms: </strong></p>
+								<p class="mb-0">-Payments are to be made in INR. Cloudtree AI India Pvt Ltd. Reserves the right to place a service charge on past dues at the highest rate permitted by law.</p>
+								<p class="mb-0">-The customer being provided with this Invoice is not authorized to add to, from, or otherwise, vary thse Terms and conditions and any such purported amendment.
+								<p class="mb-0">-Any legal issues will be under Bhubaneswar jurisdiction only.</p>
+							</div>
+							<div class="col-md-4">
+								<div class="table-responsive">
+									<table class="table table-bordered mb-0">
+										<tbody>
+											<tr>
+												<td>Taxable Value</td>
+												<td>₹15,000.00</td>
+											</tr>
+											<tr>
+												<td>Tax Value</td>
+												<td>₹2700.00</td>
+											</tr>
+											<tr>
+												<td>Round Off</td>
+												<td>₹0.00</td>
+											</tr>
+											<tr>
+											<tr>
+												<td>Invoice Value</td>
+												<td>₹17,700.00</td>
+											</tr>
+											<tr>
+												<td colspan="2">
+													<p class="p-2 mb-0 text-center"><strong>For Cloudtree AI India Pvt.Ltd</strong></p>
+												</td>
+											</tr>
+										</tbody>
+									</table>
+								</div>
+							</div>
+
+						</div>
+
+						<div class="d-flex justify-content-center">
+							<a href="#" class="btn btn-light border text-black-50 shadow-none mx-1"><i class="fa fa-print"></i> Print &amp; Download</a>
+							<a href="#" class="btn btn-light border text-black-50 shadow-none mx-1"><i class="far fa-envelope"></i> Send Mail</a>
+						</div>
+					</div>
+				</div>
+			</div>
+
+		</div>
+	</div>
+</div>
+
+
+
+<!----------------Failed Invoice --------------------->
+<div class="modal fade" id="faild_invoice_modal" tabindex="-1" aria-labelledby="faildInvoiceModalLabel"
+	 aria-hidden="true">
+	<div class="modal-dialog modal-xl" role="document">
+		<div class="modal-content">
+			<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+			<div class="modal-body">
+				<div class="invoice-container">
+					<!-- Header -->
+					<div class="header">
+						<div class="row">
+							<div class="col-sm-12">
+								<img id="logo" src="~/assets/images/Cloudtree_final_Logo.png"
+									 title="theCloudtreeAI" alt="theCloudtreeAI" width="250">
+							</div>
+						</div>
+						<div class="d-flex justify-content-center">
+							<p class="fs-5 fw-bold text-decoration-underline mb-3">Tax Invoice</p>
+						</div>
+					</div>
+
+					<!-- Main Content -->
+					<main>
+						<div class="row">
+							<div class="col-md-8">
+								<p class="mb-0"><strong>CLOUDTREE® AI INDIA PRIVATE LIMITED</strong></p>
+								<p class="mb-0">Plot No-532/1026, P.S Plaza</p>
+								<p class="mb-0">Rasulgarh, Bhubaneswar, Odisha-751010</p>
+								<p class="mb-0">State Code: 21</p>
+								<p class="mb-0"><strong>PAN NO: </strong>AALCC2539C</p>
+								<p class="mb-0"><strong>GSTIN: </strong>21AALCC2539C1Z5</p>
+								<strong>Date:</strong> 05/12/2020
+							</div>
+							<div class="col-md-4">
+								<p class="mb-0">Invoice No: CT/2025-26-006</p>
+								<p class="mb-0">Invoice Date: 06/08/2025</p>
+								<p class="mb-0"><strong>Banking Details</strong></p>
+								<p class="mb-0">Bank: ICICI BANK LIMITED</p>
+								<p class="mb-0">A/c No: 150005501591</p>
+								<p class="mb-0"><strong>IFSC: </strong>ICIC0001500</p>
+							</div>
+
+						</div>
+						<hr>
+						<div class="row mb-2">
+							<div class="col-md-8">
+								<p class="mb-0"><strong>Billing Address</strong></p>
+								<p class="mb-0"><strong>NEIGHBRSNOOK PRIVATE LIMITED</strong></p>
+								<p class="mb-0">Flat No-2016, Block-D, Falcon Residency, Patia</p>
+								<p class="mb-0">GDS, Bhubaneswar, Odisha</p>
+								<br />
+								<p class="mb-0">State Code: 21</p>
+								<p class="mb-0">Phone No: 9940640675</p>
+								<p class="mb-0">Email: pallavi@neighbrsnook.com</p>
+								<p class="mb-0">GSTIN: <strong>21AAJCN0009J1ZW</strong></p>
+							</div>
+							<div class="col-md-4">
+								<p class="mb-0"><strong>Shipping Address</strong></p>
+								<p class="mb-0"><strong>NEIGHBRSNOOK PRIVATE LIMITED</strong></p>
+								<p class="mb-0">Flat No-2016, Block-D, Falcon Residency, Patia</p>
+								<p class="mb-0">GDS, Bhubaneswar, Odisha</p>
+								<br />
+								<p class="mb-0">State Code: 21</p>
+								<p class="mb-0">Phone No: </p>
+								<p class="mb-0">Email: </p>
+							</div>
+						</div>
+						<div class="table-responsive">
+							<table class="table table-bordered mb-0">
+								<tbody>
+									<tr>
+										<td colspan="10" class="text-center"><strong>Service Details</strong></td>
+									</tr>
+								</tbody>
+							</table>
+						</div>
+						<div class="table-responsive">
+							<table class="table table-bordered mb-0 text-center">
+								<tbody>
+									<tr class="bg-light">
+										<td class="col-1">Sl No.</td>
+										<td class="col-3">Service Details</td>
+										<td class="col-2">HSN/SAC</td>
+										<td class="col-1">Qty</td>
+										<td class="col-1">UM</td>
+										<td class="col-1">Rate</td>
+										<td class="col-1">Total</td>
+										<td class="col-1" colspan="2">CGST</td>
+										<td class="col-1" colspan="2">SGST</td>
+										<td class="col-1" colspan="2">IGST</td>
+									</tr>
+									<tr>
+										<td colspan="7"></td> <!-- Blank cells -->
+										<td class="col-1">Rate(%)</td>
+										<td class="col-1">Amount</td>
+										<td class="col-1">Rate(%)</td>
+										<td class="col-1">Amount</td>
+										<td class="col-1">Rate(%)</td>
+										<td class="col-1">Amount</td>
+									</tr>
+									<tr>
+										<td class="col-1">1</td>
+										<td class="col-3">Premium Subscription</td>
+										<td class="col-2">998315</td>
+										<td class="col-1">&nbsp</td>
+										<td class="col-1">&nbsp</td>
+										<td class="col-1">5000.00</td>
+										<td class="col-1">5000.00</td>
+										<td class="col-1">9</td>
+										<td class="col-1">450.00</td>
+										<td class="col-1">9</td>
+										<td class="col-1">450.00</td>
+										<td class="col-1">0</td>
+										<td class="col-1">0</td>
+									</tr>
+									<tr>
+										<td class="col-1">2</td>
+										<td class="col-3">Consulting Service</td>
+										<td class="col-2">998312</td>
+										<td class="col-1">&nbsp</td>
+										<td class="col-1">&nbsp</td>
+										<td class="col-1">2000.00</td>
+										<td class="col-1">2000.00</td>
+										<td class="col-1">9</td>
+										<td class="col-1">180.00</td>
+										<td class="col-1">9</td>
+										<td class="col-1">180.00</td>
+										<td class="col-1">0</td>
+										<td class="col-1">0</td>
+									</tr>
+								</tbody>
+							</table>
+						</div>
+
+						<div class="row">
+							<div class="col-md-12 mt-3 mb-2">
+								<p class="mb-0 text-danger"><strong>Payment Failed</strong></p>
+								<p class="mb-0 text-danger">The payment for this order could not be processed. Please check your payment details and try again.</p>
+							</div>
+						</div>
+
+					</main>
+					<!-- Footer -->
+					<div class="footer mt-4">
+
+						<div class="row mb-4">
+							<div class="col-md-8">
+								<p class=""><strong>In Words: </strong>Rupees Seventeen Thousand Seven Hundred Only.</p>
+								<p class="mb-0"><strong>Invoice Terms: </strong></p>
+								<p class="mb-0">-Payments are to be made in INR. Cloudtree AI India Pvt Ltd. Reserves the right to place a service charge on past dues at the highest rate permitted by law.</p>
+								<p class="mb-0">-The customer being provided with this Invoice is not authorized to add to, from, or otherwise, vary thse Terms and conditions and any such purported amendment.
+								<p class="mb-0">-Any legal issues will be under Bhubaneswar jurisdiction only.</p>
+							</div>
+							<div class="col-md-4">
+								<div class="table-responsive">
+									<table class="table table-bordered mb-0">
+										<tbody>
+											<tr>
+												<td>Taxable Value</td>
+												<td>₹15,000.00</td>
+											</tr>
+											<tr>
+												<td>Tax Value</td>
+												<td>₹2700.00</td>
+											</tr>
+											<tr>
+												<td>Round Off</td>
+												<td>₹0.00</td>
+											</tr>
+											<tr>
+											<tr>
+												<td>Invoice Value</td>
+												<td>₹17,700.00</td>
+											</tr>
+											<tr>
+												<td colspan="2">
+													<p class="p-2 mb-0 text-center"><strong>For Cloudtree AI India Pvt.Ltd</strong></p>
+												</td>
+											</tr>
+										</tbody>
+									</table>
+								</div>
+							</div>
+
+						</div>
+
+						<div class="d-flex justify-content-center">
+							<a href="checkout.html" class="btn btn-primary waves-effect waves-light me-1">
+								<i class="bi bi-credit-card"></i> Retry Payment
+							</a>
+							<a href="#" class="btn btn-light border text-black-50 shadow-none mx-1">
+								<i class="fa fa-print"></i> Print &amp; Download
+							</a>
+							<a href="#" class="btn btn-light border text-black-50 shadow-none mx-1">
+								<i class="far fa-envelope "></i> Send Mail
+							</a>
+						</div>
+
+					</div>
+				</div>
+			</div>
+
+		</div>
+	</div>
+</div>
+
+<div class="modal fade" id="generateInvoiceModal" tabindex="-1" role="dialog" aria-labelledby="generateInvoiceModalLabel" aria-hidden="true">
+	<div class="modal-dialog invoicedialog modal-xl" role="document">
+		<div class="modal-content invoicecontent">
+			<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+			<div class="modal-body" id="invoiceModalBody">
+			</div>
+		</div>
+	</div>
+</div>
+
+<div class="modal fade" id="renewalModal" tabindex="-1" aria-labelledby="renewalModalLabel" aria-hidden="true">
+	<div class="modal-dialog modal-md modal-dialog-centered modal-sl">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h5 class="modal-title" id="renewalModalLabel">Order Details</h5>
+				<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+			</div>
+			<div class="modal-body">
+				<div class="text-center py-5" id="renewalLoader" >
+					<div class="spinner-border text-primary" role="status">
+						<span class="visually-hidden">Loading...</span>
+					</div>
+					<p class="mt-2 text-muted">Fetching order details...</p>
+				</div>
+
+				<div id="renewalContent" style="display: none;">
+
+
+					
+
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+
+<script>
+	$(document).ready(function () {
+		// Event listener for when the modal is about to be shown
+		$('#renewalModal').on('show.bs.modal', function (event) {
+			const anchor = $(event.relatedTarget);
+			const csorderId = anchor.data('order-id'); // Get the OrderId from the anchor tag
+			const renewalid = anchor.data('renewal-id'); // Get the renewal from the anchor tag
+
+			const modal = $(this);
+			const loader = modal.find('#renewalLoader');
+			const content = modal.find('#renewalContent');
+
+			// 1. Show loader, hide content, and clear previous content
+			content.hide().empty();
+			loader.show();
+			
+			if (csorderId) {
+				$.ajax({
+					url: '@Url.Action("GetSubscriptionDetailsForRenewal", "Subscription")', // <<< UPDATE URL IF NEEDED
+					type: 'GET', // Use GET since you're just retrieving data
+					data: { CsOrderId: csorderId, RenewalId:renewalid },
+					success: function (data) {
+						// 2. Inject the returned Partial View HTML into the content area
+						content.html(data);
+
+						// 3. Hide loader, show content
+						loader.hide();
+						content.show();
+					},
+					error: function (xhr, status, error) {
+						// Handle AJAX error
+						content.html(`
+							<div class="alert alert-danger" role="alert">
+								Failed to load order details (ID: ${orderId}). Please try again.
+								<p class="small mt-2">Error: ${status} - ${error}</p>
+							</div>
+						`);
+						loader.hide();
+						content.show();
+						console.error("AJAX Error:", error);
+					}
+				});
+			} else {
+				// Handle case where OrderId is missing
+				content.html('<div class="alert alert-warning" role="alert">Order ID not found. Cannot load details.</div>');
+				loader.hide();
+				content.show();
+			}
+		});
+	});
+</script>
+<script>
+	
+
+
+
+
+	$('.generate-invoice-btn').on('click', function (e) {
+						
+
+			e.preventDefault(); // Prevent the default link behavior
+			
+			var csorderId = $(this).data('csorder-id');
+			var recordType = $(this).data('record-type');
+			// var customerId = $(this).data('customer-id');
+
+			// Show a loading indicator
+			$('#invoiceModalBody').html('<div class="d-flex justify-content-center align-items-center" style="height: 300px;"><div class="spinner-border text-primary" role="status"><span class="visually-hidden">Loading...</span></div></div>');
+			$('#generateInvoiceModal').modal('show');
+
+			// Make an AJAX call to the InvoicePrint action
+			$.ajax({
+				url: '@Url.Action("InvoicePrint", "Order")',
+				type: 'GET',
+				data: {
+					Id: csorderId,
+					RecordType: recordType,
+					// CustomerId: customerId
+				},
+				success: function (result) {
+					// On success, inject the partial view content into the modal body
+					$('#invoiceModalBody').html(result);
+				},
+				error: function (xhr) { // Renamed 'errorMessage' to 'xhr' for clarity
+
+			// 1. Get the specific error message from the controller's BadRequest response
+			var specificErrorMessage = xhr.responseText || 'again.';
+
+			// 2. Build the HTML with the specific message and the "Ok" button
+			var htmlContent =
+				'<div class="alert alert-danger d-flex justify-content-between align-items-center" role="alert">' +
+					// Use a div to contain the message text
+					'<div class="me-3"><strong>Error:</strong> ' + specificErrorMessage + '</div>' +
+
+					// Use a standard Bootstrap button styled as primary/danger
+					'<button type="button" class="btn btn-sm btn-danger" ' +
+					// The onclick event closes the main modal
+					'onclick="$(\'#generateInvoiceModal\').modal(\'hide\');">' +
+						'Ok' +
+					'</button>' +
+				'</div>';
+
+			// Inject the error message and button into the modal body
+			$('#invoiceModalBody').html(htmlContent);
+		}
+			});
+		});
+</script>

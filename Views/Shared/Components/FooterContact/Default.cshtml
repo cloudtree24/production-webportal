@@ -1,0 +1,30 @@
+﻿@using HCMPortal.ViewModel
+@model List<WebContactInfoViewModel>
+
+<div class="pt-5 pb-4 border-bottom row">
+     @foreach (var office in Model)
+       {
+        <div class="col-sm-6 col-lg-3 col-xl">
+            <p class="fw-bold text-capitalise mb-2">@office.Title</p>
+            <p class="mb-0 text-light">
+                @Html.Raw(office.AddressDetail?.Replace("\n", "<br>"))<br>
+                   @if (!string.IsNullOrEmpty(office.Email))
+                   {
+                      <span>Mail: @office.Email</span>
+                      <br>
+                   }
+                    @if (!string.IsNullOrEmpty(office.Phone))
+                    {
+                        <span>Ph: @office.Phone</span>
+                    }
+            </p>
+        </div>               
+        }
+
+    <div class="col-sm-6 col-lg-3 col-xl-auto">
+        <p class="fw-bold text-capitalise mb-2">Compliance</p>
+        <div class="d-flex flex-column compliance-links text-light">
+            @await Component.InvokeAsync("Compliance")
+        </div>
+    </div>    
+</div>

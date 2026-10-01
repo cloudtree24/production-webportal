@@ -1,0 +1,86 @@
+﻿@{
+    Layout = "_customerDashboardLayout";
+    <script src="~/assets/js/jquery.min.js"></script>
+    <script src="~/assets/js/vanilla-toast.min.js"></script>
+
+}
+
+    <!-- Breadcrumb -->
+    <section class="breadcumnd__banner">
+      <!--Container-->
+      <div class="container">
+        <div class="d-flex justify-content-start gap-4">
+          <h2 class="bread__title">
+            Downgrade Reason
+          </h2>
+          <ul class="breadcumnd__link">
+            <li>
+                    <a asp-controller="CustomerManagement" asp-action="PortalDashboard">Dashboard</a>
+            </li>
+            <li><i class="bi bi-chevron-right"></i></li>
+            <li class="active">
+              <a href="javascript:void(0)">Downgrade Reason</a>
+            </li>
+          </ul>
+        </div>
+      </div>
+      <!--Container-->
+    </section>
+
+
+    <div class="section_gap_large">
+
+      <div class="container">
+        <div class="row justify-content-center">
+          <div class="col-md-8">
+            <div class="card box">
+
+              <div class="card-body">
+
+                <div class="p-2">
+                  <div class="text-center">
+
+                    <div class="avatar-md mx-auto">
+                      <div class="avatar-title rounded-circle bg-light">
+                        <i class="bi bi-exclamation-triangle text-danger"></i>
+                      </div>
+                    </div>
+                    <div class="p-2">
+                      <h4>Why do you want to <span class="fw-semibold">Downgrade</span>, your plan ?</h4>
+                      <p>Please provide a reason for downgrading. This will help us improve our services.</p>
+
+                      <div class="row justify-content-center">
+                        <div class="col-md-8">
+                          <form id="downgradeForm" action="index.html">
+                            <div class="mb-3">
+                              <textarea class="form-control" rows="3"
+                                placeholder="Enter your reason for downgrading" required></textarea>
+                            </div>
+                            <div class="mb-3 form-check text-start">
+                              <input type="checkbox" class="form-check-input" id="agreeDowngrade" required>
+                              <label class="form-check-label" for="agreeDowngrade">Yes, I agree with downgrade.</label>
+                            </div>
+                          </form>
+                        </div>
+                      </div>
+
+                      <div class="mt-4">
+                        <a href="#" class="btn btn-primary w-md">Submit</a>
+                                        <a asp-controller="Subscription" asp-action="MySubscriptionDetails" class="btn btn-outline-primary w-md">Cancel</a>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </div>
+    </div>
+
+<div class="main">
+    <div class="green-line"></div>
+</div>
+

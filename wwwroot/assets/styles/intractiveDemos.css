@@ -1,0 +1,69 @@
+.accent-green {
+    color: #5fbf73;
+}
+
+.demo-item {
+    animation: demoFade .5s ease;
+}
+
+    .demo-item.hide {
+        display: none;
+    }
+
+
+@keyframes demoFade {
+    from {
+        opacity: 0;
+        transform: translateY(20px) scale(.95);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+.demo-card {
+    background: white;
+    border: 1px solid #e2e8f0;
+    border-radius: 20px;
+    overflow: hidden;
+    transition: all 0.4s ease;
+    height: 100%;
+}
+
+    .demo-card:hover {
+        transform: translateY(-12px);
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.08);
+        border-color: #5fbf73;
+    }
+
+.demo-icon-wrapper {
+    height: 190px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 4.8rem;
+    transition: all 0.4s ease;
+}
+
+.demo-card:hover .demo-icon-wrapper {
+    transform: scale(1.12);
+}
+
+/* Different Light Backgrounds */
+.demo-hr {
+    background: linear-gradient(135deg, #f0fdf4, #ecfdf5);
+}
+
+.demo-attendance {
+    background: linear-gradient(135deg, #f0f9ff, #e0f2fe);
+}
+
+.demo-payroll {
+    background: linear-gradient(135deg, #fefce8, #fef9c3);
+}
+
+.demo-analytics {
+    background: linear-gradient(135deg, #f5f3ff, #ede9fe);
+}

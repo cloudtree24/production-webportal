@@ -1,0 +1,83 @@
+﻿@using Newtonsoft.Json
+@model HCMPortal.ViewModel.OrderDetailViewModel
+@{
+    var data = Model;
+}
+
+<div class="card mb-3 rounded-custom">
+	<div class="card-body" id="customerDetailsCard">
+		<div class="d-flex justify-content-between mb-2">
+			<p class="mb-0 fs-6 text-muted">Order Number : </p>
+			<p class="mb-0">@Model.OrderId</p>
+		</div>
+		<div class="d-flex justify-content-between mb-2">
+			<p class="mb-0 fs-6 text-muted">Order Date : </p>
+			<p class="mb-0">@DateTime.Now.ToString("dd-MM-yyyy hh:mm tt")</p>
+		</div>
+		<div class="d-flex justify-content-between mb-2">
+			<p class="mb-0 fs-6 text-muted">Full Name : </p>
+			<p class="mb-0">@Model?.PortalCustomerDetails?.ContactPersonName</p>
+		</div>
+		<div class="d-flex justify-content-between mb-2">
+			<p class="mb-0 fs-6 text-muted">Email Address : </p>
+			<p class="mb-0">@Model?.PortalCustomerDetails?.EmailAddress</p>
+		</div>
+		<div class="d-flex justify-content-between mb-2">
+			<p class="mb-0 fs-6 text-muted">Company : </p>
+			<p class="mb-0">@Model?.PortalCustomerDetails?.CompanyName</p>
+		</div>
+		<div class="d-flex justify-content-between mb-2">
+			<p class="mb-0 fs-6 text-muted">Billing Address : </p>
+			<p class="mb-0">@Model?.PortalCustomerDetails?.Address</p>
+		</div>
+	</div>
+</div>
+
+ <!-- Card 2: Base Amount, GST, Total -->
+                    @{
+                        decimal baseAmount = Model?.SelectedSubscription?.Amount ?? 0;
+                        decimal gstPercentage = Convert.ToDecimal(Model?.TaxPercentage ?? 0);
+                        decimal gstAmount = (baseAmount * gstPercentage) / 100;
+                        decimal totalAmount = baseAmount + gstAmount;
+                       
+                    }
+
+                    <div class="card mb-3 rounded-custom">
+                        <div class="card-body">
+                            <div class="d-flex flex-column">
+            <div class="d-flex justify-content-between mb-2">
+                <p class="mb-0">Service(s)</p>
+                <p class="mb-0" id="service">@Model.SelectedSubscription?.SubscriptionName / @Model.planMaster?.PlanName</p>
+            </div>
+                                <div class="d-flex justify-content-between mb-2">
+                                    <p class="mb-0">Amount</p>
+                                    <p class="mb-0" id="baseAmount">₹@baseAmount</p>
+                                </div>
+                                    <div class="d-flex justify-content-between mb-2">
+                                    <p class="mb-0">GST (<span id="gstPercent">@gstPercentage</span>%)</p>
+                                    <p class="mb-0" id="gstAmount">₹@gstAmount</p>
+                                    </div>
+
+                              <hr />
+                                <div class="d-flex justify-content-between mb-2">
+                                    <p class="mb-0 fw-bold">Total Amount</p>
+                                    <p class="mb-0 fw-bold text-primary" id="totalAmount">₹@totalAmount</p>
+                                </div>
+                            </div>
+                           
+                        </div>
+                    </div>
+
+<div class="d-flex flex-column gap-2 mb-3" id="paymentButtons">
+    <form asp-action="PaymentInitiate" asp-controller="Subscription" method="post">
+        <input type="hidden" name="Csid" value="@Model?.PortalCustomerDetails?.Csid" />
+        <input type="hidden" name="RenewalMembershipId" value="@Model?.RenewalMembershipId" />
+        <input type="hidden" name="totalValue" value="@totalAmount" />
+        <input type="hidden" name="totalTaxValue" value="@gstAmount" />
+        <input type="hidden" name="CustomerPhoneNumber" value="@Model?.PortalCustomerDetails?.Phonenumber" />
+        <input type="hidden" name="CustomerEmail" value="@Model?.PortalCustomerDetails?.EmailAddress" />
+        <input type="hidden" name="jsonData" value='@Html.Raw(JsonConvert.SerializeObject(Model))' />
+        <button class="btn btn-lg btn-primary w-100">Proceed to Payment</button>
+    </form>
+	<button type="button" class="btn btn-lg btn-outline-primary" data-bs-dismiss="modal">Cancel</button>
+</div>

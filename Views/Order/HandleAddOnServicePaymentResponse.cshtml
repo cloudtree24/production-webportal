@@ -1,0 +1,571 @@
+﻿@model string
+
+@{
+	ViewData["Title"] = "Service Purchase Confirmation";
+	Layout = null;
+	// Assuming the controller sends ViewBag.paymentStatus = "Success" or "Failed"
+	string paymentStatus = ViewBag.paymentStatus;
+	var data = Model;
+}
+<style>
+    .modern-success-alert {
+		background: white;
+		border: 1px solid #e2e8f0;
+		border-radius: 16px;
+		padding: 2.5rem;
+		box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+		text-align: center;
+		position: relative;
+		transition: all 0.3s ease;
+	}
+
+	.success-icon {
+		width: 80px;
+		height: 80px;
+		background: linear-gradient(135deg, #10b981, #34d399);
+		border-radius: 50%;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		margin: 0 auto 1.5rem;
+		box-shadow: 0 10px 25px rgba(16, 185, 129, 0.3);
+	}
+
+		.success-icon i {
+			font-size: 2.5rem;
+			color: white;
+		}
+
+	.modern-alert-title {
+		color: #1e293b;
+		font-size: 1.5rem;
+		font-weight: 700;
+		margin-bottom: 0.5rem;
+	}
+
+	.modern-lead-text {
+		color: #64748b;
+		font-size: 1.1rem;
+		font-weight: 500;
+		margin-bottom: 1rem;
+	}
+
+	.modern-alert-text {
+		color: #475569;
+		margin-bottom: 1.5rem;
+		line-height: 1.6;
+	}
+
+	.transaction-box {
+		background: #f1f5f9;
+		border: 1px solid #e2e8f0;
+		border-radius: 8px;
+		padding: 0.75rem 1rem;
+		margin-bottom: 1.5rem;
+		display: inline-block;
+		font-family: 'SF Mono', Monaco, monospace;
+		font-size: 0.875rem;
+		color: #334155;
+	}
+
+	.modern-dashboard-btn {
+		background: #10b981;
+		border: none;
+		border-radius: 10px;
+		padding: 0.875rem 2rem;
+		color: white;
+		font-weight: 600;
+		text-decoration: none;
+		display: inline-flex;
+		align-items: center;
+		gap: 0.5rem;
+		transition: all 0.2s ease;
+		box-shadow: 0 4px 14px rgba(16, 185, 129, 0.4);
+		margin-right: 1rem;
+	}
+
+		.modern-dashboard-btn:hover {
+			background: #31c191;
+			box-shadow: 0 8px 25px rgba(16, 185, 129, 0.4);
+			color: white;
+		}
+
+	.modern-invoice-btn {
+		background: white;
+		border: 2px solid #10b981;
+		border-radius: 10px;
+		padding: 0.875rem 2rem;
+		color: #10b981;
+		font-weight: 600;
+		text-decoration: none;
+		display: inline-flex;
+		align-items: center;
+		gap: 0.5rem;
+		transition: all 0.2s ease;
+	}
+
+		.modern-invoice-btn:hover {
+			background: #10b981;
+			color: white;
+			box-shadow: 0 4px 14px rgba(16, 185, 129, 0.3);
+		}
+
+
+	.modern-failed-alert {
+		background: white;
+		border: 1px solid #fee2e2;
+		border-radius: 16px;
+		padding: 2.5rem;
+		box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+		text-align: center;
+		position: relative;
+		transition: all 0.3s ease;
+	}
+
+	.failed-icon {
+		width: 80px;
+		height: 80px;
+		background: #dc2626;
+		border-radius: 50%;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		margin: 0 auto 1.5rem;
+		box-shadow: 0 10px 25px rgba(239, 68, 68, 0.3);
+	}
+
+		.failed-icon i {
+			font-size: 2.5rem;
+			color: white;
+		}
+
+	.modern-failed-title {
+		color: #1e293b;
+		font-size: 1.5rem;
+		font-weight: 700;
+		margin-bottom: 1rem;
+	}
+
+	.modern-failed-lead {
+		color: #dc2626;
+		font-size: 1.1rem;
+		font-weight: 500;
+		margin-bottom: 1rem;
+	}
+
+	.modern-failed-text {
+		color: #475569;
+		line-height: 1.6;
+		margin-bottom: 1rem;
+	}
+
+	.error-box {
+		background: #fee2e2;
+		border: 1px solid #fecaca;
+		border-radius: 8px;
+		padding: 0.75rem 1rem;
+		margin: 1.5rem 0;
+		display: inline-block;
+		font-family: 'SF Mono', Monaco, monospace;
+		font-size: 0.875rem;
+		color: #dc2626;
+	}
+
+	.modern-retry-btn {
+		background: #ef4444;
+		color: white;
+		font-weight: 600;
+		display: inline-flex;
+		align-items: center;
+		gap: 0.5rem;
+		transition: all 0.2s ease;
+		box-shadow: 0 4px 14px rgba(239, 68, 68, 0.4);
+	}
+
+		.modern-retry-btn:hover {
+			background: #f25a5a;
+			box-shadow: 0 8px 25px rgba(239, 68, 68, 0.4);
+			color: white;
+		}
+
+	.modern-support-btn {
+		background: white;
+		border: 2px solid #ef4444;
+		color: #ef4444;
+		font-weight: 600;
+		display: inline-flex;
+		align-items: center;
+		gap: 0.5rem;
+		transition: all 0.2s ease;
+	}
+
+		.modern-support-btn:hover {
+			background: #ef4444;
+			color: white;
+			box-shadow: 0 4px 14px rgba(239, 68, 68, 0.3);
+		}
+
+
+
+
+
+
+
+    .plan-toggle-group {
+    display: flex;
+    background: #f1f5f9;
+    padding: 0.5rem;
+    border-radius: 50px;
+    gap: 0.5rem;
+    }
+
+    /* Buttons */
+    .plan-toggle-group .plan-btn {
+    padding: 0.6rem 1.4rem;
+    border-radius: 30px;
+    font-weight: 600;
+    font-size: 0.95rem;
+    color: #444;
+    cursor: pointer;
+    border: none;
+    background: transparent;
+    transition: all 0.35s ease;
+    }
+
+    /* Hover effect */
+    .plan-toggle-group .plan-btn:hover {
+    background: rgba(13, 110, 253, 0.08);
+    color: #0d6efd;
+    }
+
+    /* Active state (selected) */
+    .plan-toggle-group .btn-check:checked + .plan-btn {
+    background: #0d6efd;
+    color: #fff;
+    box-shadow: 0 4px 12px rgba(13, 110, 253, 0.3);
+    transform: translateY(-2px);
+    }
+
+
+
+</style>
+<body>
+
+    <header>
+        <div class="container">
+            <div class="d-flex flex-wrap align-items-center justify-content-center justify-content-lg-start cloudTree-nav">
+
+                <div class="logo">
+                    <a href="https://www.thecloudtree.ai/">
+                        <img src="./assets/images/logo.png" alt="logo" />
+                    </a>
+                </div>
+
+                <!-- Navbar Section -->
+                <ul class="nav col-12 col-lg-auto me-lg-auto mb-2 justify-content-center mb-md-0">
+                    <!-- Dropdown Item -->
+                    <li class="nav-item dropdown">
+                        <a href="index.html" class="nav-link link-dark dropdown-toggle active" data-bs-toggle="dropdown">
+                            SaaS Solution
+                        </a>
+                        <ul class="dropdown-menu text-small">
+                            <li><a class="dropdown-item" href="https://www.thecloudtree.ai/human-resources">Human Capital
+                                    Management</a></li>
+                            <li><a class="dropdown-item" href="https://www.thecloudtree.ai/autotek-1">Automobile DMS</a></li>
+                        </ul>
+                    </li>
+
+                    <li class="nav-item dropdown">
+                        <a href="https://www.thecloudtree.ai/services-9" class="nav-link link-dark dropdown-toggle">Services</a>
+                        <ul class="dropdown-menu text-small">
+                            <li><a class="dropdown-item" href="https://www.thecloudtree.ai/consulting">Consulting</a></li>
+                            <li><a class="dropdown-item" href="https://www.thecloudtree.ai/custom-development">Custom
+                                    Development</a></li>
+                            <li><a class="dropdown-item" href="https://www.thecloudtree.ai/staffing">Staffing</a></li>
+                        </ul>
+                    </li>
+
+                    <li><a href="https://www.thecloudtree.ai/partners" class="nav-link link-dark">Partners</a></li>
+
+                    <li class="nav-item dropdown">
+                        <a href="https://www.thecloudtree.ai/lets-connect" class="nav-link link-dark dropdown-toggle">Let's
+                            Connect</a>
+                        <ul class="dropdown-menu text-small">
+                            <li><a class="dropdown-item" href="https://www.thecloudtree.ai/gallary">Gallery</a></li>
+                        </ul>
+                    </li>
+
+                    <li><a href="https://www.thecloudtree.ai/current-openings" class="nav-link link-dark">Career</a></li>
+                    <li><a href="https://www.thecloudtree.ai/blog" class="nav-link link-dark">Blogs</a></li>
+                    <li><a asp-action="DemoBookingDetails" asp-controller="Order" class="nav-link bookDemo_btn">Book a Demo</a></li>
+                </ul>
+
+                <div class="d-flex align-items-center">
+                    <a href="./login.html" class="booknow-btn">Login</a>
+                </div>
+
+            </div>
+        </div>
+    </header>
+
+
+
+    <div class="container">
+	<div class="d-flex align-items-center justify-content-center min-vh-100">
+		@if (paymentStatus == "Success")
+		{
+			<div id="successContent" class="alert alert-success border-3 modern-success-alert w-75" role="alert">
+
+				<div class="success-icon">
+					<i class="fa-solid fa-circle-check"></i>
+				</div>
+
+				<h4 class="alert-heading modern-alert-title">
+					Payment Successful!
+				</h4>
+				<p lead mb-0 modern-lead-text>
+					Your subscription has been successfully <span class="fw-bold text-success">Active</span>, and all services associated with your plan remain active. 🎉
+				</p>
+
+				<p class="modern-alert-text mb-1">
+					A confirmation email has been sent to your registered email address.
+				</p>
+				<p class="modern-alert-text mb-1">
+					If you have any questions or concerns regarding your subscription, please don’t hesitate to contact our
+					support team.
+				</p>
+
+				<div class="transaction-box mt-3">
+					<strong>Transaction ID:</strong> @ViewBag.TransactionId
+				</div>
+
+				<p class="modern-alert-text mb-1">
+					We appreciate your continued trust in our services.
+				</p>
+
+				<hr>
+
+				<a href="/customermanagement/portaldashboard" class="modern-dashboard-btn">
+					<i class="fa-solid fa-house"></i> Go To Dashboard
+				</a>
+				<a href="#" class="modern-invoice-btn generate-invoice-btn" data-bs-toggle="modal"
+				   data-bs-target="#generateInvoiceModal" data-order-id="@Model">
+					<i class="bi bi-file-earmark-text"></i> View Invoice
+				</a>
+
+			</div>
+		}
+
+		else if (paymentStatus == "Failed")
+		{
+
+
+			<div id="failedContent" class="alert alert-danger border-3 modern-failed-alert w-75" role="alert">
+				<div class="failed-icon mb-4">
+					<i class="fa-solid fa-circle-xmark"></i>
+				</div>
+
+				<h4 class="alert-heading modern-failed-title">
+					Payment Attempt Failed!
+				</h4>
+
+				<p class="lead mb-0 modern-failed-lead mb-1">
+					We were unable to process your payment.
+				</p>
+
+				<p class="modern-failed-text mb-1">
+					Please verify your payment details and try again. This may have occurred due to an issue with your card,
+					insufficient funds, or a temporary bank restriction.
+				</p>
+
+				<p class="modern-failed-text mb-1">
+					To avoid any disruption to your service, please update your payment method or retry the transaction.
+				</p>
+
+				<div class="error-box">
+					<strong>Error Code:</strong> GEN-FAIL<br>
+					<strong>Reason:</strong> There was an issue with your payment method or bank authorization.
+				</div>
+
+				<p class="modern-failed-text mb-1">
+					If the issue persists, feel free to contact our support team for further assistance.
+				</p>
+
+				<hr>
+
+				<div class="d-flex flex-wrap justify-content-center gap-2">
+					<a asp-controller="Order" asp-action="HandleRetryPayment" asp-route-OrderId="@Model"  class="modern-retry-btn btn btn-lg">
+						<i class="bi bi-credit-card-2-back"></i> Retry Payment
+					</a>
+					<a href="#" class="modern-support-btn btn btn-lg">
+						<i class="bi bi-chat-dots"></i> Contact Support
+					</a>
+				</div>
+			</div>
+
+		}
+
+		else
+		{
+			<div class="alert alert-info" role="alert">
+				<h4 class="alert-heading">Status Unknown</h4>
+				<p>We are currently unable to display your transaction status. Please check your **registered email** for confirmation details or contact our support team with your expected **Service Name** and **Order Date**.</p>
+			</div>
+		}
+	</div>
+</div>
+
+<div class="modal fade" id="generateInvoiceModal" tabindex="-1" role="dialog" aria-labelledby="generateInvoiceModalLabel" aria-hidden="true">
+	<div class="modal-dialog invoicedialog modal-xl" role="document">
+		<div class="modal-content invoicecontent">
+			<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+			<div class="modal-body" id="invoiceModalBody">
+			</div>
+		</div>
+	</div>
+</div>
+
+
+
+@section Scripts {
+	<script>
+		$(document).ready(function () {
+			// Target the new class 'generate-invoice-btn'
+			$('.generate-invoice-btn').on('click', function (e) {
+
+				e.preventDefault(); // Stop the link from navigating
+
+				// 1. Get the orderId from the data attribute
+				var orderId = $(this).data('order-id');
+
+				// 2. Show a loading indicator in the modal body
+				$('#invoiceModalBody').html('<div class="d-flex justify-content-center align-items-center" style="height: 300px;"><div class="spinner-border text-primary" role="status"><span class="visually-hidden">Loading...</span></div></div>');
+
+				// 3. Show the modal
+				$('#generateInvoiceModal').modal('show');
+
+				// 4. Make an AJAX call to the GenerateInvoice action
+				$.ajax({
+					url: '@Url.Action("GenerateInvoice", "Order")',
+					type: 'GET',
+					data: {
+						// The key 'orderId' MUST match the parameter name in your controller action: GenerateInvoice(string orderId)
+						orderId: orderId
+					},
+					success: function (result) {
+						// On success, inject the partial view content into the modal body
+						$('#invoiceModalBody').html(result);
+					},
+					error: function (xhr) {
+						// Handle the BadRequest response from the controller
+
+						// 1. Get the specific error message from the controller's BadRequest response
+						var specificErrorMessage = xhr.responseText || 'An unknown error occurred while generating the invoice.';
+
+						// 2. Build the HTML for the error message and "Ok" button
+						var htmlContent =
+							'<div class="alert alert-danger d-flex justify-content-between align-items-center" role="alert">' +
+								// Use a div to contain the message text
+								'<div class="me-3"><strong>Error:</strong> ' + specificErrorMessage + '</div>' +
+
+								// Use a standard Bootstrap button to close the modal
+								'<button type="button" class="btn btn-sm btn-danger" ' +
+								// The onclick event closes the main modal
+								'onclick="$(\'#generateInvoiceModal\').modal(\'hide\');">' +
+									'Ok' +
+								'</button>' +
+							'</div>';
+
+						// Inject the error message and button into the modal body
+						$('#invoiceModalBody').html(htmlContent);
+					}
+				});
+			});
+		});
+	</script>
+}
+
+
+
+
+    <div class="main">
+      <div class="green-line"></div>
+    </div>
+
+	<footer>
+      <div class="container">
+        <div class="d-flex justify-content-between left-footer">
+            <div class="mb-2">
+              <h3>CORPORATE OFFICE - </h3>
+              <p>
+                3RD FLOOR, BGR ENERGY TOWERS, <br />
+                PLOT 1, FILM CITY, NOIDA, DELHI NCR, <br />
+                UTTAR PRADESH 201301, INDIA
+              </p>
+            </div>
+            <div class="mb-2">
+              <h3>REGISTERED OFFICE - </h3>
+              <p>
+                PS PLAZA, 532/1026, RASULGARH, <br />
+                BHUBANESHWAR - 751010
+              </p>
+            </div>
+            <div class="mb-2">
+              <h3>OVERSEAS OFFICE - </h3>
+              <p>
+                6860 DALLAS PKWY, #200<br />
+                PLANO, TX 75024​​
+              </p>
+            </div>
+            <div class="mb-2">
+              <h3>CONCTACT - </h3>
+              <p>
+                info@thecloudtree.ai<br />
+                Ph : (+91) 9090973033
+              </p>
+              <img src="./assets/images/linkedin.avif" />
+            </div>
+          
+          
+          @* <div class="col-md-6">
+            <p>Send us a message and we’ll get back to you shortly.</p>
+            <div class="form">
+              <div class="mb-2">
+                <label class="">Full name</label>
+                <input name="full-name" class="" type="text" placeholder="Add your name" required="" maxlength="100"
+                  autocomplete="off" value="">
+              </div>
+              <div class="mb-2">
+                <label class="">Email</label>
+                <input name="email" class="" type="text" placeholder="e.g., email@example.com" required=""
+                  maxlength="100" autocomplete="off" value="">
+              </div>
+              <div class="mb-2">
+                <label class="">Subject</label>
+                <input name="full-name" class="" type="text" placeholder="e.g., Support" required="" maxlength="100"
+                  autocomplete="off" value="">
+              </div>
+              <div class="mb-2">
+                <label class="">Your Message</label>
+                <textarea class="" placeholder="Enter text here" aria-required="false" cols="50" rows="4"></textarea>
+              </div>
+              <div class="mb-2">
+                <button aria-disabled="false" class="btn">Send</button>
+              </div>
+            </div>
+          </div> *@
+        </div>
+      </div>
+    </footer>
+
+    <div class="bottom-footer">
+      <div class="container">
+        <div class="row">
+          <div class="col-12">
+            <p class="mb-0 text-center">Copyright © @DateTime.Now.Year. ThecloudTree. All Rights Reserved.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    </body>

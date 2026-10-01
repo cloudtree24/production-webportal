@@ -1,0 +1,77 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>net9.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+  </PropertyGroup>
+
+  <ItemGroup>
+
+    <Content Remove="bundleconfig.json" />
+
+    <Content Remove="Views\CustomerManagement\CustomerRegister.cshtml" />
+
+    <Content Remove="wwwroot\sitemap.xml" />
+
+    <PackageReference Include="BCrypt.Net-Next" Version="4.0.3" />
+
+    <PackageReference Include="Google.Apis.Auth" Version="1.69.0" />
+
+    <PackageReference Include="Google.Apis.Calendar.v3" Version="1.69.0.3746" />
+  
+
+
+    <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="9.0.12" />
+
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.4" />
+
+    <PackageReference Include="NReco.PdfGenerator" Version="1.2.1" />
+
+    <PackageReference Include="PuppeteerSharp" Version="20.2.5" />
+
+    <PackageReference Include="QuestPDF" Version="2025.12.0" />
+
+    <PackageReference Include="Razorpay" Version="3.3.2" />
+    <PackageReference Include="QRCoder" Version="1.7.0" />
+    <PackageReference Include="Serilog" Version="4.3.1-dev-02387" />
+
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="wwwroot\assets\TrainingModuleFiles\Image\" />
+    <Folder Include="wwwroot\assets\TrainingModuleFiles\Video\" />
+    <Folder Include="wwwroot\js\" />
+    <Folder Include="wwwroot\Pictures\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Update="service-account-hcmportal.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Update="Views\Subscription\_InvoicePrintPartialView.cshtml">
+      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
+    <Content Update="wwwroot\keys\service-account-hcmportal.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+	<ItemGroup>
+	  <Compile Remove="HTMLPages\**" />
+	  <Compile Remove="wwwroot\HTMLPageStaticFile\**" />
+	  <Content Remove="HTMLPages\**" />
+	  <Content Remove="wwwroot\HTMLPageStaticFile\**" />
+	  <EmbeddedResource Remove="HTMLPages\**" />
+	  <EmbeddedResource Remove="wwwroot\HTMLPageStaticFile\**" />
+	  <None Remove="HTMLPages\**" />
+	  <None Remove="wwwroot\HTMLPageStaticFile\**" />
+	</ItemGroup>
+	<ItemGroup>
+	  <Compile Remove="Views\Shared\Components\OurTeam.cs" />
+	</ItemGroup>
+	<ItemGroup>
+	  <None Include="bundleconfig.json" />
+	  <None Include="wwwroot\sitemap.xml" />
+	</ItemGroup>
+</Project>

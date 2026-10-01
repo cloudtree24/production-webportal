@@ -1,0 +1,203 @@
+﻿@model List<HCMPortal.ViewModel.TrainingViewModel>
+
+
+@{
+    Layout = "_customerDashboardLayout";
+    ViewData["Title"] = "Ticket Details";
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/assets/js/vanilla-toast.min.js"></script>
+    <link href="~/assets/font/font-awsome/css/all.min.css" rel="stylesheet" />
+            // Include DataTables CSS and JS
+}
+
+<!-- Breadcrumb -->
+<div class="breadcumnd__banner">
+    <!--Container-->
+    <div class="container">
+        <div class="d-flex justify-content-start gap-4">
+            <h2 class="bread__title">
+                Training
+            </h2>
+            <ul class="breadcumnd__link">
+                <li>
+                    <a asp-route="CustomerDashboard">Dashboard</a>
+                </li>
+                <li><i class="bi bi-chevron-right"></i></li>
+                <li class="active">
+                    <a href="javascript:void(0)">Training</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+    <!--Container-->
+</div>
+
+<div class="section_gap_large training">
+
+
+    <!-- Main Content -->
+    <div class="container">
+
+        <!-- Main Layout -->
+        <div class="row g-4">
+            <div class="col-lg-4">
+                <div class="sidebar">
+                    <div class="search position-relative">
+                        <i class="fa fa-search"></i>
+                        <input type="text" placeholder="Search..." class="form-control " />
+                    </div>
+                    <ul class="nav flex-column">
+                        <li class="nav-item">
+                            <a  href="#" class="nav-link active" data-target="get-started" >
+                                Get Started
+                            </a>
+                        </li>
+
+
+                        @{
+                            if(Model!=null)
+                            {
+                                foreach(var item in Model)
+                                {
+                                    string target = "FeatureId-" + item.Tmid;
+                                    <li class="nav-item">
+                                        <a class="nav-link text-muted" href="#" data-target="@target">
+                                            @item.Title
+                                        </a>
+                                    </li>
+                                }
+                            }
+                        }
+                        @* <li class="nav-item">
+                            <a class="nav-link text-muted" href="#" data-target="main-operational">
+                                Main Operational Management
+                            </a>
+                        </li> *@
+                    </ul>
+                </div>
+            </div>
+            <div class="col-lg-8">
+                <div class="card shadow border-0">
+                    <div class="card-body p-4">
+                    
+                <div id="get-started" class="content-panel">
+                    <h5 class="mb-3">HRM Training Video</h5>
+                    <div class="ratio ratio-16x9">
+                        <iframe width="799" height="449" src="https://www.youtube.com/embed/fuJt5Vys-jY"
+                                title="What is Human Resource Management? – [Hindi] – Quick Support" frameborder="0"
+                                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                                referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+                    </div>
+                    <p class="text-muted mt-3">
+                        Watch this introductory video to understand the fundamentals of Human Resource
+                        Management.
+                    </p>
+                </div>
+                    <div id="main-operational" class="content-panel" style="display: none;">
+                        <h5 class="mb-3">Main Operational Management</h5>
+                        <p>This is the content for Main Operational Management.</p>
+                    </div>
+                    @{
+                        if(Model!=null)
+                        {
+                            foreach(var item in Model)
+                            {
+                                string target = "FeatureId-" + item.Tmid;
+                                <div id="@target" class="content-panel" style="display: none;">
+                                    <h5 class="mb-3">@item.Title</h5>
+                                    @Html.Raw(item.FeatureDetails)
+                                </div>
+                            }
+                        }
+                    }
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    </div>
+
+<div class="main">
+      <div class="green-line"></div>
+    </div>
+
+@section Scripts{
+
+<script src="~/assets/js/bootstrap.bundle.js"></script>
+
+<script>
+            document.addEventListener('DOMContentLoaded', () => {
+            // Select only the navigation links inside the sidebar
+            const sidebar = document.querySelector('.sidebar');
+            const navLinks = sidebar ? sidebar.querySelectorAll('.nav-link') : [];
+            const contentPanels = document.querySelectorAll('.content-panel');
+
+            navLinks.forEach(link => {
+                link.addEventListener('click', (event) => {
+                    event.preventDefault();
+
+                    // Remove 'active' from all links
+                    navLinks.forEach(navLink => navLink.classList.remove('active'));
+                    link.classList.add('active');
+
+                    // Hide all panels
+                    contentPanels.forEach(panel => panel.style.display = 'none');
+
+                    // Show target panel
+                    const targetId = link.getAttribute('data-target');
+                    const targetPanel = document.getElementById(targetId);
+                    if (targetPanel) targetPanel.style.display = 'block';
+                });
+            });
+
+            // Default open first panel
+            const getStartedPanel = document.getElementById('get-started');
+            if (getStartedPanel) getStartedPanel.style.display = 'block';
+        });
+
+        //         document.addEventListener('DOMContentLoaded', () => {
+        //     // Select all the navigation links
+        //     const navLinks = document.querySelectorAll('.nav-link');
+        //     // Select all the content panels
+        //     const contentPanels = document.querySelectorAll('.content-panel');
+
+        //     // Add click event listener to each navigation link
+        //     navLinks.forEach(link => {
+        //         link.addEventListener('click', (event) => {
+        //             // Prevent default link behavior
+        //             event.preventDefault();
+
+        //             // First, remove the 'active' class from all links
+        //             navLinks.forEach(navLink => {
+        //                 navLink.classList.remove('active');
+        //             });
+        //             // Then, add the 'active' class to the clicked link
+        //             link.classList.add('active');
+
+        //             // Hide all content panels
+        //             contentPanels.forEach(panel => {
+        //                 panel.style.display = 'none';
+        //             });
+
+        //             // Get the target ID from the data-target attribute
+        //             const targetId = link.getAttribute('data-target');
+
+        //             // Find the panel with the matching ID and display it
+        //             const targetPanel = document.getElementById(targetId);
+        //             if (targetPanel) {
+        //                 targetPanel.style.display = 'block';
+        //             }
+        //         });
+        //     });
+
+        //     // Make the initial "Get Started" panel visible by default
+        //     const getStartedPanel = document.getElementById('get-started');
+        //     if (getStartedPanel) {
+        //         getStartedPanel.style.display = 'block';
+        //     }
+        // });
+    </script>
+
+}
+

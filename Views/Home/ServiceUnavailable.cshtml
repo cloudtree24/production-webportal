@@ -1,0 +1,111 @@
+﻿@{
+    Layout = null;
+}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <title>Service Unavailable</title>
+
+    <style>
+
+        *{
+            margin:0;
+            padding:0;
+            box-sizing:border-box;
+            font-family:'Segoe UI',sans-serif;
+        }
+
+        body{
+            background:#f5f7fb;
+            display:flex;
+            justify-content:center;
+            align-items:center;
+            height:100vh;
+        }
+
+        .card{
+
+            width:700px;
+            background:#fff;
+            padding:50px;
+            border-radius:20px;
+            text-align:center;
+            box-shadow:0 15px 40px rgba(0,0,0,.12);
+
+        }
+
+        .card img{
+            width:320px;
+            margin-bottom:25px;
+        }
+
+        h1{
+            color:#2c3e50;
+            margin-bottom:15px;
+            font-size:34px;
+        }
+
+        p{
+
+            color:#6c757d;
+            font-size:18px;
+            margin-bottom:35px;
+            line-height:28px;
+
+        }
+
+        .btn-home{
+
+            display:inline-block;
+            padding:15px 45px;
+            border-radius:50px;
+            text-decoration:none;
+            color:white;
+            font-size:17px;
+            font-weight:bold;
+            background: #2b5634;
+            transition:.4s;
+
+        }
+
+        .btn-home:hover{
+
+            transform:translateY(-4px);
+            box-shadow:0 10px 25px rgba(0,0,0,.25);
+
+        }
+
+        .footer{
+
+            margin-top:35px;
+            color:#999;
+
+        }
+
+    </style>
+
+</head>
+
+<body>
+
+    <div class="card">
+        <img src="~/assets/images/logos/logo.png" />
+        <h1>Service Temporarily Unavailable</h1>
+        <p>
+            Sorry! Our server is temporarily unavailable or the connection
+            has been interrupted.<br />
+            Please try again after a few minutes.
+        </p>
+        <a asp-controller="Home"
+           asp-action="Index"
+           class="btn-home">
+            ⬅ Back To Home
+        </a>
+
+     
+
+    </div>
+
+</body>
+</html>

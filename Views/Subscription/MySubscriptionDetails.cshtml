@@ -1,0 +1,741 @@
+﻿ @using HCMPortal.Helper
+@using Newtonsoft.Json
+@model List<HCMPortal.ViewModel.CustomerSubscriptionDetailsViewModel>
+@{
+	Layout = "_customerDashboardLayout";
+	<script src="~/assets/js/jquery.min.js"></script>
+	<script src="~/assets/js/vanilla-toast.min.js"></script>
+}
+
+
+
+<!-- Breadcrumb -->
+<section class="breadcumnd__banner">
+	<!--Container-->
+	<div class="container">
+		<div class="d-flex justify-content-start gap-4">
+			<h2 class="bread__title">
+				Subscription
+			</h2>
+			<ul class="breadcumnd__link">
+				<li>
+					<a asp-controller="CustomerManagement" asp-action="PortalDashboard">Dashboard</a>
+				</li>
+				<li><i class="bi bi-chevron-right"></i></li>
+				<li class="active">
+					<a href="javascript:void(0)">Subscription</a>
+				</li>
+			</ul>
+		</div>
+	</div>
+	<!--Container-->
+</section>
+
+
+<div class="section_gap_large">
+	<div class="container">
+		@{
+			@if (Model != null && Model.Count() > 0)
+			{
+				<div class="row g-4">
+					<!-- Sidebar -->
+					<div class="col-md-3">
+						<div class="sidebar">
+							<ul class="nav flex-column gap-3" role="tablist">
+								<li class="nav-item">
+									<a class="nav-link rounded-pill active py-3 px-4" id="active-tab" data-bs-toggle="tab" href="#active"
+									role="tab" aria-controls="active" aria-selected="true">
+										<i class="bi bi-grid-fill me-1"></i> Active Subscription
+									</a>
+								</li>
+								<li class="nav-item">
+									<a class="nav-link rounded-pill py-3 px-4" id="manage-tab" data-bs-toggle="tab" href="#manage"
+									role="tab" aria-controls="manage" aria-selected="false">
+										<i class="bi bi-gear-fill me-1"></i> Manage Subscription
+									</a>
+								</li>
+							</ul>
+						</div>
+					</div>
+
+					<!-- Content -->
+					<div class="col-lg-9">
+						<div class="tab-content">
+							<!-- Active Subscription -->
+							<div class="tab-pane fade show active" id="active" role="tabpanel" aria-labelledby="active-tab">
+								@{
+									bool hasActiveSubscription = Model.Any(x => x.NextrenewalDate.Date > DateTime.Now.Date);
+								}
+								@if (hasActiveSubscription)
+								{
+									<div class="d-flex justify-content-between align-items-center mb-2">
+										<h4>Active Subscription</h4>
+									</div>
+									int uniqueid = 1;
+									@foreach (var item in Model)
+									{
+										bool isSubscriptionActive = (item.NextrenewalDate.Date > DateTime.Now.Date);
+
+										if (isSubscriptionActive)
+										{
+											<!-- ACTIVE SUBSCRIPTION VIEW -->
+											<div class="card mb-5 border-0 shadow">
+												<div class="card-body p-4">
+
+													<div class="d-flex flex-column flex-md-row justify-content-between align-items-start gap-4 mb-2">
+														<div>
+															<h3 class="fw-bold mb-2">@item.SusbcriptionName Plan</h3>
+															<p class="mb-0">Renewal Date: <strong>@item.NextrenewalDate.ToString("MMMM dd, yyyy")</strong></p>
+															<p class="mb-0">Subscription ID: <strong>@item.MembershipId</strong></p>
+															@if (item.SubscriptionBaseAmount > 0 && item.OrderType == "UpgradeSubscription")
+															{
+																<p class="mb-0">
+																	Your next renewal Amount:
+																	<span class="text-primary fw-bold">₹@item.SubscriptionBaseAmount</span>
+																	<span class="text-muted">/@item.BillingName</span>
+																</p>
+															}
+
+														</div>														
+														@*	<a asp-action="UpgradeSubscription"
+														asp-route-orderId="@item.CsorderId"
+														asp-route-renewalId="@item.SubscriptionRenewalId"
+														asp-route-membershipid="@item.MembershipId"
+														class="btn btn-lg btn-primary rounded-pill px-5 shadow-xs">Upgrade Plan</a>*@
+														@{
+
+															bool hasUpgrade = Model.Any(x => x.MembershipId == item.MembershipId && x.OrderType == "UpgradeSubscription");
+
+
+															bool muteButton = hasUpgrade && item.OrderType != "UpgradeSubscription";
+														
+
+															@if (item.PerPackCount > 0 && item.PackCost > 0)
+															{
+																<a asp-action="UpgradeSubscription"
+																   asp-route-orderId="@item.CsorderId"
+																   asp-route-renewalId="@item.SubscriptionRenewalId"
+																   asp-route-membershipid="@item.MembershipId"
+																   class="btn btn-lg btn-primary rounded-pill px-5 shadow-xs"
+																   style="@(muteButton ? "pointer-events:none; opacity:0.6;" : "")">
+																	Upgrade Plan
+																</a>
+															}
+															else{
+																// <a href="https:hcmportal.anantatek.com/Subscription/SubscriptionDetails"
+																//    class="btn btn-lg btn-primary rounded-pill px-5 shadow-xs"
+																//    style="@(muteButton ? "pointer-events:none; opacity:0.6;" : "")">
+																// 	Upgrade Plan
+																// </a>
+																<button type="button" onclick="loadUpgradeOptions()" class="btn btn-lg btn-primary rounded-pill px-5 shadow-xs" style="@(muteButton ? "pointer-events:none; opacity:0.6;" : "")">Upgrade Plan</button>
+															}
+														}
+
+													</div>
+
+													<div class="d-flex justify-content-between align-items-center mb-3 pb-3 border-bottom">
+														<div class="d-flex align-items-center gap-3">
+															<span class="badge bg-success rounded-pill fs-6 px-3 py-2">
+																<i class="bi bi-patch-check-fill me-1"></i> Active
+															</span>
+															@{
+																@if (item.PurchasedAddonPackCount > 0)
+																{
+																	<span class="badge bg-success rounded-pill fs-6 px-3 py-2">
+																		<i class="bi bi-patch-check-fill me-1"></i> @item.PurchasedAddonPackCount Add-On Packs Allocated
+																	</span>
+																}
+															}
+
+
+														</div>
+
+
+														@*<p class="mb-0">
+															<span class="fs-3 text-primary fw-bold">₹@item.SubscriptionAmount</span><span class="text-muted">/@item.BillingName</span>
+														</p>*@
+														<div class="d-inline-flex align-items-center bg-white border rounded-pill px-4 py-2 shadow-sm">
+															@if (item.PurchasedAddonPackCount > 0)
+															{
+																<div class="text-center me-2">
+																	<h4 class="mb-0 fw-bold text-success">₹@(item.PurchasedAddonPackCount * item.PackCost)</h4>
+																	<div class="text-muted fw-bold" style="font-size: 0.8rem; margin-top: -5px;">(@item.PurchasedAddonPackCount ADD-ON)</div>
+																</div>
+																<span class="h4 mb-0 text-secondary opacity-50 me-2">+</span>
+															}
+															<div class="text-center">
+																<h4 class="mb-0 fw-bold text-primary">₹@item.SubscriptionAmount</h4>
+																<div class="text-muted fw-bold" style="font-size: 0.8rem; margin-top: -5px;">(BASE PRICE)</div>
+															</div>
+															<div class="ms-3 ps-3 border-start">
+																<span class="badge bg-primary rounded-pill py-2">/@item.BillingName</span>
+															</div>
+														</div>
+													</div>
+													@{
+
+														@if (item.PerPackCount > 0 && item.PackCost > 0)
+														{
+															uniqueid = uniqueid + 1;
+
+															<div class="accordion mb-4" id="addonExpander_@uniqueid">
+																<div class="accordion-item">
+																	<h2 class="accordion-header">
+																		<button class="accordion-button collapsed fw-bold" type="button" data-bs-toggle="collapse" data-bs-target="#collapseAddon_@uniqueid">
+																			<i class="bi bi-person-plus-fill text-primary me-2"></i>
+																			<div class="d-flex flex-column">
+																				<span class="fs-5 fw-bold text-dark lh-1 mb-1">Add-Ons</span>
+																				<small class="text-muted fw-normal">Additional User Packs</small>
+																			</div>
+																		</button>
+																	</h2>
+																	<div id="collapseAddon_@uniqueid" class="accordion-collapse collapse" data-bs-parent="#addonExpander_@uniqueid">
+																		<div class="accordion-body bg-light">
+																			<div class="row align-items-center g-3">
+
+																				<div class="col-sm-4 text-center">
+																					<div class="stat-label mb-2">Packs</div>
+																					<div class="counter-wrapper">
+																						<button class="btn btn-outline-primary btn-circle btn-sm" onclick="calc(-1, '@uniqueid', @item.PerPackCount, @item.PackCost)">-</button>
+																						<span class="px-3 fw-bold fs-5" id="pCount_@uniqueid">1</span>
+																						<button class="btn btn-outline-primary btn-circle btn-sm" onclick="calc(1, '@uniqueid', @item.PerPackCount, @item.PackCost)">+</button>
+																					</div>
+																				</div>
+
+																				<div class="col-sm-4 text-center border-start border-end">
+																					<div class="stat-label mb-1">Total Users</div>
+																					<div class="fw-bold fs-4 text-dark">
+																						<span id="uCount_@uniqueid">@item.PerPackCount</span>
+																					</div>
+																					
+																				</div>
+
+																				<div class="col-sm-4 text-center">
+																					<div class="stat-label mb-1">Pack Cost</div>
+																					<div class="fw-bold fs-4 text-success">
+																						₹<span id="pCost_@uniqueid">@(Math.Round(item.PackCost,2))</span>
+																					</div>
+																					<div class="text-muted small mb-2">
+																						<span>+ ₹</span><span id="taxAmt_@uniqueid">@(Math.Round((item.PackCost * (decimal)ViewBag.TaxPercentage) / 100,2))</span>
+																						<span class="text-uppercase" style="font-size: 0.75rem;">Tax (@ViewBag.TaxPercentage%)</span>
+																					</div>
+
+
+
+																					<form asp-action="PayAddon"
+																					asp-controller="Subscription"
+																					method="post">
+
+																						@*for tax amount-Anshuman 24.12.2025*@
+																						<input type="hidden" id="hTax_@uniqueid" name="gstamount" value="@((item.PackCost * (decimal)ViewBag.TaxPercentage) / 100)" />
+
+
+																						<!-- OrderId -->
+																						<input type="hidden" name="orderId" value="@item.OrderId" />
+																						<input type="hidden" name="gstPercentage" value="@ViewBag.TaxPercentage" />
+
+																						<!-- Subscription / Membership Id -->
+																						<input type="hidden" name="MembershipId" value="@item.MembershipId" />
+																						<input type="hidden" name="Phonenumber" value="@item.Phonenumber" />
+																						<input type="hidden" name="EmailAddress" value="@item.EmailAddress" />
+																						<input type="hidden" name="ContactPersonName" value="@item.ContactPersonName" />
+																						<input type="hidden" name="Address" value="@item.Address" />
+																						<input type="hidden" id="hPack_@uniqueid" name="packCount" value="1" />
+																						<input type="hidden" id="hUsers_@uniqueid" name="totalUsers" value="@item.PerPackCount" />
+																						<input type="hidden" id="hCost_@uniqueid" name="packCost" value="@item.PackCost" />
+																						<input type="hidden" id="hCost_@uniqueid" name="OriginalAddonAmount" value="@item.OriginalAddonAmount" />
+
+																						<input type="hidden" name="jsonData" value='@Html.Raw(JsonConvert.SerializeObject(item))' />
+																						<button type="submit"
+																						class="btn btn-success btn-sm w-100 mt-2 rounded-pill">
+																							Pay Now
+																						</button>
+																					</form>
+																				</div>
+
+																			</div>
+																		</div>
+																	</div>
+																</div>
+															</div>
+														}
+													}
+													<div class="row">
+														<div class="col-md-12">
+															<h6 class="fw-bold text-dark mb-3">
+																<i class="bi bi-shield-check text-primary me-2"></i> Included Features:
+															</h6>
+														</div>
+													</div>
+
+													<div class="row row-cols-2">
+														@{
+															string[] features = item.SubscriptionDetails?.Split('.') ?? new String[] { "No Details Available" };
+															foreach (var feature in features)
+															{
+																if (!string.IsNullOrWhiteSpace(feature))
+																{
+																	<div class="col">
+																		<div class="d-flex align-items-center">
+																			<i class="bi bi-check2-circle text-success fs-4 me-3"></i>@feature.Trim()
+																		</div>
+																	</div>
+																}
+															}
+														}
+													</div>
+												</div>
+											</div>
+										}
+
+									}
+								}
+								else
+								{
+									<!-- NO ACTIVE SUBSCRIPTION VIEW -->
+									@foreach (var item in Model)
+									{
+										<div class="card border-warning">
+											<div class="card-body">
+												<div class="text-center mb-4">
+													<i class="bi bi-x-circle-fill text-warning display-4 mb-3"></i>
+													<h5 class="card-title text-warning">No Currently Active Subscription</h5>
+													<p class="card-text text-muted">
+														Your subscription appears to be <strong>inactive</strong> or <strong>expired</strong>.
+														Please renew or choose a new plan.
+													</p>
+												</div>
+
+												<h6 class="text-start mb-2 text-center">Last Subscription Details:</h6>
+												<div class="row">
+													<div class="col-12 text-center">
+
+														<div class="row mb-2">
+															<div class="col-7"><small class="text-muted">Plan</small></div>
+															<div class="col-4">
+																<span class="badge bg-primary-soft text-primary rounded-pill">@item.SusbcriptionName</span>
+															</div>
+														</div>
+
+														<div class="row mb-2">
+															<div class="col-7"><small class="text-muted">Status</small></div>
+															<div class="col-4">
+																<span class="badge bg-danger-soft text-danger rounded-pill">Expired</span>
+															</div>
+														</div>
+
+														<div class="row mb-2">
+															<div class="col-7"><small class="text-muted">Billing Cycle</small></div>
+															<div class="col-4">@item.BillingName</div>
+														</div>
+
+														<div class="row mb-2">
+															<div class="col-7"><small class="text-muted">Expiration Date</small></div>
+															<div class="col-4">
+																<span class="text-danger fw-bold">@item.NextrenewalDate.ToString("MMMM dd, yyyy")</span>
+															</div>
+														</div>
+
+													</div>
+												</div>
+
+											</div>
+										</div>
+
+										break; // only show once
+									}
+								}
+
+
+
+							</div>
+
+
+							<!-- Manage Subscription -->
+							<div class="tab-pane fade" id="manage" role="tabpanel" aria-labelledby="manage-tab">
+								@{
+									<div class="mb-3">
+										<h4 class="mb-0">Manage Subscription</h4>
+										<p class="text-muted mb-0 small">You can upgrade or cancel your subscription below or use the profile menu above.</p>
+									</div>
+
+									foreach (var item in Model)
+									{
+										bool isSubscriptionActive = (item.NextrenewalDate.Date > DateTime.Now.Date);
+										<div class="card mb-5 border-0 shadow">
+											<div class="card-body p-4">
+
+												<div class="d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center gap-4 mb-3">
+													<div>
+														<h3 class="fw-bold mb-2">@item.SusbcriptionName Plan</h3>
+														@if(item.bid!=0)
+														{
+															<p class="mb-0">Renewal Date <strong>@item.NextrenewalDate.ToString("MMMM dd, yyyy")</strong></p>
+														}
+														else
+														{
+															<p class="mb-0">Expired on <strong>@item.NextrenewalDate.ToString("MMMM dd, yyyy")</strong></p>
+														}
+														
+													</div>
+													@{
+														if (item.IsRequestForCancelation)
+														{
+															if (item.IsRequestAccepted)
+															{
+																<span class="badge bg-success rounded-pill fs-6 px-3 py-2">
+																	<i class="bi bi-check-circle-fill me-1"></i> Cancellation Request Accepted
+																</span>
+															}
+															else if (item.IsRequestRejected )
+															{
+																// <a asp-controller="Subscription" asp-action="CancelSubscription" asp-route-csid="@item.Csid" asp-route-membershipid="@item.MembershipId" class="btn btn-lg btn-outline-danger rounded-pill px-5 shadow-sm fw-semibold">   Cancel Subscription</a>
+																// <span class="badge bg-danger rounded-pill fs-6 px-3 py-2">
+																// 	<i class="bi bi-check-circle-fill me-1"></i> Cancellation Request Rejected
+																// </span>
+																<div class="d-flex flex-column align-items-start gap-2">
+																	<a asp-controller="Subscription" asp-action="CancelSubscription" asp-route-csid="@item.Csid" asp-route-membershipid="@item.MembershipId" class="btn btn-lg btn-outline-danger rounded-pill px-5 shadow-sm fw-semibold">Cancel Subscription</a>
+																	<span class="badge bg-danger rounded-pill fs-6 px-3 py-2">
+																		<i class="bi bi-check-circle-fill me-1"></i> Cancellation Request Rejected
+																	</span>
+																</div>
+															}
+															else
+															{
+																<span class="badge bg-warning rounded-pill fs-6 px-3 py-2">
+																	<i class="bi bi-exclamation-triangle-fill me-1"></i> Cancellation Requested
+																</span>
+															}
+														}
+														else if (isSubscriptionActive)
+														{
+														//<a asp-controller="Subscription" asp-action="CancelSubscription" asp-route-csorderId="@item.CsorderId" asp-route-csid="@item.Csid" asp-route-membershipid="@item.MembershipId" asp-route-planName="@item.SusbcriptionName" asp-route-Sid="@item.sid" asp-route-billingCycle="@item.BillingName" asp-route-amount="@item.SubscriptionAmount" asp-route-createdDate="@item.CreatedDate.ToString("yyyy-MM-dd")" asp-route-nextRenewalDate="@item.NextrenewalDate.ToString("yyyy-MM-dd")" class="btn btn-outline-danger">   Cancel Subscription</a>
+															<a asp-controller="Subscription" asp-action="CancelSubscription" asp-route-csid="@item.Csid" asp-route-membershipid="@item.MembershipId" class="btn btn-lg btn-outline-danger rounded-pill px-5 shadow-sm fw-semibold">   Cancel Subscription</a>
+															// <a asp-controller="Subscription" asp-action="CancelSubscription" class="btn btn-outline-danger">Cancel Subscription</a>
+														}
+														else
+														{
+															if(item.bid!=0)
+															{
+															<a href="#" class="btn btn-lg btn-primary rounded-pill px-5 shadow-sm fw-semibold"
+															   data-bs-toggle="modal"
+															   data-bs-target="#renewalModal"
+															   data-order-id="@item.CsorderId"
+															   data-renewal-id="@item.SubscriptionRenewalId">
+																Renew Now
+															</a>
+															}
+														}
+													}
+												</div>
+
+												<div class="d-flex justify-content-between align-items-center mb-3 pb-3 border-bottom">
+													<div class="d-flex align-items-center gap-3">
+														@{
+															if (isSubscriptionActive)
+															{
+																<span class="badge bg-success rounded-pill fs-6 px-3 py-2">
+																	<i class="bi bi-patch-check-fill me-1"></i> Active
+																</span>
+															}
+															else
+															{
+																<span class="badge bg-danger rounded-pill fs-6 px-3 py-2">
+																	<i class="bi bi-patch-check-fill me-1"></i> Expired
+																</span>
+															}
+														}
+													</div>
+													@*<p class="mb-0">
+														<span class="fs-3 text-primary fw-bold">₹@item.SubscriptionAmount</span><span class="text-muted">/@item.BillingName</span>
+													</p>*@
+													<div class="d-inline-flex align-items-center bg-white border rounded-pill px-4 py-2 shadow-sm">
+														@if (item.PurchasedAddonPackCount > 0)
+														{
+															<div class="text-center me-2">
+																<h4 class="mb-0 fw-bold text-success">₹@(item.PurchasedAddonPackCount * item.PackCost)</h4>
+																<div class="text-muted fw-bold" style="font-size: 0.8rem; margin-top: -5px;">(@item.PurchasedAddonPackCount ADD-ON)</div>
+															</div>
+															<span class="h4 mb-0 text-secondary opacity-50 me-2">+</span>
+														}
+														<div class="text-center">
+															<h4 class="mb-0 fw-bold text-primary">₹@item.SubscriptionAmount</h4>
+															<div class="text-muted fw-bold" style="font-size: 0.8rem; margin-top: -5px;">(BASE PRICE)</div>
+														</div>
+														<div class="ms-3 ps-3 border-start">
+															<span class="badge bg-primary rounded-pill py-2">/@item.BillingName</span>
+														</div>
+													</div>
+												</div>
+
+												<div class="row row-cols-2">
+													@{
+														string[] features1 = item.SubscriptionDetails?.Split('.') ?? new String[] { "No Details Available" };
+														foreach (var feature in features1)
+														{
+															if (!string.IsNullOrWhiteSpace(feature))
+															{
+																<div class="col">
+																	<div class="d-flex align-items-center">
+																		<i class="bi bi-check2-circle text-success fs-4 me-3"></i>@feature.Trim()
+																	</div>
+																</div>
+															}
+														}
+													}
+												</div>
+											</div>
+										</div>
+									}
+								}
+							</div>
+
+						</div>
+					</div>
+				</div>
+			}
+			else
+			{
+				<div class="row g-4">
+					<div class="col-12">
+						<div class="card shadow border-0 mb-4">
+							<div class="card-body text-center p-4">
+								<i class="bi bi-cart-x display-1 text-secondary mb-3"></i>
+								<h3 class="card-title mb-3">No Active Subscription Found</h3>
+								<p class="card-text fs-5 text-muted mb-4">
+									You have not purchased any of our products yet. Start your journey by exploring our available plans!
+								</p>
+								<a asp-controller="Subscription" asp-action="SubscriptionDetails" class="btn btn-lg btn-primary">
+									<i class="bi bi-search me-2"></i> Explore Products
+								</a>
+							</div>
+						</div>
+					</div>
+				</div>
+			}
+		}
+	</div>
+</div>
+
+<div class="main">
+	<div class="green-line"></div>
+</div>
+
+<div class="modal fade" id="renewalModal" tabindex="-1" aria-labelledby="renewalModalLabel" aria-hidden="true">
+	<div class="modal-dialog modal-md modal-dialog-centered modal-sl">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h5 class="modal-title" id="renewalModalLabel">Order Details</h5>
+				<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+			</div>
+			<div class="modal-body">
+				<div class="text-center py-5" id="renewalLoader">
+					<div class="spinner-border text-primary" role="status">
+						<span class="visually-hidden">Loading...</span>
+					</div>
+					<p class="mt-2 text-muted">Fetching order details...</p>
+				</div>
+
+				<div id="renewalContent" style="display: none;">
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+<div class="modal fade" id="upgradeModal" tabindex="-1" aria-hidden="true">
+	<div class="modal-dialog modal-xl">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h5 class="modal-title"> Upgrade Plan</h5>
+				<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+			</div>
+			<div id="modalBodyContent" class="modal-body">
+			</div>
+		</div>
+	</div>
+</div>
+
+<script src="./assests/js/bootstrap.bundle.js"></script>
+@section Scripts {
+
+	<script>
+		function loadUpgradeOptions() {
+			$("#modalBodyContent").html('<div class="text-center p-5"><div class="spinner-border text-primary"></div></div>');
+			$("#upgradeModal").modal('show');
+
+			$.get("@Url.Action("GetUpgradeOptionsPartial", "Subscription")", function (data) {
+				$("#modalBodyContent").html(data);
+
+				// Use event delegation to handle the toggle for dynamically loaded elements
+
+			const initialBody = document.querySelector(
+                    '#modalBodyContent .productPlan_body:not([style*="display:none"])'
+                );
+            if (initialBody) {
+                initialBody.style.display = 'block';
+                // Force reflow
+                void initialBody.offsetWidth;
+                // Add active class
+                initialBody.classList.add('plan-active');
+            }
+				
+		   $(document).off('change', 'input[name="modalSelectedPlan"]')
+					.on('change', 'input[name="modalSelectedPlan"]', function () {
+					const target = $('#m-body-' + $(this).val());
+					const planBodies = $('.productPlan_body');
+
+					// HIDE CURRENT PLAN //
+					planBodies.each(function () {
+						const body = $(this);
+						if (body.hasClass('plan-active')) {
+							body.removeClass('plan-active');
+							body.addClass('plan-hide');
+							setTimeout(function () {
+								body.css('display', 'none');
+								body.removeClass('plan-hide');
+							}, 350);
+						} else {
+							body.css('display', 'none');
+						}
+					});
+					// SHOW SELECTED PLAN //
+					setTimeout(function () {
+						if (target.length) {
+							target.css('display', 'block');
+							// Force reflow
+							target[0].offsetWidth;
+							// Add active animation
+							target.addClass('plan-active');
+						}
+					}, 360);
+
+				});
+
+			});
+		}
+		function calc(val, uid, usersPerPack, costPerPack) {
+			
+			// UI elements
+			const pCountElem = document.getElementById('pCount_' + uid);
+			const uCountElem = document.getElementById('uCount_' + uid);
+			const pCostElem  = document.getElementById('pCost_' + uid);
+			const taxAmtElem = document.getElementById('taxAmt_' + uid); // Tax UI
+
+			// Hidden inputs
+			const hPackElem  = document.getElementById('hPack_' + uid);
+			const hUsersElem = document.getElementById('hUsers_' + uid);
+			const hCostElem  = document.getElementById('hCost_' + uid);
+			const hTaxElem   = document.getElementById('hTax_' + uid);   // Tax Hidden Input
+
+			// Get Tax Percentage from ViewBag
+			const taxPercent = parseFloat('@ViewBag.TaxPercentage');
+
+			let currentPacks = parseInt(pCountElem.innerText);
+			let newPacks = Math.max(1, currentPacks + val);
+
+			// Calculations
+			let totalBaseCost = newPacks * costPerPack;
+			let totalUsers    = newPacks * usersPerPack;
+			let taxAmount     = (totalBaseCost * taxPercent) / 100;
+
+			// 🔹 Update UI
+			pCountElem.innerText = newPacks;
+			uCountElem.innerText = totalUsers;
+			pCostElem.innerText  = totalBaseCost.toFixed(2);
+			taxAmtElem.innerText = taxAmount.toFixed(2); // Display tax with 2 decimals
+
+			// 🔥 Update hidden inputs
+			hPackElem.value  = newPacks;
+			hUsersElem.value = totalUsers;
+			hCostElem.value  = totalBaseCost.toFixed(2);
+			hTaxElem.value   = taxAmount.toFixed(2); // Send tax amount to controller
+		}
+
+
+		// function calc(val, uid, usersPerPack, costPerPack) {
+		// 	// UI elements
+		// 	const pCountElem = document.getElementById('pCount_' + uid);
+		// 	const uCountElem = document.getElementById('uCount_' + uid);
+		// 	const pCostElem  = document.getElementById('pCost_' + uid);
+
+		// 	// Hidden inputs (controller ke liye)
+		// 	const hPackElem  = document.getElementById('hPack_' + uid);
+		// 	const hUsersElem = document.getElementById('hUsers_' + uid);
+		// 	const hCostElem  = document.getElementById('hCost_' + uid);
+
+		// 	// Current packs
+		// 	let currentPacks = parseInt(pCountElem.innerText);
+
+		// 	// Minimum 1 pack
+		// 	let newPacks = Math.max(1, currentPacks + val);
+
+		// 	// Calculations
+		// 	let totalUsers = newPacks * usersPerPack;
+		// 	let totalCost  = newPacks * costPerPack;
+
+		// 	// 🔹 Update UI
+		// 	pCountElem.innerText = newPacks;
+		// 	uCountElem.innerText = totalUsers;
+		// 	pCostElem.innerText  = totalCost;
+
+		// 	// 🔥 Update hidden inputs (MOST IMPORTANT)
+		// 	hPackElem.value  = newPacks;
+		// 	hUsersElem.value = totalUsers;
+		// 	hCostElem.value  = totalCost;
+		// }
+	</script>
+
+	<script>
+		$(document).ready(function () {
+			// Event listener for when the modal is about to be shown
+			$('#renewalModal').on('show.bs.modal', function (event) {
+				const anchor = $(event.relatedTarget);
+				const csorderId = anchor.data('order-id'); // Get the OrderId from the anchor tag
+				const renewalid = anchor.data('renewal-id'); // Get the renewal from the anchor tag
+
+				const modal = $(this);
+				const loader = modal.find('#renewalLoader');
+				const content = modal.find('#renewalContent');
+
+				// 1. Show loader, hide content, and clear previous content
+				content.hide().empty();
+				loader.show();
+				
+				if (csorderId) {
+					$.ajax({
+						url: '@Url.Action("GetSubscriptionDetailsForRenewal", "Subscription")', // <<< UPDATE URL IF NEEDED
+						type: 'GET', // Use GET since you're just retrieving data
+						data: { CsOrderId: csorderId, RenewalId:renewalid },
+						success: function (data) {
+							// 2. Inject the returned Partial View HTML into the content area
+							content.html(data);
+
+							// 3. Hide loader, show content
+							loader.hide();
+							content.show();
+						},
+						error: function (xhr, status, error) {
+							// Handle AJAX error
+							content.html(`
+								<div class="alert alert-danger" role="alert">
+									Failed to load order details (ID: ${orderId}). Please try again.
+									<p class="small mt-2">Error: ${status} - ${error}</p>
+								</div>
+							`);
+							loader.hide();
+							content.show();
+							console.error("AJAX Error:", error);
+						}
+					});
+				} else {
+					// Handle case where OrderId is missing
+					content.html('<div class="alert alert-warning" role="alert">Order ID not found. Cannot load details.</div>');
+					loader.hide();
+					content.show();
+				}
+			});
+		});
+	</script>
+
+}

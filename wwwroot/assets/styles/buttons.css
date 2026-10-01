@@ -1,0 +1,292 @@
+/* ---------- Buttons ---------- */
+.ct-btn__dark,
+.ct-btn__primary,
+.ct-btn__white {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.375rem .75rem;
+  border: 1px solid transparent;
+  border-radius: 4px;
+  text-decoration: none;
+  font-size: 16px;
+  font-weight: 500;
+  line-height: 1.5;
+  cursor: pointer;
+  transition: 0.5s;
+}
+
+.ct-btn__dark.btn-lg,
+.ct-btn__primary.btn-lg,
+.ct-btn__white.btn-lg {
+  padding: 0.5rem 1rem;
+  font-size: 1.25rem;
+}
+
+.ct-btn__dark {
+  background: var(--ct-dark);
+  color: var(--ct-white);
+  border-color: var(--ct-dark);
+  transition: 0.5s;
+}
+
+.ct-btn__dark:hover,
+.ct-btn__dark:focus {
+  background: var(--ct-white);
+  border-color: var(--ct-dark);
+  color: var(--ct-dark);
+}
+
+
+.ct-btn__primary {
+  background: var(--ct-primary);
+  color: var(--ct-white);
+  border-color: var(--ct-primary);
+  transition: 0.5s;
+}
+
+.ct-btn__primary:hover,
+.ct-btn__primary:focus {
+  background: var(--ct-white);
+  border-color: var(--ct-primary);
+  color: var(--ct-primary);
+}
+
+.ct-btn__white {
+  background: var(--ct-white);
+  color: var(--ct-dark);
+  border-color: var(--ct-white);
+  transition: 0.5s;
+}
+
+.ct-btn__white:hover,
+.ct-btn__white:focus {
+  background: var(--ct-dark);
+  border-color: var(--ct-white);
+  color: var(--ct-white);
+}
+
+
+.ct-button__white,
+.ct-button__dark,
+.ct-button__outline,
+.ct-button__white__outline {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  padding: 1rem 3rem;
+  font-size: 1.25rem;
+  font-weight: 500;
+  text-decoration: none;
+  border-radius: 12px;
+  transition: all .3s ease;
+  text-align: center;
+}
+
+.ct-button__white {
+  background: #fff;
+  color: #000;
+  border: 1px solid #fff;
+}
+
+.ct-button__dark {
+  background: #000;
+  color: #fff;
+  border: 1px solid #000;
+}
+
+.ct-button__white:hover,
+.ct-button__dark:hover {
+  background: var(--ct-primary);
+  border-color: var(--ct-primary);
+  color: #fff;
+  transform: translateY(-2px);
+}
+
+.ct-button__white:hover .bi,
+.ct-button__dark:hover .bi {
+  color: #fff;
+}
+
+/* Outline Button */
+.ct-button__outline {
+  background: #fff;
+  color: #000;
+  border: 1px solid #000;
+}
+
+.ct-button__outline:hover {
+  background: #000;
+  color: #fff;
+  transform: translateY(-2px);
+}
+
+.ct-button__white__outline {
+  background: transparent;
+  color: #fff;
+  border-color: rgba(255, 255, 255, 0.25);
+  border-color: rgba(255, 255, 255, 0.25);
+  border-width: 1px;
+  border-style: solid;
+}
+
+.ct-button__white__outline.sm {
+  font-weight: 500;
+  font-size: 1rem;
+  display: inline-block;
+  width: 100%;
+}
+
+.ct-button__white__outline:hover {
+  background: #fff;
+  color: #000;
+  border: 1px solid #fff;
+  transform: translateY(-2px);
+}
+
+
+.ct-btn__darkTrans {
+  text-decoration: none;
+  font-weight: 600;
+  background-color: transparent;
+  border-radius: var(--ct-radius-md);
+  display: inline-block;
+  padding: 1rem 3rem;
+  font-size: var(--ct-fs-18);
+  color: var(--ct-primary);
+  border: 2px solid var(--ct-primary);
+  transition: all 0.5s ease-out;
+  position: relative;
+  z-index: 2;
+}
+
+.ct-btn__darkTrans::before {
+  content: "";
+  height: 100%;
+  width: 0;
+  background-color: var(--ct-primary);
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  right: 0;
+  z-index: -1;
+  transition: all 0.45s ease-out;
+  border-radius: var(--ct-radius-sm);
+}
+
+.ct-btn__darkTrans:hover {
+  color: var(--ct-white);
+}
+
+.ct-btn__darkTrans:hover::before {
+  width: 100%;
+  left: 0;
+}
+
+
+
+
+/* =========================
+   COMMON BASE
+========================= */
+.ct-arrow__white,
+.ct-arrow__white_border,
+.ct-arrow__dark {
+  position: relative;
+  overflow: hidden;
+  transition: all 0.45s cubic-bezier(0.4, 0, 0.2, 1);
+
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+
+  padding: 1rem 1.5rem;
+  border-radius: 50rem;
+  text-decoration: none;
+  font-weight: 600;
+
+  font-size: 16px;
+}
+
+/* Shine Effect */
+.ct-arrow__white::before,
+.ct-arrow__white_border::before,
+.ct-arrow__dark::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: -80%;
+  width: 60%;
+  height: 100%;
+  background: linear-gradient(120deg,
+      transparent,
+      rgba(255, 255, 255, 0.35),
+      transparent);
+  transform: skewX(-25deg);
+  transition: left 0.7s ease;
+}
+
+.ct-arrow__white:hover::before,
+.ct-arrow__white_border:hover::before,
+.ct-arrow__dark:hover::before {
+  left: 130%;
+}
+
+/* Arrow Animation */
+.ct-arrow__white i,
+.ct-arrow__white_border i,
+.ct-arrow__dark i {
+  transition: transform .4s ease;
+}
+
+.ct-arrow__white:hover i,
+.ct-arrow__white_border:hover i,
+.ct-arrow__dark:hover i {
+  transform: translateX(4px);
+}
+
+/* =========================
+   WHITE BUTTON
+========================= */
+.ct-arrow__white {
+  background: #fff;
+  color: #000;
+  border: 1px solid #fff;
+}
+
+.ct-arrow__white:hover {
+  background: #000;
+  color: #fff;
+  border-color: #000;
+}
+
+/* =========================
+   WHITE BORDER BUTTON
+========================= */
+.ct-arrow__white_border {
+  background: #fff;
+  color: #000;
+  border: 1px solid #000;
+}
+
+.ct-arrow__white_border:hover {
+  background: #000;
+  color: #fff;
+  border-color: #000;
+}
+
+/* =========================
+   DARK BUTTON
+========================= */
+.ct-arrow__dark {
+  background: #000;
+  color: #fff;
+  border: 1px solid #000;
+}
+
+.ct-arrow__dark:hover {
+  background: var(--ct-primary);
+  color: #fff;
+  border-color: var(--ct-primary);
+}

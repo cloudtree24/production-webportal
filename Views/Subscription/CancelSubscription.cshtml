@@ -1,0 +1,281 @@
+﻿@model HCMPortal.ViewModel.CustomerSubscriptionDetailsViewModel
+
+@{
+    Layout = "_customerDashboardLayout";
+    <script src="~/assets/js/jquery.min.js"></script>
+    <script src="~/assets/js/vanilla-toast.min.js"></script>
+}
+
+<!-- Breadcrumb -->
+<section class="breadcumnd__banner">
+    <div class="container">
+        <div class="d-flex justify-content-start gap-4">
+            <h2 class="bread__title">Cancel</h2>
+            <ul class="breadcumnd__link">
+                <li><a asp-controller="CustomerManagement" asp-action="PortalDashboard">Dashboard</a></li>
+                <li><i class="bi bi-chevron-right"></i></li>
+                <li class="active"><a href="javascript:void(0)">Cancel Plan</a></li>
+            </ul>
+        </div>
+    </div>
+</section>
+<div id="maindiv">
+    <div class="section_gap_large">
+        <div class="container">
+            <div class="row justify-content-center">
+                <div class="col-md-8">
+                    <div class="card box">
+                        <div class="card-body">
+
+                            <div class="d-flex flex-column align-items-center mb-4">
+                                <div class="avatar-md mb-3">
+                                    <div class="avatar-title rounded-circle bg-light border border-danger">
+                                        <i class="bi bi-exclamation-triangle text-danger" style="font-size: 1.5rem;"></i>
+                                    </div>
+                                </div>
+                                <div class="text-center">
+                                    <h4 class="fw-bold mb-1">Cancel Your Plan</h4>
+                                    <p class="text-muted mb-0">Cancelling your plan will end your access to all features.</p>
+                                </div>
+                            </div>
+
+                            <form id="cancelForm">
+                                @* Hidden fields *@
+                                <input type="hidden" asp-for="Csid" />
+                                <input type="hidden" asp-for="MembershipId" />
+                                @*  <input type="hidden" asp-for="SubscriptionAmount" />
+                            <input type="hidden" asp-for="SubscriptionStartDate" />
+                            <input type="hidden" asp-for="NextrenewalDate" />
+                            <input type="hidden" asp-for="PurchaseDate" />
+                            <input type="hidden" asp-for="BillingName" /> *@
+
+                                <div class="mb-4">
+                                    <div class="form-check mb-2">
+                                        <input class="form-check-input" type="checkbox" id="reasonOther">
+
+                                        <label class="form-check-label text-muted" for="reasonOther">
+                                            I agree to the
+                                            <a href="javascript:void(0)" onclick="showPrivacyModal()" class="text-danger text-decoration-none">
+                                                Terms & Conditions
+                                            </a>
+                                        </label>@* <span class="text-danger">*</span> *@
+                                    </div>
+
+                                    <small id="checkboxError" class="text-danger d-none">
+                                        ⚠ You must agree to the Terms & Conditions to proceed. Note: Subscription payments are non-refundable.
+
+                                    </small>
+                                </div>
+
+                                <div class="mb-4">
+                                    <label class="form-label fw-semibold">Cancellation Reason</label><span class="text-danger">*</span>
+                                    <textarea class="form-control" id="generalReason" name="CancelReason" rows="4" placeholder="Share reason"></textarea>
+                                    <small id="reasonError" class="text-danger d-none">⚠ Please provide a cancellation reason before proceeding.</small>
+                                </div>
+
+                                <div class="d-flex gap-2">
+                                    <button type="submit" class="btn btn-primary px-4" id="cancelBtn">
+                                        Proceed to Cancel
+                                    </button>
+                                    <a asp-controller="Subscription" asp-action="MySubscriptionDetails"
+                                       class="btn btn-outline-primary px-4">Keep Subscription</a>
+                                </div>
+                            </form>
+
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="cancel-success-message d-none mt-5">
+    <div class="section_gap_large">
+        <div class="container">
+            <div class="row justify-content-center">
+                <div class="col-md-8">
+
+                    <div class="card shadow border-0" style="border-radius:12px;">
+                        <div class="card-body d-flex flex-column justify-content-center align-items-center" style="height:404px;">
+
+                            <!-- Icon -->
+                            <div class="mb-3">
+                                <div style="width:80px; height:80px; border-radius:50%; background:#e8f5e9; display:flex; align-items:center; justify-content:center; box-shadow:0 0 8px rgba(0,0,0,0.1);">
+                                    <i class="bi bi-check2-circle" style="font-size:40px; color:#28a745;"></i>
+                                </div>
+                            </div>
+
+                            <!-- Title -->
+                            <h4 class="fw-bold mb-2" style="color:#333;">
+                                Cancellation Request Submitted
+                            </h4>
+
+                            <!-- Subtitle Text -->
+                            <p style="max-width:400px; font-size:17px; color:#555;">
+                                Your cancellation request is in progress. You will be notified soon.
+                            </p>
+
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<!-- Success Modal -->
+<div class="modal fade" id="cancelSuccessModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content border-success">
+            <div class="modal-header">
+                <h5 class="modal-title" style="text-align:center;">Cancellation Request Submitted</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                ✅ Request submitted. We will process it shortly.
+            </div>
+
+            @* <div class="modal-footer">
+                <button type="button" class="btn btn-primary" data-bs-dismiss="modal">OK</button>
+            </div> *@
+        </div>
+    </div>
+</div>
+
+<!-- Privacy & Policy Modal -->
+<div class="modal fade" id="privacyModal" tabindex="-1" aria-labelledby="privacyLabel" aria-hidden="true">
+    <div class="modal-dialog modal-xl modal-dialog-scrollable">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="privacyLabel">Privacy Policy</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body p-0">                <!-- iFrame -->
+                <iframe id="privacyFrame"  src=""  style="width:100%; height:80vh; border:0; display:none;">   </iframe>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+<script>
+    $("#cancelForm").submit(function (e) {
+        e.preventDefault();
+
+        let valid = true;
+
+        // Checkbox validation
+        if (!$("#reasonOther").is(":checked")) {
+            $("#checkboxError").removeClass("d-none");
+            valid = false;
+        } else {
+            $("#checkboxError").addClass("d-none");
+        }
+
+        // Reason validation
+        let reason = $("#generalReason").val().trim();
+        if (reason === "") {
+            $("#reasonError").removeClass("d-none");
+            valid = false;
+        } else {
+            $("#reasonError").addClass("d-none");
+        }
+
+        if (!valid) return;
+
+        $.ajax({
+            url: "/Subscription/CancelSubscription",
+            type: "POST",
+            data: $(this).serialize(),
+            success: function (res) {
+
+                if (res.success) {
+
+                    // Reset form data
+                    $("#cancelForm")[0].reset();
+
+                    // Hide the main cancel form section
+                    $("#maindiv").hide();
+
+                    // Show success message instantly
+                    $(".cancel-success-message").removeClass("d-none");
+
+                    // Open the modal
+                    let modal = new bootstrap.Modal(document.getElementById('cancelSuccessModal'));
+                    modal.show();
+
+                } else {
+                    alert(res.message || "Something went wrong.");
+                }
+            },
+            error: function () {
+                alert("Server error. Please try again.");
+            }
+        });
+    });
+</script>
+
+
+
+@* <script>
+    $("#cancelForm").submit(function (e) {
+        e.preventDefault();
+
+        var isValid = true;
+
+        // Checkbox validation
+        if (!$("#reasonOther").is(":checked")) {
+            $("#checkboxError").removeClass("d-none");
+            isValid = false;
+        } else {
+            $("#checkboxError").addClass("d-none");
+        }
+
+        // Cancellation reason validation
+        var reason = $("#generalReason").val().trim();
+        if (reason === "") {
+            $("#reasonError").removeClass("d-none");
+            isValid = false;
+        } else {
+            $("#reasonError").addClass("d-none");
+        }
+        if (!isValid) return;    
+        $.ajax({
+            url: "/Subscription/CancelSubscription",
+            type: "POST",
+            data: $(this).serialize(),
+            success: function (res) {
+                if (res.success) {
+                    $("#cancelSuccessModal").modal("show");
+                    $("#cancelForm")[0].reset();
+                    setTimeout(function () {
+                        window.location.href = "/CustomerManagement/PortalDashboard";                       
+                    }, 6000);
+                } else {
+                    alert(res.message || "Something went wrong. Please try again.");
+                }
+            }
+        });
+    });
+</script>
+ *@
+<script>
+    function showPrivacyModal() {
+        let url = "https://www.thecloudtree.ai/privacy-policy";
+
+        let iframe = document.getElementById("privacyFrame");
+        iframe.style.display = "none";
+        iframe.src = "";
+        iframe.src = url;
+        iframe.onload = function () {
+            iframe.style.display = "block";
+        };
+        var modal = new bootstrap.Modal(document.getElementById('privacyModal'));
+        modal.show();
+    }
+</script>

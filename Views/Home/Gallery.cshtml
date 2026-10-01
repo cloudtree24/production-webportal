@@ -1,0 +1,370 @@
+﻿@model List<HCMPortal.ViewModel.GalleryMasterViewModel>
+
+@{
+    Layout = "_LayoutWithoutEnquiryForm";
+    string baseUrl = ViewBag.baseurlforimg as string ?? "https://admin.anantatek.com/";
+}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="author" content="thecloudtree" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <meta name="keywords" content="Get top-notch HR and payroll management software" />
+    <meta name="description" content="HR and payroll management software in India at Thecloudtree.ai" />
+
+    <title>GALLERY | thecloudtree</title>
+    <meta property="og:title" content="GALLERY | thecloudtree" />
+    <meta property="og:url" content="https://hcmportal.anantatek.com/gallery.html" />
+    <meta property="og:site_name" content="thecloudtree" />
+    <meta property="og:type" content="website" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="GALLERY | thecloudtree" />
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+    <style>
+        /* Video aur Image ko bada aur clean dikhane ke liye */
+        .gallery_imgVideo {
+            width: 100%;
+            border-radius: 10px;
+            object-fit: cover;
+            min-height: 220px;
+            border: none;
+        }
+
+        /* CC button ko display none karne ka logic (agar custom element ho) */
+        .ytp-subtitles-button, .cc-button, [aria-label*="subtitles"], [aria-label*="captions"] {
+            display: none !important;
+        }
+
+        /* Search Box styling */
+        #gallerySearch {
+            border-radius: 30px;
+            padding: 12px 25px;
+            border: 2px solid #e1e1e1;
+            margin-top: 20px;
+            transition: 0.3s;
+        }
+
+            #gallerySearch:focus {
+                border-color: #007bff;
+                box-shadow: 0 0 8px rgba(0,123,255,0.2);
+                outline: none;
+            }
+    </style>
+</head>
+
+<body>
+
+    @* <div class="ct-inner_banner ct-gray__bg">
+        <div class="container">
+            <div class="row align-items-center g-1">
+                <div class="col-md-5 wow animate__animated animate__fadeInLeft" data-wow-delay="0.1s">
+                    <div class=" ct-inner__content mb-5">
+                        <h2 class="ct-fs-90 fw-bold">The Next Big Things</h2>
+                    </div>
+                </div>
+                <div class="col-md-7 wow animate__animated animate__fadeInRight" data-wow-delay="0.5s">
+                    <img src="/assets/images/bg/job_bg.png" class="img-fluid banner-img" alt="Career">
+                </div>
+            </div>
+        </div>
+    </div> *@
+
+    <div class="clearfix"></div>
+
+    <div class="ct-padding__120">
+
+        <!-- HEADING -->
+        <div class="ct-heading__section text-center mb-5">
+
+            <h2 class="ct-fs-48">Moments & Milestones</h2>
+
+            <div class="bar"></div>
+
+            <div class="container mt-2">
+                <div class="row justify-content-center">
+                    <div class="col-md-6">
+
+                        <input type="text"
+                               id="gallerySearch"
+                               class="form-control"
+                               placeholder="Search milestones...">
+
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+
+        <!-- GALLERY -->
+        <div class="container">
+
+            @if (Model != null && Model.Count > 0)
+            {
+                <div class="row justify-content-center g-5"
+                     id="galleryContainer">
+
+                    @foreach (var item in Model)
+                    {
+                        string path = item.AttachmentPath ?? "";
+
+                        bool isYoutube =
+                        path.Contains("youtube.com") ||
+                        path.Contains("youtu.be");
+
+                        string videoId = "";
+
+                        string modalId = "ct-gallery-" + item.GalleryId;
+
+                        if (isYoutube)
+                        {
+                            try
+                            {
+                                if (path.Contains("v="))
+                                {
+                                    videoId = System.Web.HttpUtility
+                                    .ParseQueryString(new Uri(path).Query)["v"];
+                                }
+                                else if (path.Contains("youtu.be"))
+                                {
+                                    videoId = path.Split('/').Last().Split('?').First();
+                                }
+                                else if (path.Contains("embed/"))
+                                {
+                                    videoId = path.Split(new[] { "embed/" }, StringSplitOptions.None)
+                                    .Last()
+                                    .Split('?')
+                                    .First();
+                                }
+                            }
+                            catch { }
+                        }
+
+                        string fullImagePath =
+                        (path.StartsWith("http") || string.IsNullOrEmpty(path))
+                        ? path
+                        : baseUrl + path;
+
+                        <div class="col-12 col-md-4 mb-4 gallery-item">
+
+                            <div class="border-0 shadow-sm bg-white h-100 overflow-hidden ct-radius__lg d-flex flex-column">
+
+                                <!-- IMAGE / VIDEO -->
+                                <div class="position-relative overflow-hidden group">
+
+                                    @if (isYoutube && !string.IsNullOrEmpty(videoId))
+                                    {
+                                        <iframe src="https://www.youtube.com/embed/@(videoId)?rel=0"
+                                                class="gallery_imgVideo w-100"
+                                                style="height:220px;"
+                                                allowfullscreen>
+                                        </iframe>
+                                    }
+                                    else
+                                    {
+                                        <img src="@(string.IsNullOrEmpty(fullImagePath)
+                                                                                     ? "/assets/images/partners/upali_mam_gallery.avif"
+                                                                                     : fullImagePath)"
+                                 alt="@item.Title"
+                                 class="img-fluid w-100 ct-radius__md gallery_imgVideo"
+                                 style="height:220px; object-fit:cover;"
+                                 onerror="this.src='/images/partners/upali_mam_gallery.avif';">
+                                                        }
+
+                            </div>
+
+                            <!-- CONTENT -->
+                            <div class="p-4 bg-white">
+
+                                <div class="content-text">
+
+                                    <span class="small text-muted mb-2 d-block">
+                                        Wed, Nov 02 | Singapore
+                                    </span>
+
+                                    <h3 class="ct-fs-24 fw-bold mb-3 text-dark">
+                                        @item.Title
+                                    </h3>
+
+                                    <p class="text-muted mb-4 small one-line-ellipsis">
+                                        @(string.IsNullOrEmpty(item.Description)
+                                                                            ? "No description provided."
+                                                                            : item.Description)
+                                </p>
+
+                                        <!-- BUTTON -->
+                                        <a href="#"
+                                           class="ct-btn__darkTrans d-inline-flex align-items-center gap-2 fw-semibold"
+                                           data-bs-toggle="modal"
+                                           data-bs-target="#@modalId">
+                                            Explore <span>→</span>
+
+                                        </a>
+
+                                    </div>
+
+                                </div>
+
+                            </div>
+
+                        </div>
+                                }
+
+                </div>
+            }
+
+        </div>
+
+    </div>
+
+
+
+    <!-- ALL MODALS -->
+    @if (Model != null && Model.Count > 0)
+    {
+        @foreach (var item in Model)
+        {
+            string path = item.AttachmentPath ?? "";
+
+            bool isYoutube =
+            path.Contains("youtube.com") ||
+            path.Contains("youtu.be");
+
+            string videoId = "";
+
+            string modalId = "ct-gallery-" + item.GalleryId;
+
+            if (isYoutube)
+            {
+                try
+                {
+                    if (path.Contains("v="))
+                    {
+                        videoId = System.Web.HttpUtility
+                        .ParseQueryString(new Uri(path).Query)["v"];
+                    }
+                    else if (path.Contains("youtu.be"))
+                    {
+                        videoId = path.Split('/').Last().Split('?').First();
+                    }
+                    else if (path.Contains("embed/"))
+                    {
+                        videoId = path.Split(new[] { "embed/" }, StringSplitOptions.None)
+                        .Last()
+                        .Split('?')
+                        .First();
+                    }
+                }
+                catch { }
+            }
+
+            string fullImagePath =
+            (path.StartsWith("http") || string.IsNullOrEmpty(path))
+            ? path
+            : baseUrl + path;
+
+            <div class="modal fade"
+                 id="@modalId"
+                 tabindex="-1"
+                 aria-hidden="true">
+
+                <div class="modal-dialog modal-lg modal-dialog-centered">
+
+                    <div class="modal-content border-0 overflow-hidden ct-radius__lg shadow-lg">
+
+
+                    <!-- MODAL BODY -->
+                    <div class="modal-body p-4 p-md-5 bg-white">
+                        <div class="row">
+                            <div class="col-md-6">
+                                    <div class="position-relative w-100">
+
+                                        @if (isYoutube && !string.IsNullOrEmpty(videoId))
+                                        {
+                                            <iframe src="https://www.youtube.com/embed/@(videoId)?rel=0"
+                                                    class="w-100"
+                                                    style="height:500px;"
+                                                    allowfullscreen>
+                                            </iframe>
+                                        }
+                                        else
+                                        {
+                                            <img src="@(string.IsNullOrEmpty(fullImagePath)
+                                                                                                                      ? "/assets/images/partners/upali_mam_gallery.avif"
+                                                                                                                      : fullImagePath)"
+                                     alt="@item.Title"
+                                     class="w-100 h-100 d-block">
+                                                                }
+
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-4">
+                                    <span class="text-uppercase tracking-wider small fw-bold text-success mb-1 d-inline-block">
+                                        Event Showcase
+                                    </span>
+                                    <h2 class="ct-fs-30 fw-bold text-dark mb-2">
+                                        @item.Title
+                                    </h2>
+                                </div>
+
+                                <hr class="text-muted my-4 opacity-25">
+
+                                <div class="row g-4">
+                                    <div class="col-md-12">
+                                        <h5 class="text-dark fw-bold small text-uppercase mb-2 tracking-wide">
+                                            About the Event
+                                        </h5>
+                                        <p class="text-secondary small line-height-md mb-0">
+                                            @(string.IsNullOrEmpty(item.Description)
+                                                                                    ? "No description available."
+                                                                                    : item.Description)
+                                    </p>
+                                </div>
+                            </div>
+                            </div>
+                        <!-- CLOSE BUTTON -->
+                        <button type="button"
+                                class="btn-close position-absolute top-0 end-0 m-3 p-2 bg-dark rounded-circle"
+                                data-bs-dismiss="modal"
+                                aria-label="Close"
+                                style="z-index:2;">
+                        </button>
+                        </div>                        
+                        </div>
+
+                        <!-- FOOTER -->
+                        <div class="modal-footer border-0 p-4 bg-light d-flex justify-content-end">
+                            <button type="button"
+                                    class="btn btn-outline-dark btn-sm rounded-pill px-4"
+                                    data-bs-dismiss="modal">Close Window</button>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        }
+    }
+
+    <div class="clearfix"></div>
+
+    <script>
+        $(document).ready(function () {
+            $("#gallerySearch").on("keyup", function () {
+                var value = $(this).val().toLowerCase();
+                $("#galleryContainer .gallery-item").filter(function () {
+                    var titleText = $(this).find(".item-title").text().toLowerCase();
+                    var descText = $(this).find(".item-desc").text().toLowerCase();
+                    $(this).toggle(titleText.indexOf(value) > -1 || descText.indexOf(value) > -1);
+                });
+            });
+        });
+    </script>
+
+</body>
+</html>

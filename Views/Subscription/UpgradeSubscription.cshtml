@@ -1,0 +1,1295 @@
+﻿@model HCMPortal.ViewModel.CustomerSubscriptionDetailsViewModel
+@{
+    Layout = "_customerDashboardLayout";
+    <script src="~/assets/js/jquery.min.js"></script>
+    <script src="~/assets/js/vanilla-toast.min.js"></script>
+
+}
+<style>
+    .step-content {
+        display: none;
+    }
+
+        .step-content.active {
+            display: block;
+        }
+
+    .button-group {
+        display: flex;
+        gap: 10px;
+        margin-top: 20px;
+    }
+</style>
+@{
+    DateTime startDate = Model.SubscriptionStartDate != DateTime.MinValue ? Model.SubscriptionStartDate: Model.PurchaseDate;
+    DateTime endDate = Model.NextrenewalDate != DateTime.MinValue? Model.NextrenewalDate : startDate.AddMonths(1);
+    string jsStart = startDate.ToString("yyyy-MM-ddTHH:mm:ss");
+    string jsEnd = endDate.ToString("yyyy-MM-ddTHH:mm:ss");
+    double oldPlanAmount = Model.SubscriptionAmount;
+}
+<!-- Breadcrumb -->
+<section class="breadcumnd__banner">
+    <!--Container-->
+    <div class="container">
+        <div class="d-flex justify-content-start gap-4">
+            <h2 class="bread__title">
+                Upgrade
+            </h2>
+            <ul class="breadcumnd__link">
+                <li>
+                    <a asp-controller="CustomerManagement" asp-action="PortalDashboard">Dashboard</a>
+                </li>
+                <li><i class="bi bi-chevron-right"></i></li>
+                <li class="active">
+                    <a href="javascript:void(0)">Upgrade</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+    <!--Container-->
+</section>
+
+<div class="section_gap_large">
+    <div class="container">
+
+        <div class="row">
+            <div class="col-md-4">
+                <div class="sidebar">
+                    <div class="step active rounded mb-2" id="step-1">
+                        <i class="bi-arrow-right-circle me-2"></i> Details
+                    </div>
+                    <div class="step mb-2" id="step-2">
+                        <i class="bi-arrow-right-circle me-2"></i> Order Details
+                    </div>
+                    @* <div class="step mb-2" id="step-3">
+						<i class="bi-arrow-right-circle me-2"></i> Confirm
+					</div> *@
+                    <div class="row mt-3">
+                        <div class="col-12" id="subscription-details">
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="col-md-8">
+                <div class="card shadow border-0">
+                    <div class="card-body p-4">
+
+                        <!-- Step 1: Plan Details (Active Plan + Form) -->
+                        <div class="step-content active" id="content-1">
+                            @{
+
+                                bool isSubscriptionActive = (Model.NextrenewalDate.Date > DateTime.Now.Date);
+                                if (isSubscriptionActive)
+                                {
+                                    <div class="d-flex justify-content-between align-items-center mb-2">
+                                        <h4>Active Plan</h4>
+                                        <!-- <a href="#" id="change-plan">Change Plan</a> -->
+                                    </div>
+
+                                    <div class="active-plan mb-4">
+
+                                        <div class="d-flex justify-content-between">
+                                            <div class="d-flex flex-column">
+                                                <p class="mb-0">
+                                                    <!-- <i class="bi bi-star-fill me-1"></i>---->
+                                                    <span class="text-muted">Plan</span>
+                                                </p>
+                                                <p class="mb-0">@Model.SusbcriptionName (₹@Model.SubscriptionAmount/@Model.BillingName)</p>
+                                            </div>
+                                            <div class="d-flex flex-column">
+                                                <p class="mb-0">
+                                                    <!-- <i class="bi bi-calendar me-1"></i>-->
+                                                    <span class="text-muted">Renewal Date</span>
+                                                </p>
+                                                <p class="mb-0">@Model.NextrenewalDate.ToString("MMMM dd, yyyy")</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                }
+                                else
+                                {
+                                    <div class="d-flex justify-content-between align-items-center mb-2">
+                                        <h4>Last Active Plan</h4>
+                                    </div>
+
+                                    <div class="active-plan mb-4">
+
+                                        <div class="d-flex justify-content-between">
+                                            <div class="d-flex flex-column">
+                                                <p class="mb-0">
+                                                    <!-- <i class="bi bi-star-fill me-1"></i>---->
+                                                    <span class="text-muted">Plan</span>
+                                                </p>
+                                                <p class="mb-0">@Model.SusbcriptionName (₹@Model.SubscriptionAmount/@Model.BillingName)</p>
+                                            </div>
+                                            <div class="d-flex flex-column">
+                                                <p class="mb-0">
+                                                    <!-- <i class="bi bi-calendar me-1"></i>-->
+                                                    <span class="text-muted">Expired On</span>
+                                                </p>
+                                                <p class="mb-0">@Model.NextrenewalDate.ToString("MMMM dd, yyyy")</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                }
+
+                            }
+
+                            <div class="card" id="planFormCard">
+                                <div class="card-body">
+                                    <form id="checkoutForm">
+                                        <div class="row g-3">
+                                            <!-- Plan Selection -->
+                                            <div class="col-6">
+                                                <label for="plan" class="form-label">Select Plan<span class="text-danger">*</span></label>
+                                                <select class="form-select" id="plan" asp-items=@(new SelectList(ViewBag.SubscriptionList, "Sid", "SubscriptionName")) required>
+                                                    <option value="" selected>Select a plan</option>
+
+
+                                                </select>
+                                                <div id="plan-warning" class="text-danger medium mt-1"></div>
+                                            </div>
+                                            <div class="col-6">
+                                                <label for="billing" class="form-label">Select Billing Cycle<span class="text-danger">*</span></label>
+                                                <select class="form-select" id="billing" asp-items=@(new SelectList(ViewBag.PlanList, "PlanId", "PlanName")) required>
+                                                    <option value="" selected>Select a Billing cycle</option>
+
+
+                                                </select>
+                                                <div id="billing-warning" class="text-danger medium mt-1"></div>
+                                            </div>
+
+                                           
+                                            <!-- Hidden Active Plan block -->
+                                            <div class="col-md-12">
+                                                <div class="plan d-none" id="selectedPlanBox">
+                                                    <div class="d-flex justify-content-between">
+
+                                                        <div class="d-flex flex-column">
+                                                            <p class="mb-0 text-muted">Plan</p>
+                                                            <p class="mb-0" id="selectedPlanText"></p>
+                                                        </div>
+
+                                                        <div class="d-flex flex-column">
+                                                            <p class="mb-0 text-muted">Billing Cycle</p>
+                                                            <p class="mb-0" id="">Monthly</p>
+                                                        </div>
+
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <!-- Name -->
+                                            <div class="col-md-6">
+                                                <label for="fullName" class="form-label">Full Name</label>
+                                                <input type="text" class="form-control" id="fullName" placeholder="Jayanta Samal" value="@Model.ContactPersonName" required readonly>
+                                            </div>
+                                            <!-- Email -->
+                                            <div class="col-md-6">
+                                                <label for="email" class="form-label">Email Address</label>
+                                                <input type="email" class="form-control" id="email" placeholder="example@company.com" value="@Model.EmailAddress" required readonly>
+                                            </div>
+                                            <!-- Company Name -->
+                                            <div class="col-md-6">
+                                                <label for="company" class="form-label">Company Name</label>
+                                                <input type="text" class="form-control" id="company" placeholder="Your Company" value="@Model.CompanyName" required readonly>
+                                            </div>
+                                            <!-- Billing Address -->
+                                            <div class="col-md-6">
+                                                <label for="address" class="form-label">Billing Address<span class="text-danger">*</span></label>
+                                                <input type="text" class="form-control" id="address" placeholder="123 Main St" value="@Model.Address" required>
+                                                <div id="address-warning" class="text-danger medium mt-1"></div>
+                                            </div>
+                                            <!-- City -->
+                                            <div class="col-md-6">
+                                                <label for="city" class="form-label">City<span class="text-danger">*</span></label>
+                                                <input type="text" class="form-control" id="city" placeholder="City" value="@Model.City" required>
+                                                <div id="city-warning" class="text-danger medium mt-1"></div>
+                                            </div>
+                                            <!-- Postal Code -->
+                                            <div class="col-md-6">
+                                                <label for="postalCode" class="form-label">Postal Code<span class="text-danger">*</span></label>
+                                                <input type="text"
+                                                       class="form-control"
+                                                       id="postalCode"
+                                                       placeholder="123456"
+                                                       value="@Model.PostalCode"
+                                                       required
+                                                       pattern="^\d{6}$" maxlength="6">
+                                                <div id="postalCode-warning" class="text-danger medium mt-1"></div>
+                                            </div>
+                                        </div>
+                                        <div class="d-flex justify-content-between mt-4">
+                                            <button type="button" class="btn btn-primary btn-lg" onclick="showStep(2)">
+                                                Proceed to Order
+                                                Details
+                                            </button>
+                                            <a type="button" class="btn btn btn-outline-primary btn-lg" asp-controller="Subscription" asp-action="MySubscriptionDetails">Cancel</a>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        
+                        </div>
+
+                        <!-- Step 2: Order Summary -->
+                        <div class="step-content" id="content-2">
+
+                            <div class="d-flex justify-content-between align-items-center mb-2">
+                                <h4>Order Details</h4>
+                            </div>
+
+                            <div class="card">
+                                <div class="card-body">
+                                    <div class="order-summary">
+
+                                        <div class="row">
+                                            <div class="col-md-6">
+
+                                                @* <div class="d-flex flex-column">
+											<p class="text-muted mb-0">Plan</p>
+											<p id="summaryPlan"></p>
+										</div> *@
+
+                                                <div class="d-flex flex-column">
+                                                    <p class="text-muted mb-0">Full Name</p>
+                                                    <p id="summaryName"></p>
+                                                </div>
+
+                                                <div class="d-flex flex-column">
+                                                    <p class="text-muted mb-0">Email</p>
+                                                    <p id="summaryEmail"></p>
+                                                </div>
+
+                                            </div>
+                                            <div class="col-md-6">
+
+                                                <div class="d-flex flex-column">
+                                                    <p class="text-muted mb-0">Company</p>
+                                                    <p id="summaryCompany"></p>
+                                                </div>
+
+                                                <div class="d-flex flex-column">
+                                                    <p class="text-muted mb-0">Billing Address</p>
+                                                    <p id="summaryAddress"></p>
+                                                </div>
+
+
+                                            </div>
+                                            <div class="row">
+                                                @* @{
+											decimal baseAmount = Model?.SelectedSubscription?.Amount ?? 0;
+											decimal gstPercentage = Convert.ToDecimal(Model?.TaxPercentage ?? 0);
+
+											decimal cgstPercentage = 0;
+											decimal sgstPercentage = 0;
+											decimal igstPercentage = 0;
+
+											decimal gstAmount = (baseAmount * gstPercentage) / 100;
+											decimal totalAmount = baseAmount + gstAmount;
+										} *@
+                                                <input type="hidden" id="pid" value="@Model.bid" />
+                                                <input type="hidden" id="sid" value="@Model.sid" />
+                                                <input type="hidden" id="companyType" value="@Model.CompanyType" />
+                                                <div class="card mb-3 rounded-custom">
+                                                    <div class="card-body">
+                                                        <div class="d-flex flex-column">
+                                                            <div class="d-flex justify-content-between mb-2">
+                                                                <p class="text-muted mb-0">Plan</p>
+                                                                <p id="summaryPlan"></p>
+                                                            </div>
+
+                                                            <div class="d-flex justify-content-between mb-2">
+                                                                <p class="mb-0">Subscription Amount</p>
+                                                                <p class="mb-0" id="PlanAmountDisplay">₹</p>
+                                                            </div>
+
+                                                            <!-- Active Plan Amount -->
+                                                            <div class="d-flex justify-content-between mb-2">
+                                                                <p class="mb-0">Active Subscription Remaining Amount</p>
+                                                                <p class="mb-0" id="activeAmountDisplay">₹</p>
+                                                            </div>
+
+                                                            <div class="d-flex justify-content-between mb-2">
+                                                                <p class="mb-0">Amount</p>
+                                                                <p class="mb-0" id="baseAmountDisplay">₹</p>
+                                                            </div>
+
+                                                           
+															<div class="mb-2" id="addondiv">
+
+																<div class="row bg-light py-3 rounded">
+
+																	<div class="col-md-12 d-flex">
+																		<i class="bi bi-person-plus-fill text-primary me-2"></i>
+																		<p class="d-flex flex-column">
+																			<span class="fs-5 fw-bold text-dark lh-1 mb-1">Add-Ons</span>
+																			<small class="text-muted fw-normal">Additional User Packs</small>
+																		</p>
+																	</div>
+
+																	<div class="col-md-4">
+																		<!-- Packs -->
+																		<div class="text-center mb-4">
+																			<div class="stat-label mb-2">Packs</div>
+																			<div class="counter-wrapper d-inline-flex align-items-center">
+                                                                                
+                                                                            
+                                                                            <input type="hidden" id="usersPerPack" value="0" />
+                                                                                <input type="hidden" id="costPerPack" value="0" />
+																				
+                                                                                
+                                                                                
+                                                                                <button class="btn btn-outline-primary btn-circle btn-sm" onclick="calc(-1)">
+																					-
+																				</button>
+																				<span class="px-4 fw-bold fs-5" id="pCount">0</span>
+																				<button class="btn btn-outline-primary btn-circle btn-sm" onclick="calc(1)">
+																					+
+																				</button>
+																			</div>
+																		</div>
+																	</div>
+
+																	<div class="col-md-4">
+																		<!-- Total Users -->
+																		<div class="text-center mb-4">
+																			<div class="stat-label mb-1">Total Users</div>
+																			<div class="fw-bold fs-4 text-dark">
+																				<span id="uCount">0</span>
+																			</div>
+																		</div>
+																	</div>
+
+																	<div class="col-md-4">
+																		<!-- Pack Cost -->
+																		<div class="text-center">
+																			<div class="stat-label mb-1">Pack Cost</div>
+																			<div class="fw-bold fs-5 text-success">
+																				₹<span id="pCost">0.00</span>
+																			</div>
+
+																		</div>
+																	</div>
+																</div>
+
+															</div>
+
+
+                                                            @* To display discount amount--Jayanta(18-12-2025)*@
+                                                            <div class="d-flex justify-content-between mb-2">
+                                                                <p class="mb-0 text-success">Discount </p>
+                                                                <p class="mb-0 text-success" id="discountValue">₹0</p>
+                                                            </div>
+                                                            <div class="d-flex justify-content-between mb-2">
+                                                                <p class="mb-0" id="gstTextDisplay">GST ()</p>
+                                                                <p class="mb-0" id="gstAmountDisplay"></p>
+                                                            </div>                                                           
+
+                                                            <hr />
+                                                            <div class="d-flex justify-content-between mb-2">
+                                                                <p class="mb-0 fw-bold">Total Amount</p>
+                                                                <p class="mb-0 fw-bold text-primary" id="totalAmountDisplay">₹</p>
+                                                            </div>
+                                                        </div>
+                                                        <p id="discountSuccessMsg" style="display:none;"></p>
+                                                        <div class="d-flex flex-column mb-2">
+                                                            <p class="text-muted mb-2">If You have a coupon code</p>
+                                                            <div class="d-flex">
+                                                                <input type="text" class="form-control" id="couponCode" placeholder="Enter coupon code">
+                                                                <button class="btn btn-outline-primary btn-lg ms-2" type="button" id="btnApplyDiscount">Apply</button>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="d-flex justify-content-between mt-4">
+                                            <div class="d-flex gap-2">
+                                                <button class="btn btn-outline-primary" onclick="showStep(1)">Back</button>
+                                                <form asp-action="NormalPaymentInitiate" asp-controller="Subscription" method="post">
+
+                                                    <input type="hidden" id="hPack" name="packCount" value="0">
+                                                    <input type="hidden" id="hUsers" name="totalUsers" value="0">
+                                                    <input type="hidden" id="hCost" name="packCost" value="0">
+
+                                                    <input type="hidden" name="discountvalue" id="hdndiscountvalue" />
+
+                                          
+                                                    <input type="hidden" name="Csid" value="@Model.Csid" />
+                                                    <input type="hidden" name="orderId" value="@Model.OrderId" />
+                                                    <input type="hidden" name="totalValue" id="totalValueHidden" />
+                                                    <input type="hidden" name="totalBaseAmount" id="totalBaseAmountHidden" />
+                                                    <input type="hidden" name="taxpercentage" id="hdntaxpercentage" />
+
+                                                    <input type="hidden" name="totalTaxValue" id="totalTaxValuehidden" />
+                                                    <input type="hidden" name="CustomerEmail" value="@Model.EmailAddress" />
+
+                                                    <input type="hidden" name="upgradesid" />
+                                                    <input type="hidden" name="upgradebid" />
+                                                    <input type="hidden" name="CustomerEmail" />
+                                                    <input type="hidden" name="CustomerEmail" />
+                                                    <input type="hidden" name="CustomerEmail" />
+                                                    <button class="btn btn btn-outline-primary btn-lg">Proceed to Payment</button>
+                                                </form>
+                                            </div>
+                                            <a class="btn btn-outline-primary btn-lg" asp-controller="Subscription" asp-action="MySubscriptionDetails">Cancel</a>
+                                        </div>
+
+
+                                    </div>
+                                </div>
+                            </div>
+
+
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+    </div>
+</div>
+
+<div class="main">
+    <div class="green-line"></div>
+</div>
+
+
+<!-- Modal -->
+<div class="modal fade" id="confirmationModal" tabindex="-1" aria-labelledby="confirmationModalLabel"
+     aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="confirmationModalLabel">Payment Confirmation</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body text-center">
+                <div class="mb-4">
+                    <svg class="bi bi-check-circle-fill text-success" width="64" height="64" fill="currentColor"
+                         viewBox="0 0 16 16">
+                        <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zm-3.97-3.03a.75.75 0 0 0-1.08.022L7.477 9.417 5.384 7.323a.75.75 0 0 0-1.06 1.06L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-.01-1.05z" />
+                    </svg>
+                </div>
+                <h4>Payment Successful!</h4>
+                <p>Thank you for your payment. Your transaction has been completed successfully.</p>
+                <div class="mb-3">
+                    <p><strong>Transaction ID:</strong> #123456789</p>
+                    <p><strong>Amount:</strong> ₹49.99</p>
+                    <p><strong>Date:</strong> August 29, 2025</p>
+                    <p><strong>Payment Method:</strong> Credit Card</p>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <a href="#" class="btn btn-primary">Go to Account</a>
+                <a href="#" class="btn btn-outline-primary" data-bs-dismiss="modal">Return to Home</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<script>
+
+    @*function calc(val, usersPerPack, costPerPack) {*@
+    function calc(val) {
+       
+                           // UI elements
+                           const pCountElem = document.getElementById('pCount');
+                           const uCountElem = document.getElementById('uCount');
+                           const pCostElem  = document.getElementById('pCost');
+
+                           @* let gstpercentage=parseFloat("@Model?.TaxPercentage");*@
+                           let gstpercentage=parseFloat($('#hdntaxpercentage').val());
+                           
+                           const usersPerPack  = document.getElementById('usersPerPack');
+                           const costPerPack  = document.getElementById('costPerPack');
+
+
+
+
+                           const totalAmount  = document.getElementById('totalAmountDisplay');
+                           const gstAmount  = document.getElementById('gstAmountDisplay');
+                           const discountAmount  = document.getElementById('hdndiscountvalue');
+
+
+                           const hdntotalvalue  = document.getElementById('totalValueHidden');
+                           const hdntotaltaxvalue  = document.getElementById('totalTaxValuehidden');
+                           // const taxAmtElem = document.getElementById('taxAmt_' + uid);// Tax UI
+
+
+                           // Hidden inputs
+                           
+                           const hPackElem  = document.getElementById('hPack');
+                           const hUsersElem = document.getElementById('hUsers');
+                           const hCostElem  = document.getElementById('hCost');
+                           // const hTaxElem   = document.getElementById('hTax_' + uid);  // Tax Hidden Input
+
+                           // Get Tax Percentage from ViewBag
+                           // const taxPercent = parseFloat('@ViewBag.TaxPercentage');
+
+
+                           let currentPacks = parseInt(pCountElem.innerText);
+                           let newPacks = Math.max(0, currentPacks + val);
+
+
+
+                           // Calculations
+                           let totalBaseCost = newPacks * parseFloat(costPerPack.value);
+                           let totalUsers    = newPacks * parseInt(usersPerPack.value);
+                           // let taxAmount     = (totalBaseCost * taxPercent) / 100;
+
+
+                           // 🔹 Update UI
+                           pCountElem.innerText = newPacks;
+                           uCountElem.innerText = totalUsers;
+                           pCostElem.innerText  = totalBaseCost.toFixed(2);
+                           // taxAmtElem.innerText = taxAmount.toFixed(2); Display tax with 2 decimals
+
+
+                            
+                           // 🔥 Update hidden inputs
+                           hPackElem.value  = newPacks;
+                           hUsersElem.value = totalUsers;
+                           hCostElem.value  = totalBaseCost.toFixed(2);
+                           // hTaxElem.value   = taxAmount.toFixed(2); Send tax amount to controller
+
+                            let prevamount=parseFloat($('#totalBaseAmountHidden').val());
+                          
+                            
+                           let discount=parseFloat(discountAmount.value)|| 0;
+                           let newtotalValue=prevamount+totalBaseCost-discount;
+                           let newtaxamount=(newtotalValue*gstpercentage)/100;
+
+                           totalAmount.innerText=(newtotalValue+newtaxamount).toFixed(2);
+                           gstAmount.innerText="₹"+newtaxamount.toFixed(2);
+
+                            hdntotalvalue.value  = (newtotalValue+newtaxamount).toFixed(2);
+                           hdntotaltaxvalue.value = newtaxamount.toFixed(2);
+
+                       }
+
+
+        $(document).ready(function () {
+
+            const postalCodeInput = document.getElementById('postalCode');
+    const warningElement = document.getElementById('postalCode-warning');
+
+    if (postalCodeInput) {
+        // Function to handle the input and show/hide the temporary warning
+        const handleInputFiltering = (event) => {
+            const currentValue = event.target.value;
+            const sanitizedValue = currentValue.replace(/[^\d]/g, ''); // Keep only digits
+
+            if (currentValue !== sanitizedValue) {
+                // If a non-digit character was detected and removed
+
+                // 1. Set the clean value back to the input
+                event.target.value = sanitizedValue;
+
+                // 2. Display the temporary warning
+                if (warningElement) {
+                    warningElement.textContent = '❌ Only numbers are allowed in the Postal Code.';
+                }
+
+                // 3. Clear the warning after a short delay (e.g., 2 seconds)
+                setTimeout(() => {
+                    if (warningElement) {
+                        warningElement.textContent = '';
+                    }
+                }, 2000);
+
+            } else if (currentValue.length > 6) {
+                // Handle case where maxlength might be bypassed or copy-pasted (though HTML limits it)
+                event.target.value = currentValue.slice(0, 6);
+            }
+        };
+
+        // Attach listeners for both keypress (faster feedback) and input (paste/autofill)
+        postalCodeInput.addEventListener('input', handleInputFiltering);
+    }
+
+
+
+
+
+
+
+
+
+            // Helper function to attach event listeners to a field
+    function attachFieldListener(id, msg) {
+        const element = document.getElementById(id);
+        if (element) {
+            const eventType = (element.tagName === 'SELECT' ? 'change' : 'input');
+            element.addEventListener(eventType, () => {
+                // Assuming validateField is defined globally or within this scope
+                validateField(id, msg);
+            });
+        }
+    }
+
+    // Attach listeners for all required fields when the DOM is ready
+    attachFieldListener('plan', 'Please select a Plan.');
+    attachFieldListener('billing', 'Please select a Billing Cycle.');
+    attachFieldListener('address', 'Billing Address is required.');
+    attachFieldListener('city', 'City is required.');
+    attachFieldListener('postalCode', 'Postal Code is required.');
+
+
+
+        // Function to clear the warning message
+        function clearWarning() {
+            $('#plan-warning').text('').hide();
+        }
+
+        // Clear warning whenever the Plan selection changes
+        $('#plan').on('change', function() {
+            clearWarning();
+        });
+
+       @* // 1. Listen for changes on the Billing Cycle dropdown
+        $('#billing,#plan').on('change', function () {
+
+            var selectedPlanId = $('#plan').val();
+            var selectedBillingId = $('#billing').val();
+
+            // Clear previous details and any existing warning
+            $('#subscription-details').empty();
+            clearWarning(); // Clear warning before new validation
+
+            // 2. Validation: Check if a Plan is selected
+            if (selectedPlanId === "") {
+                // Show the warning message below the Plan dropdown
+                $('#plan-warning').text('⚠️ Please select a Plan before choosing a Billing Cycle.').show();
+
+                // Reset the Billing Cycle selection (optional, but good UX)
+                $('#billing').val("");
+                return; // Stop the function execution
+            }
+
+            // 3. Check if a Billing Cycle is selected (value is not empty)
+            if (selectedBillingId !== "" && selectedPlanId !== "") {
+
+                // --- 2. Current Subscription Check ---
+    // The Model values (@Model.sid and @Model.bid) should be available in your Razor view.
+    // NOTE: Razor values are rendered as strings, so comparison should use the string type.
+
+    if (selectedPlanId === "@Model.sid" && selectedBillingId === "@Model.bid") {
+
+        // Display a clear message that this is the current plan
+        var currentPlanMessage = `
+            <div class="alert alert-danger mt-3" role="alert">
+                <h4 class="alert-heading">Your Current Subscription!</h4>
+                <p class="mb-0">You are currently subscribed to this plan. To change your subscription, please select a **different** Plan or Billing Cycle.</p>
+            </div>
+        `;
+        $('#subscription-details').html(currentPlanMessage);
+        return; // Stop processing and prevent the AJAX call
+
+    }
+    else
+    {
+                // Display a loading indicator
+                $('#subscription-details').html('<p>Loading details...</p>');
+
+                // 4. AJAX Call (Ensure you update the URL to your actual path)
+                $.ajax({
+                    type: "GET",
+                    url: "/Subscription/GetSubscriptionDetails",
+                    data: {
+                        sid: selectedPlanId,
+                        bid: selectedBillingId
+                    },
+                    success: function (response) {
+                        if (response) {
+                            // 5. Success: Display the details
+                            displaySubscriptionDetails(response);
+                        } else {
+                            $('#subscription-details').html('<p>No details found for this combination.</p>');
+                        }
+                    },
+                    error: function (xhr, status, error) {
+                        console.error("AJAX Error:", status, error);
+                        $('#subscription-details').html('<p style="color: red;">An error occurred while fetching details. Please try again.</p>');
+                    }
+                });
+                }
+            }
+        });*@
+        // 1. Handle Plan Selection (to populate Billing Cycles)
+    $('#plan').on('change', function () {
+        
+        var selectedPlanId = $(this).val();
+        var billingSelect = $('#billing');
+
+        clearWarning();
+        billingSelect.empty().append('<option value="">Select a Billing cycle</option>');
+        $('#subscription-details').empty();
+
+        if (selectedPlanId !== "") {
+            $.ajax({
+                url: '/Subscription/GetPlansBySubscription', // Ensure this matches your controller action
+                type: 'GET',
+                data: { subscriptionId: selectedPlanId },
+                success: function (data) {
+                    $.each(data, function (index, item) {
+                        billingSelect.append($('<option>', { value: item.planId, text: item.planName }));
+                    });
+                    // If editing, re-select the existing billing cycle
+                    // if ("@Model.bid" && billingSelect.find('option[value="@Model.bid"]').length > 0) {
+                    //     billingSelect.val("@Model.bid").trigger('change');
+                    // }
+                },
+                error: function () { alert("Error loading billing cycles."); }
+            });
+        }
+    });
+
+    // 2. Handle Billing Selection (to show details)
+    $('#billing').on('change', function () {
+        var selectedPlanId = $('#plan').val();
+        var selectedBillingId = $(this).val();
+         
+        if (selectedPlanId !== "" && selectedBillingId !== "") {
+            if (selectedPlanId === "@Model.sid" && selectedBillingId === "@Model.bid") {
+                // $('#subscription-details').html('<div class="alert alert-danger mt-3">You are currently subscribed to this plan.</div>');
+                var currentPlanMessage = `
+            <div class="alert alert-danger mt-3" role="alert">
+                <h4 class="alert-heading">This Is Your Current Subscription!</h4>
+                <p class="mb-0">You are currently subscribed to this plan. To change your subscription, please select a **different** Plan or Billing Cycle.</p>
+            </div>
+        `;
+        $('#subscription-details').html(currentPlanMessage);
+            } else {
+                $('#subscription-details').html('<p>Loading details...</p>');
+                $.ajax({
+                    type: "GET",
+                    url: "/Subscription/GetSubscriptionDetails",
+                    data: { sid: selectedPlanId, bid: selectedBillingId },
+                    success: function (response) {
+                        response ? displaySubscriptionDetails(response) : $('#subscription-details').html('<p>No details found.</p>');
+                    }
+                });
+            }
+        }
+    });
+
+    // 3. Initialization for Edit Mode
+    if ("@Model.sid" !== "" && "@Model.sid" !== "0") {
+        $('#plan').val("@Model.sid").trigger('change');
+    }
+
+            // --- Dynamic Display Function ---
+    function displaySubscriptionDetails(data) {
+
+        // 1. Get Billing Cycle Name from the selected option text
+        // This assumes the text of the selected 'billing' dropdown option is the PlanName
+        var billingCycleName = $('#billing option:selected').text().trim();
+        if (billingCycleName.includes("Choose a Billing cycle")) {
+             billingCycleName = "Cycle"; // Default name if selection is invalid
+        }
+
+        
+        if(data.perpackCount>0 && data.packCost>0)
+        {
+            $('#addondiv').show();
+    $('#usersPerPack').val(data.perpackCount);
+    $('#costPerPack').val(data.packCost);
+            
+        }
+        else
+        {
+            $('#addondiv').hide();
+        }
+
+
+
+
+        // 2. Process Feature Details string
+        // Split the 'Details' string by '.', trim whitespace, and filter out empty strings
+        var featureList = (data.details || '')
+            .split('.')
+            .map(item => item.trim())
+            .filter(Boolean);
+
+        // 3. Build the dynamic features list HTML (UL)
+        var featuresHtml = '<ul class="p-0 m-0">';
+        featureList.forEach(function(item) {
+            if (item) {
+                featuresHtml += `
+                    <li class="d-flex align-items-center mb-2">
+                        <span class="pricing-check me-2">
+                            <i class="bi bi-patch-check-fill text-primary"></i>
+                        </span>
+                        ${item}
+                    </li>
+                `;
+            }
+        });
+        featuresHtml += '</ul>';
+
+        // 4. Construct the Main Card HTML (Matching your Razor Markup)
+        var detailsHtml = `
+            <div class="card mt-3">
+                <div class="card-body">
+                    <p class="mb-1"><h3 id="summarySubscriptionName"><strong>${data.subscriptionName}</strong></h3></p>
+                    <div class="d-flex align-items-center mb-2">
+                        <h4 id="summaryAmount">₹${data.amount}</h4>
+                        <span class="d-inline-flex ms-1" id="summaryBillingCycle">/ ${billingCycleName}</span>
+                    </div>
+
+                    <p class="mb-3">Feature for up to ${data.maximumMemberCount} users</p>
+
+                    <span class="d-block mb-1">Features</span>
+                    <p class="mb-2">Includes in this ${data.subscriptionName}</p>
+
+                    ${featuresHtml}
+                </div>
+            </div>
+        `;
+
+        // 5. Update the DOM
+        $('#subscription-details').html(detailsHtml);
+    }
+
+
+
+    });
+
+
+        // A dedicated function to handle the AJAX call for the View Component update
+    function updateCartMenu() {
+
+        // Perform the second AJAX call to fetch the rendered View Component HTML
+        $.ajax({
+            type: "GET",
+            url: "/Subscription/GetCartSummary", // Targetting the Controller Action we created
+            success: function (cartHtml) {
+
+                // 1. Update the content inside the <div class="cart-menu">
+                $('.cart-menu').html(cartHtml);
+
+                // 2. Re-initialize any necessary JavaScript/event handlers on the new content
+                initializeCartFeatures();
+
+                console.log("Cart menu updated successfully.");
+            },
+            error: function (xhr, status, error) {
+                console.error("AJAX Error: Failed to update cart summary.", status, error);
+            }
+        });
+    }
+
+    // document.getElementById("change-plan").addEventListener("click", function (e) {
+    //   e.preventDefault();
+    //   document.getElementById("planFormCard").classList.toggle("d-none");
+    // });
+
+
+    // document.getElementById("plan").addEventListener("change", function () {
+    //   const selectedValue = this.value;
+    //   const selectedPlanBox = document.getElementById("selectedPlanBox");
+    //   const selectedPlanText = document.getElementById("selectedPlanText");
+
+    //   const planText = {
+    // 	basic_month: "Basic (₹49.00/month)",
+    // 	basic_year: "Basic (₹149.00/month)",
+    // 	business_month: "Business (₹99.00/month)",
+    // 	business_year: "Business (₹599.00/month)",
+    // 	premium_month: "Premium (₹199.00/month)",
+    // 	premium_year: "Premium (₹1099.00/month)"
+    //   }[selectedValue] || "";
+
+    //   if (planText) {
+    // 	selectedPlanText.textContent = planText;
+    // 	selectedPlanBox.classList.remove("d-none"); // show
+    //   } else {
+    // 	selectedPlanBox.classList.add("d-none"); // hide if "Choose a plan"
+    //   }
+    // });
+
+        // * Checks if an input field has a value. If not, adds a warning element below it.
+
+        function validateField(inputId, message) {
+        const inputElement = document.getElementById(inputId);
+        // Find the warning element using the naming convention: [id]-warning
+        const warningElement = document.getElementById(inputId + '-warning');
+
+        // Clear previous state
+        if (warningElement) {
+            warningElement.textContent = '';
+        }
+
+        // Check if the field is empty (invalid)
+        if (!inputElement || inputElement.value.trim() === "") {
+            if (warningElement) {
+                // Display the error message
+                warningElement.textContent = '⚠️ ' + message;
+            }
+            return false;
+        }
+
+        // Valid: warningElement is already cleared above
+        return true;
+    }
+
+            function showStep(step) {
+
+        // --- 1. Validation Logic (Only run when moving to step 2) ---
+        if (step === 2) {
+            let isValid = true;
+
+
+            $('#pCount').text("0");
+            $('#pCost').text("0.00");
+            $('#uCount').text("0");
+            $('#discountValue').text("₹0");
+            $('#discountSuccessMsg').hide();
+
+            $('#hPack').val(0);
+            $('#hUsers').val(0);
+            $('#hCost').val(0);
+            $('#hdndiscountvalue').val(0);
+
+
+
+
+
+
+
+
+            // Run initial validation for all fields. If any are invalid, their warnings appear.
+            // We use the boolean AND operator to ensure ALL validation functions run,
+            // even if the first one fails, so all messages are displayed at once.
+            isValid = validateField('plan', 'Please select a Plan.') && isValid;
+            isValid = validateField('billing', 'Please select a Billing Cycle.') && isValid;
+            isValid = validateField('address', 'Billing Address is required.') && isValid;
+            isValid = validateField('city', 'City is required.') && isValid;
+            isValid = validateField('postalCode', 'Postal Code is required.') && isValid;
+
+            // --- B. Check for Current Subscription ---
+        const selectedPlanId = document.getElementById('plan').value;
+        const selectedBillingId = document.getElementById('billing').value;
+
+        // Check against the current active plan IDs from the Model
+        if (selectedPlanId === "@Model.sid" && selectedBillingId === "@Model.bid")
+        {
+            isValid = false; // Mark as invalid for proceeding
+        }
+
+            if (!isValid) {
+                // Stop the function if validation failed
+                return;
+            }
+        }
+
+        // --- 2. Step Transition Logic ---
+
+        // Hide all steps and remove active class
+        document.querySelectorAll('.step').forEach((el) => el.classList.remove('active'));
+        document.querySelectorAll('.step-content').forEach((el) => el.classList.remove('active'));
+
+        // Show selected step and add active class
+        document.getElementById(`step-${step}`).classList.add('active');
+        document.getElementById(`content-${step}`).classList.add('active');
+
+        // --- 3. Summary Update Logic (When moving to step 2 or 3) ---
+
+        if (step === 2 || step === 3) {
+
+             const selectedPlanId = document.getElementById('plan').value;
+        const selectedBillingId = document.getElementById('billing').value;
+            // Retrieve values from the form (using default values only for fallback)
+            const plan = document.getElementById('plan').value || 'standard';
+            // const sid = document.getElementById('plan').text ;
+            // const bid = document.getElementById('billing').text ;
+            const fullName = document.getElementById('fullName').value || 'Jayanta Samal';
+            const email = document.getElementById('email').value || 'example@company.com';
+            const company = document.getElementById('company').value || 'Your Company';
+
+            const address = document.getElementById('address').value || '123 Main St';
+            const city = document.getElementById('city').value || 'City';
+            const postalCode = document.getElementById('postalCode').value || '123456';
+
+
+            $.ajax({
+                    type: "GET",
+                    url: "/Subscription/PrepareOrderDetails",
+                    data: {
+                        sid: selectedPlanId,
+                        bid: selectedBillingId
+                    },
+                    success: function (response) {
+                        if (response) {
+                            updateCartMenu();
+
+
+                              // session save
+        $.ajax({
+            url: '/Subscription/SaveOrderSession',
+            type: 'POST',
+            contentType: 'application/json',
+            data: JSON.stringify(response),
+            success: function () {
+                console.log("Session Saved");
+            },
+            error: function () {
+                console.log("Session Save Failed");
+            }
+        });
+  
+
+       const baseAmount = parseFloat(response?.selectedSubscription?.amount ?? 0);
+        const gstPercentage = parseFloat(response?.taxPercentage ?? 0);
+
+        // ------ MODEL DATES (Direct Razor Injection) ------
+        const subscriptionDate = new Date("@jsStart");
+        const nextRenewalDate = new Date("@jsEnd");
+        const oldPlanAmount = parseFloat("@oldPlanAmount");
+
+        // ------ Days Calculation ------
+        const today = new Date();
+        const totalDays = Math.max(1, Math.ceil((nextRenewalDate - subscriptionDate) / 86400000));
+        const remainingDays = Math.max(0, Math.ceil((nextRenewalDate - today) / 86400000));
+
+        const remainingAmount = (oldPlanAmount / totalDays) * remainingDays;
+
+        // ------ Final Price ------
+        let discountedBaseAmount = Math.max(0, baseAmount - remainingAmount);
+        const finalGstAmount = discountedBaseAmount * (gstPercentage / 100);
+        const finalPayableAmount = discountedBaseAmount + finalGstAmount;
+
+        // ------ Update UI ------
+              $('#PlanAmountDisplay').html(`₹${baseAmount.toFixed(2)}`);
+        $('#baseAmountDisplay').html(`₹${discountedBaseAmount.toFixed(2)}`);
+        $('#gstTextDisplay').html(`GST (${gstPercentage}%)`);
+        $('#gstAmountDisplay').html(`₹${finalGstAmount.toFixed(2)}`);
+        $('#totalAmountDisplay').html(`₹${finalPayableAmount.toFixed(2)}`);
+        $('#activeAmountDisplay').text(`- ₹${remainingAmount.toFixed(2)}`);
+
+        $('#totalBaseAmountHidden').val(discountedBaseAmount.toFixed(2));
+        $('#hdntaxpercentage').val(gstPercentage.toFixed(2));
+
+        $('#totalValueHidden').val(finalPayableAmount.toFixed(2));
+        $('#totalTaxValuehidden').val(finalGstAmount.toFixed(2));
+
+
+
+        // Save whole response for server post if needed
+        $('#orderDetailsJson').val(JSON.stringify(response));
+ 
+
+
+            // ✅ Use this standard if-check instead:
+        if (response.portalCustomerDetails) {
+            response.portalCustomerDetails.address = address;
+            response.portalCustomerDetails.city = city;
+            response.portalCustomerDetails.postalCode = postalCode;
+        }
+            // 👇 NEW: Convert the response object to a JSON string and store it
+                // This is the correct way to store the data received via AJAX
+                const responseJsonString = JSON.stringify(response);
+                $('#orderDetailsJson').val(responseJsonString);
+
+
+                        } else {
+
+                        }
+                    },
+                    error: function (xhr, status, error) {
+                        console.error("AJAX Error:", status, error);
+                        $('#subscription-details').html('<p style="color: red;">An error occurred while fetching details. Please try again.</p>');
+                    }
+                });
+
+
+
+
+                // Retrieve text content using .textContent
+    const summarySubscriptionName = document.getElementById('summarySubscriptionName').textContent.trim();
+    const summaryAmount = document.getElementById('summaryAmount').textContent.trim().replace('₹', ''); // Optional: remove ₹ for clean output
+    const summaryBillingCycle = document.getElementById('summaryBillingCycle').textContent.trim();
+
+    // Construct the planText string using template literals (backticks)
+    // We use template literals (backticks) to correctly inject variables.
+    const planText = `${summarySubscriptionName} (₹${summaryAmount}${summaryBillingCycle})`;
+
+            const fullAddress = `${address}, ${city}, ${postalCode}`;
+
+            // Update summary
+            document.getElementById('summaryPlan').textContent = planText;
+            document.getElementById('summaryName').textContent = fullName;
+            document.getElementById('summaryEmail').textContent = email;
+            document.getElementById('summaryCompany').textContent = company;
+            document.getElementById('summaryAddress').textContent = fullAddress;
+
+            // Update confirmation
+
+
+
+
+            document.getElementById('confirmPlan').textContent = planText;
+            document.getElementById('confirmName').textContent = fullName;
+            document.getElementById('confirmEmail').textContent = email;
+            document.getElementById('confirmCompany').textContent = company;
+            document.getElementById('confirmAddress').textContent = fullAddress;
+
+        }
+    }
+
+
+
+
+    function confirmPayment() {
+      // Simulate payment processing
+      alert('Payment processing...');
+      // Redirect to confirmation page
+      window.location.href = 'confirmation.html';
+    }
+
+    function cancel() {
+      // Redirect to cancellation page or reset
+      window.location.href = 'cancel.html';
+    }
+
+    // Toggle card details visibility based on payment method
+    document.querySelectorAll('input[name="paymentMethod"]').forEach((input) => {
+      input.addEventListener('change', () => {
+        const cardDetails = document.getElementById('cardDetails');
+        const cardExpiry = document.getElementById('cardExpiry');
+        const cardCvc = document.getElementById('cardCvc');
+        if (input.value === 'creditCard') {
+          cardDetails.style.display = 'block';
+          cardExpiry.style.display = 'block';
+          cardCvc.style.display = 'block';
+          document.getElementById('cardNumber').required = true;
+          document.getElementById('cardExpiryDate').required = true;
+          document.getElementById('cardCvc').required = true;
+        } else {
+          cardDetails.style.display = 'none';
+          cardExpiry.style.display = 'none';
+          cardCvc.style.display = 'none';
+          document.getElementById('cardNumber').required = false;
+          document.getElementById('cardExpiryDate').required = false;
+          document.getElementById('cardCvc').required = false;
+        }
+      });
+    });
+</script>
+<script>
+    jQuery(document).ready(function () {
+
+        $("#btnApplyDiscount").on("click", function () {
+
+            var pid = $("#pid").val();
+            var sid = $("#sid").val();
+            var dmcode = $("#couponCode").val();
+            var companyType = $("#companyType").val();
+
+            if (!pid || !dmcode) {
+                alert("Please select a product and enter coupon code!");
+                return;
+            }
+
+            $.ajax({
+                url: '/Order/GetDiscountDetailsByCode',
+                type: 'GET',
+                data: {
+                    pid: pid,
+                    sid: sid,
+                    companyType: companyType,
+                    dmcode: dmcode
+                },
+                success: function (response) {
+
+                    if (response && response.discountType) {
+                        
+                        @*// ----- Get base amount -----
+                        var baseAmount = parseFloat(
+                            $("#baseAmountDisplay").text().replace(/[₹,]/g, "")
+                        ) || 0;*@
+                        const hdntotaltaxvalue  = document.getElementById('totalTaxValuehidden');
+                        var baseAmount=parseFloat($("#totalBaseAmountHidden").val());
+                        var addonamount=parseFloat($('#hCost').val()??0);
+                        baseAmount=addonamount+baseAmount;
+                        // ----- Get GST percentage from text "GST (18%)" -----
+                        var gstText = $("#gstTextDisplay").text();
+                        var gstPercent = parseFloat(gstText.match(/\d+/)) || 0;
+
+                        var discountAmount = 0;
+
+                        if (response.discountType.toLowerCase() === "fixed" ||
+                            response.discountType.toLowerCase() === "fix") {
+                            discountAmount = response.discountValue;
+                        }
+                        else if (response.discountType.toLowerCase() === "percentage") {
+                            discountAmount = (baseAmount * response.discountValue) / 100;
+                        }
+
+                        discountAmount = parseFloat(discountAmount) || 0;
+                        $('#hdndiscountvalue').val(discountAmount);
+                        var newBaseAmount = baseAmount - discountAmount;
+                        if (newBaseAmount < 0) newBaseAmount = 0;
+
+                        var gstAmount = (newBaseAmount * gstPercent) / 100;
+                        var totalAmount = newBaseAmount + gstAmount;
+
+                        // ----- Update UI -----
+                        $("#discountValue").text("₹" + discountAmount.toFixed(2));
+                        $("#gstAmountDisplay").text("₹" + gstAmount.toFixed(2));
+                        $("#totalAmountDisplay").text("₹" + totalAmount.toFixed(2));
+                        $("#totalValueHidden").val(totalAmount.toFixed(2));
+                        hdntotaltaxvalue.value=gstAmount.toFixed(2);
+                       // $("#couponCode").val("");
+
+                        $("#discountSuccessMsg")
+                            .text("🎉 You have successfully redeemed your discount coupon!")
+                            .css({
+                                "color": "green",
+                                "font-weight": "bold",
+                                "margin-top": "10px"
+                            })
+                            .show();
+                    }
+                    else {
+                        vt.error("Please enter a valid discount code.", {
+                            title: "Invalid Code",
+                            position: "top-center",
+                            duration: 2000
+                        });
+
+                        $("#couponCode").val("");
+                        $("#discountSuccessMsg").hide();
+                    }
+                },
+                error: function () {
+                    vt.error("Something went wrong while fetching discount details.", {
+                        title: "Invalid operation",
+                        position: "top-center",
+                        duration: 2000
+                    });
+                }
+            });
+        });
+
+    });
+</script>
+
+<script>
+    $.ajax({
+        url: '/Subscription/SaveOrderSession',
+        type: 'POST',
+        contentType: 'application/json',
+        data: JSON.stringify(response),
+        success: function () {
+            console.log("Session Saved");
+        }
+    });
+</script>

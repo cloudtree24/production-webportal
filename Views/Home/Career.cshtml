@@ -1,0 +1,728 @@
+﻿@model HCMPortal.ViewModel.CareerViewModel
+
+
+<!DOCTYPE html>
+<html lang="en">
+       @{
+                Layout = "_LayoutWithoutEnquiryForm";
+}
+<head>
+    <!-- metas -->
+    <meta charset="utf-8" />
+    <meta name="author" content="thecloudtree" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <meta name="keywords" content="Get top-notch HR and payroll management software" />
+
+    <!-- title  -->
+    <title>Career | Thecloudtree</title>
+    <meta name="description" content="Check out current openings at theCloudTree for Full-time &amp; Contractual Employment" />
+    <meta property="og:title" content="Career | Thecloudtree" />
+    <meta property="og:description" content="Check out current openings at theCloudTree for Full-time &amp; Contractual Employment" />
+    <meta property="og:url" content="https://hcmportal.anantatek.com/career.html" />
+    <meta property="og:site_name" content="thecloudtree" />
+    <meta property="og:type" content="website" />
+    <meta name="fb_admins_meta_tag" content="thecloudtree" />
+    <meta property="fb:admins" content="thecloudtree" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Career | Thecloudtree" />
+    <meta name="twitter:description" content="Check out current openings at theCloudTree for Full-time &amp; Contractual Employment" />
+    <script src="~/assets/js/jquery-3.6.0.js"></script>
+    <script src="~/lib/jquery-validation/dist/jquery.validate.min.js"></script>
+    <script src="~/lib/jquery-validation-unobtrusive/dist/jquery.validate.unobtrusive.min.js"></script>
+   
+</head>
+
+<body>
+
+    <div class="ct-inner_banner ct-gray__bg">
+        <div class="container">
+            <div class="d-flex gap-2 align-items-center py-4 justify-content-between">
+                <div class="ct-inner__content mb-4 w-50">
+                    <h2 class="display-4 fw-bold mb-3">Career</h2>
+                    <p class="text-muted">
+                        To today's most difficult business challenges, we as saas company contribute deep
+                        expertise, an entrepreneurial spirit, and a collaborative approach.
+                    </p>
+                </div>
+                <img class="img-fluid banner-img" alt="Career" src="~/assets/images/banner/career-banner.png">
+            </div>
+        </div>
+    </div>
+
+    <section class="mb-0">
+        <div class="container">
+            <!-- Stats section -->
+            <div class="ct-dark__bg ct-white__text ct-padding__60 ct-radius__lg">
+                <div class="row text-center align-items-center">
+
+                    <!-- Item 1 -->
+                    <div class="col-md-4 border-end">
+                        <div class="ct-fs-60 fw-bold">1500+</div>
+                        <div class="ct-fs-24">Man-years of experience</div>
+                    </div>
+
+                    <!-- Item 2 -->
+                    <div class="col-md-4 border-end">
+                        <div class="ct-fs-60 fw-bold">3+</div>
+                        <div class="ct-fs-24">Development Centers</div>
+                    </div>
+
+                    <!-- Item 3 -->
+                    <div class="col-md-4">
+                        <div class="ct-fs-60 fw-bold">70+</div>
+                        <div class="ct-fs-24">Passionate People</div>
+                    </div>
+
+                </div>
+            </div>
+
+        </div>
+    </section>
+
+    <div class="ct-padding__120">
+
+        <div class="ct-heading__section text-center mb-5">
+            <h2 class="ct-fs-48">Current Openings</h2>
+            <div class="bar"></div>
+        </div>
+
+        <div class="container">
+            <div class="row g-5 align-items-stretch">
+
+                <!-- Card 1 -->
+                @foreach (var item in Model.JobList)
+                {
+                    <div class="col-md-4">
+                        <div class="ct-serviceCard h-100">
+                            <div class="d-flex flex-column h-100">
+
+                                <!-- Top meta -->
+                                <div class="d-flex justify-content-between align-items-center mb-3">
+                                    <span class="ct-time-badge"><i class="bi bi-clock"></i> @item.CreatedDate.ToString("dd-MM-yyyy")</span>
+                                    <span class="ct-job-icon"><i class="bi bi-bookmark-fill"></i></span>
+                                </div>
+
+                                <!-- Job title -->
+                                <h5 class="fw-bold mb-2">@item.JobTitle</h5>
+                               @*  <p>@item.JobDescription</p> *@
+                              @*   <p>
+                                    @(item.JobDescription != null && item.JobDescription.Length > 50
+                                                                    ? item.JobDescription.Substring(0, 50) + "..."
+                                                                    : item.JobDescription)
+                                </p> *@
+                                @using System.Text.RegularExpressions
+                                <p>
+                                    @{
+                                        var cleanText = item.JobDescription != null
+                                        ? Regex.Replace(System.Net.WebUtility.HtmlDecode(item.JobDescription), "<.*?>", "")
+                                        : "";
+
+                                        var shortText = cleanText.Length > 50
+                                        ? cleanText.Substring(0, 50) + "..."
+                                        : cleanText;
+                                    }
+
+                                    @shortText
+                                </p>
+
+                                <div class="d-flex gap-3">
+                                   @*  <p class="text-muted small mb-4">
+                                        <i class="bi bi-dot"></i>
+                                        <span>Software Developer</span>
+                                    </p> *@
+                                    <p class="text-muted small mb-4">
+                                        <i class="bi bi-briefcase"></i> <span>@item.JobType</span>
+                                    </p>
+                                </div>
+
+                                <!-- Bottom buttons -->
+                               @*  <div class="mt-auto d-flex gap-2">
+                                    <a href="job-details.html" class="ct-btn__dark btn py-2 px-4">Details</a>
+                                    <a href="#" class="ct-btn__primary btn py-2 px-4">Apply Now</a>
+                                </div> *@
+                                <div class="mt-auto d-flex gap-2">
+                                    @* <a asp-controller="Home" asp-action="JobDetails" *@
+                                    <a asp-route="JobDetails"
+                                       asp-route-Jid="@item.Jid"
+                                       class="ct-btn__dark btn py-2 px-4">
+                                        Details
+                                    </a>
+
+                                    @* <a asp-controller="Career"
+                                       asp-action="ApplyNow"
+                                       asp-route-Jid="@item.Jid"
+                                       class="ct-btn__primary btn py-2 px-4">
+                                        Apply Now
+                                    </a> *@
+                                    <a href="javascript:void(0);"
+                                       class="ct-btn__primary btn py-2 px-4"
+                                       data-bs-toggle="modal"
+                                       data-bs-target="#applyJobModal"
+                                       onclick="setJobId('@item.Jid', '@item.JobTitle')">
+                                        Apply Now
+                                    </a>
+                                </div>
+
+
+                            </div>
+                        </div>
+                    </div>
+                }
+
+
+                <!-- Card 2 -->
+               @*  <div class="col-md-4">
+                    <div class="ct-serviceCard h-100">
+                        <div class="d-flex flex-column h-100">
+
+                            <!-- Top meta -->
+                            <div class="d-flex justify-content-between align-items-center mb-3">
+                                <span class="ct-time-badge"><i class="bi bi-clock"></i> 5 months ago</span>
+                                <span class="ct-job-icon"><i class="bi bi-bookmark-fill"></i></span>
+                            </div>
+
+                            <!-- Job title -->
+                            <h5 class="fw-bold mb-2">IT Recruiter</h5>
+                            <p>
+                                Must have experience on full Life Cycle of Recruiting (screening resumes, interviewing, technical
+                                queries & interviews, closing of candidates and responsibilities till joining of candidates)
+                            </p>
+
+                            <div class="d-flex gap-3">
+                                <p class="text-muted small mb-4">
+                                    <i class="bi bi-dot"></i>
+                                    <span>Software Developer</span>
+                                </p>
+                                <p class="text-muted small mb-4">
+                                    <i class="bi bi-briefcase"></i> <span>Full Time</span>
+                                </p>
+                            </div>
+
+                            <!-- Bottom buttons -->
+                            <div class="mt-auto d-flex gap-2">
+                                <a href="job-details.html" class="ct-btn__dark btn py-2 px-4">Details</a>
+                                <a href="#" class="ct-btn__primary btn py-2 px-4">Apply Now</a>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Card 3 -->
+                <div class="col-md-4">
+                    <div class="ct-serviceCard h-100">
+                        <div class="d-flex flex-column h-100">
+
+                            <!-- Top meta -->
+                            <div class="d-flex justify-content-between align-items-center mb-3">
+                                <span class="ct-time-badge"><i class="bi bi-clock"></i> 5 months ago</span>
+                                <span class="ct-job-icon"><i class="bi bi-bookmark-fill"></i></span>
+                            </div>
+
+                            <!-- Job title -->
+                            <h5 class="fw-bold mb-2">Product Manager</h5>
+                            <p>
+                                Work to set a product vision and strategy that delivers unique value based on customer needs and
+                                expectations
+                            </p>
+
+                            <div class="d-flex gap-3">
+                                <p class="text-muted small mb-4">
+                                    <i class="bi bi-dot"></i>
+                                    <span>Manager</span>
+                                </p>
+                                <p class="text-muted small mb-4">
+                                    <i class="bi bi-briefcase"></i> <span>Full Time</span>
+                                </p>
+                            </div>
+
+                            <!-- Bottom buttons -->
+                            <div class="mt-auto d-flex gap-2">
+                                <a href="job-details.html" class="ct-btn__dark btn py-2 px-4">Details</a>
+                                <a href="#" class="ct-btn__primary btn py-2 px-4">Apply Now</a>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Card 4 -->
+                <div class="col-md-4">
+                    <div class="ct-serviceCard h-100">
+                        <div class="d-flex flex-column h-100">
+
+                            <!-- Top meta -->
+                            <div class="d-flex justify-content-between align-items-center mb-3">
+                                <span class="ct-time-badge"><i class="bi bi-clock"></i> 5 months ago</span>
+                                <span class="ct-job-icon"><i class="bi bi-bookmark-fill"></i></span>
+                            </div>
+
+                            <!-- Job title -->
+                            <h5 class="fw-bold mb-2">Drupal Developer</h5>
+                            <p>
+                                3 years experience working with Drupal 8
+                                ​Experience developing web solutions in Drupal and PHP implementations in a LAMP environment
+                            </p>
+
+                            <div class="d-flex gap-3">
+                                <p class="text-muted small mb-4">
+                                    <i class="bi bi-dot"></i>
+                                    <span>Software Developer</span>
+                                </p>
+                                <p class="text-muted small mb-4">
+                                    <i class="bi bi-briefcase"></i> <span>Full Time</span>
+                                </p>
+                            </div>
+
+                            <!-- Bottom buttons -->
+                            <div class="mt-auto d-flex gap-2">
+                                <a href="job-details.html" class="ct-btn__dark btn py-2 px-4">Details</a>
+                                <a href="#" class="ct-btn__primary btn py-2 px-4">Apply Now</a>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Card 5 -->
+                <div class="col-md-4">
+                    <div class="ct-serviceCard h-100">
+                        <div class="d-flex flex-column h-100">
+
+                            <!-- Top meta -->
+                            <div class="d-flex justify-content-between align-items-center mb-3">
+                                <span class="ct-time-badge"><i class="bi bi-clock"></i> 5 months ago</span>
+                                <span class="ct-job-icon"><i class="bi bi-bookmark-fill"></i></span>
+                            </div>
+
+                            <!-- Job title -->
+                            <h5 class="fw-bold mb-2">Business Development Manager</h5>
+                            <p>
+                                3-5 Yrs Exp (IT/ITES Sales) BE/B-Tech + MBA
+                                Lead generation- Research and generate new (focused) leads Lead nurturing and conversion
+                            </p>
+
+                            <div class="d-flex gap-3">
+                                <p class="text-muted small mb-4">
+                                    <i class="bi bi-dot"></i>
+                                    <span>Development Manager</span>
+                                </p>
+                                <p class="text-muted small mb-4">
+                                    <i class="bi bi-briefcase"></i> <span>Full Time</span>
+                                </p>
+                            </div>
+
+                            <!-- Bottom buttons -->
+                            <div class="mt-auto d-flex gap-2">
+                                <a href="job-details.html" class="ct-btn__dark btn py-2 px-4">Details</a>
+                                <a href="#" class="ct-btn__primary btn py-2 px-4">Apply Now</a>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Card 6 -->
+                <div class="col-md-4">
+                    <div class="ct-serviceCard h-100">
+                        <div class="d-flex flex-column h-100">
+
+                            <!-- Top meta -->
+                            <div class="d-flex justify-content-between align-items-center mb-3">
+                                <span class="ct-time-badge"><i class="bi bi-clock"></i> 5 months ago</span>
+                                <span class="ct-job-icon"><i class="bi bi-bookmark-fill"></i></span>
+                            </div>
+
+                            <!-- Job title -->
+                            <h5 class="fw-bold mb-2">Associate-Demand Generation(USA shift)</h5>
+                            <p>
+                                Proven B2B International Sales track record(USA geography) Quick learner with strong negotiating
+                                skills
+                            </p>
+
+                            <div class="d-flex gap-3">
+                                <p class="text-muted small mb-4">
+                                    <i class="bi bi-dot"></i>
+                                    <span>Development Manager</span>
+                                </p>
+                                <p class="text-muted small mb-4">
+                                    <i class="bi bi-briefcase"></i> <span>Full Time</span>
+                                </p>
+                            </div>
+
+                            <!-- Bottom buttons -->
+                            <div class="mt-auto d-flex gap-2">
+                                <a href="job-details.html" class="ct-btn__dark btn py-2 px-4">Details</a>
+                                <a href="#" class="ct-btn__primary btn py-2 px-4">Apply Now</a>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Card 7 -->
+                <div class="col-md-4">
+                    <div class="ct-serviceCard h-100">
+                        <div class="d-flex flex-column h-100">
+
+                            <!-- Top meta -->
+                            <div class="d-flex justify-content-between align-items-center mb-3">
+                                <span class="ct-time-badge"><i class="bi bi-clock"></i> 5 months ago</span>
+                                <span class="ct-job-icon"><i class="bi bi-bookmark-fill"></i></span>
+                            </div>
+
+                            <!-- Job title -->
+                            <h5 class="fw-bold mb-2">Business Analyst</h5>
+                            <p>
+                                Preferred B-tech with an MBAdegree from premium institutes with a minimum of 2years of handling
+                                similar kind of profile Preferred Experience in IT industry
+                            </p>
+
+                            <div class="d-flex gap-3">
+                                <p class="text-muted small mb-4">
+                                    <i class="bi bi-dot"></i>
+                                    <span>Business Analyst</span>
+                                </p>
+                                <p class="text-muted small mb-4">
+                                    <i class="bi bi-briefcase"></i> <span>Full Time</span>
+                                </p>
+                            </div>
+
+                            <!-- Bottom buttons -->
+                            <div class="mt-auto d-flex gap-2">
+                                <a href="job-details.html" class="ct-btn__dark btn py-2 px-4">Details</a>
+                                <a href="#" class="ct-btn__primary btn py-2 px-4">Apply Now</a>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Card 7 -->
+                <div class="col-md-4">
+                    <div class="ct-serviceCard h-100">
+                        <div class="d-flex flex-column h-100">
+
+                            <!-- Top meta -->
+                            <div class="d-flex justify-content-between align-items-center mb-3">
+                                <span class="ct-time-badge"><i class="bi bi-clock"></i> 5 months ago</span>
+                                <span class="ct-job-icon"><i class="bi bi-bookmark-fill"></i></span>
+                            </div>
+
+                            <!-- Job title -->
+                            <h5 class="fw-bold mb-2">Digital Marketing Manager</h5>
+                            <p>
+                                Expertise in Lead Generation <br>
+                                - Good technical skills in Digital Marketing, SEO, SMM, PPC, etc
+                            </p>
+
+                            <div class="d-flex gap-3">
+                                <p class="text-muted small mb-4">
+                                    <i class="bi bi-dot"></i>
+                                    <span>Business Analyst</span>
+                                </p>
+                                <p class="text-muted small mb-4">
+                                    <i class="bi bi-briefcase"></i> <span>Full Time</span>
+                                </p>
+                            </div>
+
+                            <!-- Bottom buttons -->
+                            <div class="mt-auto d-flex gap-2">
+                                <a href="job-details.html" class="ct-btn__dark btn py-2 px-4">Details</a>
+                                <a href="#" class="ct-btn__primary btn py-2 px-4">Apply Now</a>
+                            </div>
+
+                        </div>
+                    </div>
+                </div> *@
+
+            </div>
+
+        </div>
+    </div>
+   
+    <div class="modal fade" id="applyJobModal" tabindex="-1" aria-labelledby="applyJobModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+
+                <form id="jobApplyForm" asp-action="SubmitJobApplication"
+                      asp-controller="Home"
+                      method="post"
+                      enctype="multipart/form-data">
+
+                    <div class="modal-header">
+                        <h5 class="modal-title">Apply for Job</h5>
+                        <button type="button"
+                                class="btn-close"
+                                data-bs-dismiss="modal">
+                        </button>
+                    </div>
+
+                    <div class="modal-body">
+
+                        <!-- Hidden Job Id -->
+                        <input asp-for="CandidateApplication.Jid"
+                               type="hidden"
+                               id="JobId" />
+                        <input asp-for="SelectedJobTitle"
+                               type="hidden"
+                              id="selectJobtitle" />
+
+                        <div class="row">
+
+                            <!-- Job Title -->
+                            <div class="col-md-12 mb-3">
+                                <label class="form-label">Job Title</label>
+
+                                <input asp-for="SelectedJobTitle"
+                                       id="JobTitle"
+                                       class="form-control"
+                                       readonly />
+                            </div>
+
+                            <!-- Full Name -->
+                            <div class="col-md-6 mb-3">
+                                <label asp-for="CandidateApplication.Name" class="form-label">
+                                    Full Name <span class="text-danger">*</span>
+                                </label>
+
+                                <input asp-for="CandidateApplication.Name"
+                                       class="form-control"
+                                       placeholder="Enter Full Name" required/>
+
+                                <span asp-validation-for="CandidateApplication.Name"
+                                      class="text-danger"></span>
+                            </div>
+
+                            <!-- Mobile -->
+                            <div class="col-md-6 mb-3">
+                                <label asp-for="CandidateApplication.Mobile" class="form-label">
+                                    Contact Number <span class="text-danger">*</span>
+                                </label>
+
+                                <input asp-for="CandidateApplication.Mobile"
+                                       type="text"
+                                       maxlength="10"
+                                       oninput="this.value=this.value.replace(/[^0-9]/g,'').slice(0,10)"
+                                       class="form-control"
+                                       placeholder="Enter Mobile Number" />
+
+                                <span asp-validation-for="CandidateApplication.Mobile"
+                                      class="text-danger"></span>
+                            </div>
+
+                            <!-- Email -->
+                            <div class="col-md-6 mb-3">
+                                <label asp-for="CandidateApplication.EmailAddress" class="form-label">
+                                    Email <span class="text-danger">*</span>
+                                </label>
+
+                                <input asp-for="CandidateApplication.EmailAddress" type="email"
+                                       class="form-control"
+                                       placeholder="Enter Email Address" required />
+
+                                <span asp-validation-for="CandidateApplication.EmailAddress"
+                                      class="text-danger"></span>
+                            </div>
+
+                            <!-- CV Upload -->
+                            <div class="col-md-6 mb-3">
+                                <label asp-for="CandidateApplication.ResumeFile" class="form-label">
+                                    Upload CV <span class="text-danger">*</span>
+                                </label>
+
+                                <input asp-for="CandidateApplication.ResumeFile"
+                                       type="file"
+                                       class="form-control"
+                                       accept=".pdf,.doc,.docx" required/>
+
+                                <span asp-validation-for="CandidateApplication.ResumeFile"
+                                      class="text-danger"></span>
+
+                                <small class="text-muted">
+                                    Allowed: PDF, DOC, DOCX
+                                </small>
+                            </div>
+
+                            <!-- Remarks -->
+                            <div class="col-md-12 mb-3">
+                                <label asp-for="CandidateApplication.Remarks" class="form-label">
+                                    Remark
+                                </label>
+
+                                <textarea asp-for="CandidateApplication.Remarks"
+                                          class="form-control"
+                                          rows="4"
+                                          placeholder="Enter Remarks"></textarea>
+
+                                <span asp-validation-for="CandidateApplication.Remarks"
+                                      class="text-danger"></span>
+                            </div>
+
+                            <!-- Google reCAPTCHA -->
+                            <div class="col-md-12 mb-3">
+                                <div class="g-recaptcha" data-sitekey="6LcP1r4rAAAAAHNiLqWilMZWVAroHkjaHZAEAIT9"></div>
+                                <span id="recaptchaError" class="text-danger d-block mt-2"></span>
+                                <span asp-validation-summary="ModelOnly" class="text-danger"></span>
+                                @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+                            </div>
+
+                        </div>
+                    </div>
+
+                    <div class="modal-footer">
+                        <button type="button"
+                                class="btn btn-secondary"
+                                data-bs-dismiss="modal">
+                            Cancel
+                        </button>
+
+                        <button type="submit"
+                                class="btn btn-primary">
+                            Submit Application
+                        </button>
+                    </div>
+
+                </form>
+
+            </div>
+        </div>
+    </div>
+    
+    <div class="modal fade" id="resultModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content text-center p-4">
+
+                <div id="resultIcon" class="mb-3"></div>
+
+                <h5 id="resultTitle"></h5>
+                <p id="resultMessage"></p>
+
+                <button class="btn btn-primary mt-3" data-bs-dismiss="modal">
+                    OK
+                </button>
+
+            </div>
+        </div>
+    </div>
+
+</body>
+
+</html>
+@* <script src="~/lib/jquery-validation/dist/jquery.validate.min.js"></script>
+<script src="~/lib/jquery-validation-unobtrusive/dist/jquery.validate.unobtrusive.min.js"></script>
+ *@
+<script src="@Url.Content("~/assets/js/jquery-3.6.0.js")"></script>
+
+<script src="@Url.Content("~/lib/jquery-validation/dist/jquery.validate.min.js")"></script>
+
+<script src="@Url.Content("~/lib/jquery-validation-unobtrusive/dist/jquery.validate.unobtrusive.min.js")"></script>
+
+<script type="text/javascript">
+    window.onload = function () {
+        var shouldOpenModal = '@ViewBag.OpenModal';
+
+        if (shouldOpenModal === 'True') {
+            var myModal = new bootstrap.Modal(document.getElementById('applyJobModal'));
+            myModal.show();
+        }
+    };
+</script>
+<script type="text/javascript">
+    function setJobId(jobId, jobTitle) {
+
+        // Set Job Id in hidden field
+        document.getElementById("JobId").value = jobId;
+
+        // Set Job Title in readonly textbox
+        document.getElementById("JobTitle").value = jobTitle;
+        document.getElementById("selectJobtitle").value = jobTitle;
+    }
+</script>
+<script type="text/javascript">
+    document.addEventListener("DOMContentLoaded", function () {
+
+        var type = '@TempData["ResultType"]';
+        var message = '@TempData["ResultMessage"]';
+
+        if (type) {
+
+            // Set content
+            document.getElementById("resultTitle").innerText =
+                type === "Success" ? "Success" : "Error";
+
+            document.getElementById("resultMessage").innerText = message;
+
+            // Icon
+            var iconHtml = type === "Success"
+                ? '<i class="bi bi-check-circle-fill text-success" style="font-size:50px;"></i>'
+                : '<i class="bi bi-x-circle-fill text-danger" style="font-size:50px;"></i>';
+
+            document.getElementById("resultIcon").innerHTML = iconHtml;
+
+            // Show modal
+            var modal = new bootstrap.Modal(document.getElementById('resultModal'));
+            modal.show();
+        }
+    });
+</script>
+<script type="text/javascript">
+
+    $(function () {
+
+    $.validator.unobtrusive.parse("#jobApplyForm");
+
+    $("#jobApplyForm").on("submit", function (e) {
+
+    $("#recaptchaError").text("");
+
+    if (!$(this).valid()) {
+
+    e.preventDefault();
+    e.stopImmediatePropagation();
+
+    return false;
+    }
+
+    var response = grecaptcha.getResponse();
+
+    if (response.length === 0) {
+
+    e.preventDefault();
+
+    $("#recaptchaError").text("reCAPTCHA validation failed.");
+
+    return false;
+    }
+    });
+
+    });
+
+</script>
+<script type="text/javascript">
+
+    $('#applyJobModal').on('hidden.bs.modal', function () {
+
+    // Reset form fields
+    $('#jobApplyForm')[0].reset();
+
+    // Clear validation messages
+    $('#jobApplyForm').find(".text-danger").html('');
+
+    // Remove validation styles
+    $('#jobApplyForm').find(".input-validation-error")
+    .removeClass("input-validation-error");
+
+    // Reset hidden fields manually
+    $('#JobId').val('');
+    $('#selectJobtitle').val('');
+
+    // Reset reCAPTCHA
+    if (typeof grecaptcha !== 'undefined') {
+    grecaptcha.reset();
+    }
+    });
+
+</script>
+

@@ -1,0 +1,49 @@
+#notification .dataTables_wrapper .dataTables_paginate .paginate_button.current {
+  width: 35px;
+  height: 35px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #ffffff !important;
+  border: 1px solid #FAFAFA;
+  background: #0d6efd;
+  border-radius: 100%;
+  font-size: 15px;
+}
+
+.dataTables_wrapper .dataTables_paginate {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+}
+
+#notification .dataTables_wrapper .dataTables_paginate .paginate_button {
+  padding: 5px;
+}
+
+#notification table.dataTable.no-footer {
+  border: none;
+}
+
+#notification table.dataTable>thead>tr>th {
+  background-color: #F9FAFB;
+}
+
+#notification table.dataTable>thead>tr>th,
+#notification table.dataTable>thead>tr>td,
+table.dataTable th,
+table.dataTable td {
+  border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+.dt-length label {
+  display: none;
+}
+
+.dt-search {
+  display: flex;
+}
+
+.dt-search label{
+  margin-right: 5px
+}

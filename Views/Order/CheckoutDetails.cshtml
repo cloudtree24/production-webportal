@@ -1,0 +1,1179 @@
+﻿@using Newtonsoft.Json
+@model HCMPortal.ViewModel.OrderDetailViewModel
+@{
+    ViewData["Title"] = "CheckoutDetails";
+    Layout = "~/Views/Shared/_customerDashboardLayout.cshtml";
+}
+
+@if (TempData["PaymentError"] != null)
+{
+    <script>
+        alert('@TempData["PaymentError"]');
+    </script>
+}
+
+<script src="~/assets/js/jquery.min.js"></script>
+<script src="~/assets/js/vanilla-toast.min.js"></script>
+<style>
+    .custom-modal {
+        border-radius: 1rem;
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+        overflow: hidden;
+        animation: fadeInScale 0.3s ease-out;
+    }
+
+  
+
+    /* Gradient button */
+    .btn-gradient {
+        background: linear-gradient(90deg, #007bff, #00c6ff);
+        color: white;
+        border: none;
+        transition: all 0.3s ease;
+    }
+
+        .btn-gradient:hover {
+            background: linear-gradient(90deg, #0062cc, #0096d6);
+            box-shadow: 0 4px 12px rgba(0, 123, 255, 0.4);
+            transform: translateY(-1px);
+        }
+
+</style>
+<!-- Breadcrumb -->
+<section class="breadcumnd__banner">
+    <!--Container-->
+    <div class="container">
+        <div class="d-flex justify-content-start gap-4">
+            <h2 class="bread__title">
+                Checkout
+            </h2>
+            <ul class="breadcumnd__link">
+                <li>
+                    @* <a href="https://www.thecloudtree.ai/human-resources">Home</a> *@
+                    <a asp-route="CustomerDashboard">Home</a>
+                </li>
+                <li><i class="bi bi-chevron-right"></i></li>
+                <li class="active">
+                    <a href="javascript:void(0)">Checkout</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+    <!--Container-->
+</section>
+@* @if (Model?.issubscriptionActive == true)
+{   
+    <div class="modal fade" id="subscriptionActiveModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-xl modal-dialog-centered">
+            <div class="modal-content custom-modal">
+                <form id="subscriptionModalForm" novalidate>
+                <div class="modal-header border-0">
+                    <h5 class="modal-title text-primary fw-semibold">
+                        New Company Details
+                    </h5>
+                </div>
+
+                <div class="modal-body">
+                     
+                    <div class="mb-3">
+                        <label class="form-label">Organisation Name</label>
+                        <input type="text" name="organisation"
+                               class="form-control"
+                               id="modalorgName" 
+                               placeholder="Enter Organisation Name"
+                               data-val="true"
+                               data-val-required="Organisation is required."
+                               data-val-remote="This Organisation name is already in use."
+                               data-val-remote-url="/Order/CheckOrganisationDuplicacy"
+                               data-val-remote-type="GET" />
+                        <span class="text-danger field-validation-valid" data-valmsg-for="organisation" data-valmsg-replace="true"></span>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Email Address</label>
+                        <input type="email" name="PrimaryEmail"
+                               class="form-control"
+                               id="modalemailId"   
+                               placeholder="Enter the Email Address"
+                               data-val="true"
+                               data-val-required="Primary Email is required."
+                               data-val-email="Invalid Email Format."
+                               data-val-remote="This Email is already registered."
+                               data-val-remote-url="/Order/CheckEmailDuplicacy"
+                               data-val-remote-type="GET" />
+                        <span class="text-danger field-validation-valid" data-valmsg-for="PrimaryEmail" data-valmsg-replace="true"></span>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Phone Number</label>
+                        <input type="number" name="PrimaryPhone"
+                               class="form-control"
+                               id="modalphoneNumber"
+                               placeholder="Enter valid Mobile number"
+                               data-val="true"
+                               oninput="if(this.value.length > 12) { this.value = this.value.slice(0, 12); }"
+                               data-val-required="Primary Phone is required."
+                               data-val-remote="This Phone number is already registered."
+                               data-val-remote-url="/Order/CheckPhoneDuplicacy"
+                               data-val-remote-type="GET"
+                               data-val-regex="Phone number must be 12 digits starting with 91."
+                               data-val-regex-pattern="^91\d{10}$" />
+                        <span class="text-danger field-validation-valid" data-valmsg-for="PrimaryPhone" data-valmsg-replace="true"></span>
+                              
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">GSTIN</label>
+                            <input type="text" name="modalGSTIN"
+                               class="form-control"
+                               id="modalGSTIN"
+                               placeholder="Enter GSTIN Number"
+                                   data-val="true"
+                                   data-val-required="GSTIN is required."
+                                   data-val-remote="This Phone number is already registered."
+                                   data-val-remote-url="/Order/CheckGSTINDuplicacy"
+                                   data-val-remote-type="GET"
+                                   data-val-regex="Please enter a valid GSTIN."
+                                   data-val-regex-pattern="^[0-9]{2}[A-Z]{5}[0-9]{4}[A-Z]{1}[1-9A-Z]{1}Z[0-9A-Z]{1}$" />
+                            <span class="text-danger field-validation-valid" data-valmsg-for="modalGSTIN" data-valmsg-replace="true"></span>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">PAN</label>
+                        <input type="text" name="modalPAN"
+                               class="form-control"
+                               id="modelPan"
+                               placeholder="Enter Pan Number"
+                                   data-val="true"
+                                   data-val-required="PAN is required."
+                                   data-val-remote="This Phone number is already registered."
+                                   data-val-remote-url="/Order/CheckPANDuplicacy"
+                                   data-val-remote-type="GET"
+                                   data-val-regex="Please enter a valid PAN number."
+                                   data-val-regex-pattern="^[A-Z]{5}[0-9]{4}[A-Z]{1}$"   />
+                            <span class="text-danger field-validation-valid" data-valmsg-for="modalPAN" data-valmsg-replace="true"></span>
+                    </div>
+                     <div class="mb-3">
+                            <label class="form-label" for="modal_country">Country</label>
+                            <select class="form-select" required="" name="CountryId" asp-items="@(new SelectList(ViewBag.CountryList, "CountryId", "CountryName"))" id="ddlCountry" disabled>
+                               @*  <option value="">Select Country</option> 
+                            </select>
+                            <span class="text-danger field-validation-valid" data-valmsg-for="CountryId" data-valmsg-replace="true"></span>
+                        </div>
+
+
+                        <div class="mb-3">
+                            <label class="form-label" for="modal_state">State</label>
+                            <select class="form-select" required="" name="StateId" asp-items="@(new SelectList(ViewBag.StateList, "StateId", "StateName"))" id="ddlState">
+                                <option value="">Select State</option>
+                            </select>
+                            <span class="text-danger field-validation-valid" data-valmsg-for="StateId" data-valmsg-replace="true"></span>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label" for="modal_city">City</label>
+                            <input class="form-control" placeholder="City" required="" type="text" name="City" id="modal_city" />
+                        </div>
+                       
+                        <div class="mb-3">
+                            <label class="form-label" for="modal_postal_code">Postal Code</label>
+                            <input class="form-control" placeholder="Postal Code" required="" type="text"
+                                   name="PostalCode" id="modal_postal_code"
+                                   oninput="if(this.value.length > 6) { this.value = this.value.substring(0, 6); }"
+                                   data-val="true"
+                                   data-val-required="Postal Code is required."
+                                   data-val-length-max="6"
+                                   data-val-length-min="6"
+                                   data-val-length="Postal Code must be exactly 6 digits long."
+                                   data-val-regex="Postal Code must consist only of 6 digits (0-9)."
+                                   data-val-regex-pattern="^\d{6}$" />
+
+                            <span class="text-danger field-validation-valid" data-valmsg-for="PostalCode" data-valmsg-replace="true"></span>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label" for="modal_address">Address</label>
+                            <input class="form-control" placeholder="Address" required="" type="text" name="Address" id="modal_address" />
+                        </div>
+                </div>
+                   
+                <div class="modal-footer border-0">
+                    <button type="button"
+                            class="btn btn-outline-secondary rounded-pill"
+                            id="cancelSubscriptionModal">
+                        Cancel
+                    </button>
+                    <button type="submit"
+                   class="btn btn-gradient rounded-pill fw-semibold"
+                   id="saveSubscriptionModal">
+                          Save
+                   </button>
+                    @* <button type="button"
+                            class="btn btn-gradient rounded-pill fw-semibold"
+                            id="saveSubscriptionModal">
+                        Save
+                    </button> 
+                </div>
+              </form>
+                
+
+            </div>
+            
+        </div>
+    </div>
+   
+}
+
+ *@
+
+
+
+<div class="section_gap_large">
+    <div class="container">
+       
+        <div class="row">
+            <!-- Left Side: Order Details Cards -->
+            <div class="col-md-4 order-2 order-md-1">
+                <div class="order-details">
+                    <h4 class="mb-3">Order Details</h4>
+                    <!-- Card 1: Order Number, Order Date, Full Name, Email Address, Company, Billing Address -->
+                    <div class="card mb-3 rounded-custom">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between mb-2">
+                                <p class="mb-0 fs-6 text-muted">Order Number : </p>
+                                <p class="mb-0">@Model?.OrderId</p>
+                            </div>
+                            <div class="d-flex justify-content-between mb-2">
+                                <p class="mb-0 fs-6 text-muted">Order Date : </p>
+                                @* <p class="mb-0">@DateTime.Now.Date</p> *@
+                                <p class="mb-0">@DateTime.Now.ToString("dd-MM-yyyy hh:mm tt")</p>
+                            </div>
+                            <div class="d-flex justify-content-between mb-2">
+                                <p class="mb-0 fs-6 text-muted">Full Name : </p>
+                                <p class="mb-0">@Model?.PortalCustomerDetails?.ContactPersonName</p>
+                            </div>
+                            <div class="d-flex justify-content-between mb-2">
+                                <p class="mb-0 fs-6 text-muted">Email Address : </p>
+                                <p class="mb-0">@Model?.PortalCustomerDetails?.EmailAddress</p>
+                            </div>
+                            <div class="d-flex justify-content-between mb-2">
+                                <p class="mb-0 fs-6 text-muted">Company : </p>
+                                <p class="mb-0">@Model?.PortalCustomerDetails?.CompanyName</p>
+                            </div>
+                            <div class="d-flex justify-content-between mb-2">
+                                <p class="mb-0 fs-6 text-muted">Billing Address : </p>
+                                <p class="mb-0">@Model?.PortalCustomerDetails?.Address</p>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Card 2: Base Amount, GST, Total -->
+                    @{
+                        decimal baseAmount = Model?.SelectedSubscription?.Amount ?? 0;
+                        decimal gstPercentage = Convert.ToDecimal(Model?.TaxPercentage ?? 0);
+
+                        decimal cgstPercentage = 0;
+                        decimal sgstPercentage = 0;
+                        decimal igstPercentage = 0;
+
+                        // if (Model?.PortalCustomerDetails?.StateId == 10)
+                        // {
+                        //     // Intra-state → CGST + SGST
+                        //     cgstPercentage = gstPercentage / 2;
+                        //     sgstPercentage = gstPercentage / 2;
+                        //     igstPercentage = 0;
+                        // }
+                        // else
+                        // {
+                        //     // Inter-state → IGST
+                        //     cgstPercentage = 0;
+                        //     sgstPercentage = 0;
+                        //     igstPercentage = gstPercentage;
+                        // }
+
+                        // decimal cgstAmount = (baseAmount * cgstPercentage) / 100;
+                        // decimal sgstAmount = (baseAmount * sgstPercentage) / 100;
+                        // decimal igstAmount = (baseAmount * igstPercentage) / 100;
+                        decimal gstAmount = (baseAmount * gstPercentage) / 100;
+                        decimal totalAmount = baseAmount + gstAmount;
+                        // decimal totalAmount = baseAmount + cgstAmount + sgstAmount + igstAmount;
+                    }
+
+                    <div class="card mb-3 rounded-custom">
+                        <div class="card-body">
+                            <div class="d-flex flex-column">
+                                <div class="d-flex justify-content-between mb-2">
+                                    <p class="mb-0">Amount</p>
+                                    <p class="mb-0" id="baseAmount">₹@baseAmount</p>
+                                </div>
+
+                                @{
+                                    if(Model?.SelectedSubscription?.PerpackCount>0 && Model.SelectedSubscription?.PackCost>0)
+                                    {
+                                        <div class="mb-4">
+
+                                            <div class="row bg-light p-3 rounded">
+
+                                                <div class="col-md-12 d-flex">
+                                                    <i class="bi bi-person-plus-fill text-primary me-2"></i>
+                                                    <p class="d-flex flex-column">
+                                                        <span class="fs-5 fw-bold text-dark lh-1 mb-1">Add-Ons</span>
+                                                        <small class="text-muted fw-normal">Additional User Packs</small>
+                                                    </p>
+                                                </div>
+
+                                                <div class="col-md-4">
+                                                    <!-- Packs -->
+                                                    <div class="text-center mb-4">
+                                                        <div class="stat-label mb-2">Packs</div>
+                                                        <div class="counter-wrapper d-inline-flex align-items-center">
+                                                            <button class="btn btn-outline-primary btn-circle btn-sm" onclick="calc(-1, @Model?.SelectedSubscription?.PerpackCount, @Model?.SelectedSubscription?.PackCost)">
+                                                                -
+                                                            </button>
+                                                            <span class="px-4 fw-bold fs-5" id="pCount">0</span>
+                                                            <button class="btn btn-outline-primary btn-circle btn-sm" onclick="calc(1, @Model?.SelectedSubscription?.PerpackCount, @Model?.SelectedSubscription?.PackCost)">
+                                                                +
+                                                            </button>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                                <div class="col-md-4">
+                                                    <!-- Total Users -->
+                                                    <div class="text-center mb-4">
+                                                        <div class="stat-label mb-1">Total Users</div>
+                                                        <div class="fw-bold fs-4 text-dark">
+                                                            <span id="uCount">0</span>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                                <div class="col-md-4">
+                                                    <!-- Pack Cost -->
+                                                    <div class="text-center">
+                                                        <div class="stat-label mb-1">Pack Cost</div>
+                                                        <div class="fw-bold fs-5 text-success">
+                                                            ₹<span id="pCost">0.00</span>
+                                                        </div>
+
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    }
+                                }
+                                
+
+
+
+                                <div class="d-flex justify-content-between mb-2">
+                                    <p class="mb-0 text-success">Discount </p>
+                                    <p class="mb-0 text-success" id="discountValue">₹0</p>
+                                </div>
+                               @*  @if (cgstPercentage > 0)
+                                { *@
+                                    <div class="d-flex justify-content-between mb-2">
+                                       @*  <p class="mb-0">GST (@gstPercentage%)</p> *@
+                                    <p class="mb-0">GST (<span id="gstPercent">@gstPercentage</span>%)</p>
+                                    <p class="mb-0" id="gstAmount">₹@gstAmount</p>
+                                    </div>
+                                   @*  <div class="d-flex justify-content-between">
+                                        <p class="mb-0">SGST (@sgstPercentage%)</p>
+                                        <p class="mb-0">₹@sgstAmount</p>
+                                    </div> *@
+                               @*  } *@
+
+                               @*  @if (igstPercentage > 0)
+                                { *@
+                                   @*  <div class="d-flex justify-content-between">
+                                        <p class="mb-0">IGST (@igstPercentage%)</p>
+                                        <p class="mb-0">₹@igstAmount</p>
+                                    </div> *@
+                              @*   } *@
+
+                              <hr />
+                                <div class="d-flex justify-content-between mb-2">
+                                    <p class="mb-0 fw-bold">Total Amount</p>
+                                    <p class="mb-0 fw-bold text-primary" id="totalAmount">₹@totalAmount</p>
+                                </div>
+                            </div>
+                            <p id="discountSuccessMsg" style="display:none;"></p>
+                            <div class="d-flex flex-column mb-2">
+                                <p class="text-muted mb-2">If You have a coupon code</p>
+                                <div class="d-flex">
+                                    <input type="text" class="form-control" id="couponCode" placeholder="Enter coupon code">
+                                    <button class="btn btn-outline-primary ms-2" id="btnApplyDiscount" type="button">Apply</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                   
+                </div>
+                
+                <div class="d-flex flex-column gap-2">
+                    
+                    @* <form asp-action="PaymentInitiate" method="post"> *@
+                    <form asp-action="RazorPayPaymentInitiate" id="razorpayForm" method="post">
+                        <input type="hidden" id="hPack" name="packCount" value="0">
+                        <input type="hidden" id="hUsers" name="totalUsers" value="0">
+                        <input type="hidden" id="hCost" name="packCost" value="0">
+
+                        <input type="hidden" name="Csid" value="@Model?.PortalCustomerDetails?.Csid" />
+
+                        <input type="hidden" name="discountvalue" id="hdndiscountvalue" />
+                        <input type="hidden" name="totalValue" id="hdntotalvalue" value="@totalAmount" />
+                        <input type="hidden" name="totalTaxValue" id="hdntotaltaxvalue" value="@gstAmount" />
+
+                        <input type="hidden" name="neworganisation" id="neworganisation" />
+
+                        <input type="hidden" name="CustomerPhoneNumber" id="CustomerPhoneNumber" value="@Model?.PortalCustomerDetails?.Phonenumber" />
+                        <input type="hidden" name="CustomerEmail" id="CustomerEmail" value="@Model?.PortalCustomerDetails?.EmailAddress" />
+                        <input type="hidden" id="discountInput" name="DiscountAmount" value="0" />
+                        <input type="hidden" name="jsonData" value='@Html.Raw(JsonConvert.SerializeObject(Model))' />
+                        <input type="hidden" id="newCompanyDetails" name="newCompanyDetails" value="" />
+                        <input type="hidden" id="dmid" name="dmid" />
+                        <input type="hidden" id="originalEmailId" name="originalEmailId" value="@Model?.PortalCustomerDetails?.EmailAddress" />
+
+                        <button class="btn btn-lg btn-primary w-100">Proceed to Payment</button>
+                    </form>
+                    <a href"#" class="btn btn-lg btn-outline-primary" asp-action="Index" asp-controller="Dashboard">Back</a>
+                </div>
+
+            </div>
+            <!-- Right Side: Plan Details Card -->
+            <div class="col-md-8 order-1 order-md-2">
+                <div class="order-summary">
+                    <h4 class="mb-3">Selected Subscription</h4>
+                     <div class="card rounded-custom active">
+                         <div class="card-body">   
+                             
+                            <div class="d-flex justify-content-between mb-3">
+                                <div>
+                                   <h4 class="mb-1">@Model?.SelectedSubscription?.SubscriptionName</h4>
+                                    @{
+                                        var planName = Model?.planMaster?.PlanName;
+                                        var totalPrice = Model?.SelectedSubscription?.Amount ?? 0;
+                                        decimal perMonthPrice = 0;
+
+                                        // Calculate per month price based on plan type
+                                        if (planName == "Quarterly")
+                                        {
+                                            perMonthPrice = totalPrice / 3;
+                                        }
+                                        else if (planName == "Yearly")
+                                        {
+                                            perMonthPrice = totalPrice / 12;
+                                        }
+
+                                        // Split feature list
+
+                                    }
+
+                                    @* 🟢 Show per month value if applicable *@
+                                    @if (planName == "Quarterly" || planName == "Yearly")
+                                    {
+                                        <div class="col-12 mb-3">
+                                            <h6>
+                                                ₹@perMonthPrice.ToString("0.00") / month
+                                                <small class="text-muted">
+                                                    (Paid @planName.ToLower())
+                                                </small>
+                                            </h6>
+                                        </div>
+                                    }
+                                   <p class="mb-0">
+                                       <span class="text-muted">Feature for up to</span>
+                                       <strong>@Model?.SelectedSubscription?.MaximumMemberCount users</strong>
+                                   </p>
+                                </div>
+                                <div class="text-end">
+                                    <h4 class="mb-0 fw-bold text-primary">₹@Model?.SelectedSubscription?.Amount</h4>
+                                    <span class="text-muted">/ @Model?.planMaster?.PlanName</span>
+                                </div>
+                            </div>
+                           
+                          @*  <div class="row">
+                                @{
+                                    List<string> featureList = @Model?.SelectedSubscription?.Details?
+                               .Split('.')
+                               .ToList()
+                                  ?? new List<string>();
+                                    foreach (var item in featureList)
+                                    {
+                                        if (@Model?.planMaster?.PlanName!="Monthy")
+                                        {
+                                            
+                                        }
+                                        <div class="col-md-6">
+                                         <p class="mb-2">
+                                           <span class="pricing-check me-2">
+                                              <i class="bi bi-patch-check-fill text-primary"></i>
+                                           </span>@item
+                                         </p>
+                                        </div>
+                                      }
+                                    }
+                                </div> *@
+                            <div class="row">
+                                @{
+                                    List<string>
+                                    featureList = Model?.SelectedSubscription?.Details?
+                                    .Split('.', StringSplitOptions.RemoveEmptyEntries)
+                                    .Select(f => f.Trim())
+                                    .ToList() ?? new List<string>
+                                    ();
+                                }
+                               
+
+                                @* 🟢 Display feature list *@
+                                @foreach (var item in featureList)
+                                {
+                                    <div class="col-md-6">
+                                        <p class="mb-2">
+                                            <span class="pricing-check me-2">
+                                                <i class="bi bi-patch-check-fill text-primary"></i>
+                                            </span>@item
+                                        </p>
+                                    </div>
+                                }
+                            </div>
+
+                            </div>
+                            </div>
+
+                            <div class="d-flex justify-content-end mt-2">
+                        <a class="custom-sm-btn-gray" href="#" onclick="togglePlanOptions()">
+                            <i class="fa-solid fa-rotate"></i> Change Plan</a>
+                    </div>
+
+                    <div id="planOptions" style="display: none;">
+
+                        <div class="row">
+                            <div class="col-md-12 mb-3">
+                                <label class="form-label">Select Plan</label>                          
+                                <select asp-for="planId" class="form-select" id="dPlanId" asp-items="@(new SelectList(Model.ListOfPlanMater, "PlanId", "PlanName"))">
+                                    <option value="">Select Plan</option>
+                                </select>
+                            </div>
+                        </div>
+
+                      
+                     @*    <div class="row" id="subscriptionContainer">
+                            @foreach (var detail in Model.SubscriptionDetails)
+                            {
+                                <div class="col-md-6">
+                                    <div class="card mb-3 rounded-custom">
+                                        <div class="card-body">
+                                            <h4 class="mb-1">@detail.SubscriptionName
+                                                <span>₹@detail.Amount </span>
+                                                <span class="d-inline-flex ms-1">/ @Model?.planMaster?.PlanName</span>
+                                            </h4>
+                                            <p class="mb-0">Feature for up to @detail.MaximumMemberCount users</p>
+                                            @{
+                                                List<string> featureList2 = detail.Details?
+                                                .Split('.')
+
+                                                .ToList()
+                                                ?? new List<string>();
+                                                foreach (var item in featureList2)
+                                                {
+
+                                                    <li class="d-flex align-items-center mb-2">
+                                                        <span class="pricing-check me-2">
+                                                            <i class="bi bi-patch-check-fill text-primary"></i>
+                                                        </span>@item
+                                                    </li>
+
+                                                }
+                                                <a asp-controller="Order" asp-action="CheckoutDetails" asp-route-sid="@detail.Sid" asp-route-pid="@Model?.planMaster?.PlanId" class="btn btn-primary btn-lg w-100 mb-3">Select</a>
+                                            }
+                                        </div>
+                                    </div>
+                                </div>
+                            }
+                           
+                           @*  <div class="col-md-6">
+                                <div class="card mb-3 rounded-custom">
+                                    <div class="card-body">
+                                        <p class="mb-1">Premium Plan</p>
+                                        <div class="d-flex align-items-center mb-2">
+                                            <h4>₹199.00 </h4><span class="d-inline-flex ms-1">/ Per Month</span>
+                                        </div>
+                                        <p class="mb-0">Feature for up to 33 users</p>
+                                    </div>
+                                </div>
+                            </div> 
+                        </div> *@
+                        <div class="row" id="subscriptionContainer">
+                            @foreach (var detail in Model.SubscriptionDetails)
+                            {
+                                <div class="col-md-6">
+                                    <div class="card mb-3 rounded-custom">
+                                        <div class="card-body">
+                                            <h4 class="mb-1">
+                                                @detail.SubscriptionName
+                                                <span>₹@detail.Amount</span>
+                                                <span class="d-inline-flex ms-1">/ @Model?.planMaster?.PlanName</span>
+                                            </h4>
+                                            @{
+                                                var planName1 = Model?.planMaster?.PlanName;
+                                                decimal amount = detail.Amount;
+                                                decimal perMonthPrice1 = 0;
+
+                                                if (planName1 == "Quarterly")
+                                                {
+                                                    perMonthPrice1 = amount / 3;
+                                                }
+                                                else if (planName1 == "Yearly")
+                                                {
+                                                    perMonthPrice1 = amount / 12;
+                                                }
+                                            }
+                                            @* 🟢 Show per-month price if applicable *@
+                                            @if (planName1 == "Quarterly" || planName1 == "Yearly")
+                                            {
+                                                <div class="mt-2 mb-2">
+                                                    <h6 class="text-muted">
+                                                        ₹@perMonthPrice1.ToString("0.00") / month
+                                                        <small>(Paid @planName1.ToLower())</small>
+                                                    </h6>
+                                                </div>
+                                            }
+                                            <p class="mb-0">Feature for up to @detail.MaximumMemberCount users</p>
+
+                                            @{
+                                                // 🧮 Calculate per month value if Quarterly or Yearly
+                                               
+
+                                                // ✳️ Split features
+                                                List<string> featureList2 = detail.Details?
+                                                .Split('.', StringSplitOptions.RemoveEmptyEntries)
+                                                .Select(x => x.Trim())
+                                                .ToList()
+                                                ?? new List<string>();
+                                            }
+
+                                           
+
+                                            @* 🟢 Feature list *@
+                                            <ul class="list-unstyled mt-2">
+                                                @foreach (var item in featureList2)
+                                                {
+                                                    <li class="d-flex align-items-center mb-2">
+                                                        <span class="pricing-check me-2">
+                                                            <i class="bi bi-patch-check-fill text-primary"></i>
+                                                        </span>@item
+                                                    </li>
+                                                }
+                                            </ul>
+
+                                            <a href="#"
+                                               class="btn btn-primary btn-lg w-100 mb-3 select-plan-btn"
+                                               data-sid="@detail.Sid"
+                                               data-pid="@Model?.planMaster?.PlanId"
+                                               data-subscription="@detail.SubscriptionName"
+                                               data-planname="@Model?.planMaster?.PlanName"
+                                               data-amount="@detail.Amount">
+                                                Select
+                                            </a>
+                                        </div>
+                                    </div>
+                                </div>
+                            }
+                        </div>
+
+                        <input type="hidden" id="pid" value="@Model?.SelectedSubscription?.Bid" />
+                        <input type="hidden" id="sid" value="@Model?.SelectedSubscription?.Sid" />
+                        <input type="hidden" id="companyType" value="@Model?.SelectedSubscription?.CompanyType" />
+                    </div>
+                    <!-- Confirmation Modal -->
+                    <div class="modal fade" id="planConfirmModal" tabindex="-1" aria-labelledby="planConfirmModalLabel" aria-hidden="true">
+                        <div class="modal-dialog modal-dialog-centered">
+                            <div class="modal-content custom-modal">
+                                <div class="modal-header border-0">
+                                    <h5 class="modal-title fw-semibold text-primary" id="planConfirmModalLabel">Confirm Plan Change</h5>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                </div>
+                                <div class="modal-body text-muted fs-6">
+                                    Are you sure you want to switch to this plan?
+                                </div>
+                                <div class="modal-footer border-0">
+                                    <button type="button" class="btn btn-outline-secondary rounded-pill px-4" data-bs-dismiss="modal">Cancel</button>
+                                    <button type="button" id="confirmPlanBtn" class="btn btn-gradient rounded-pill px-4 fw-semibold">Yes, Continue</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+         
+    </div>
+</div>
+
+
+
+<div class="main">
+    <div class="green-line"></div>
+</div>
+
+<script>
+    function togglePlanOptions() {
+        const planOptions = document.getElementById('planOptions');
+        planOptions.style.display = planOptions.style.display === 'none' ? 'block' : 'none';
+      }
+</script>
+<script src="~/lib/jquery-validation/dist/jquery.validate.min.js"></script>
+@* <script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js"></script> *@
+<script src="~/lib/jquery-validation-unobtrusive/dist/jquery.validate.unobtrusive.min.js"></script>
+<script src="~/assets/js/bootstrap/bootstrap.bundle.js"></script>
+
+@* <script>
+    jQuery(document).ready(function () {
+        $("#dPlanId").change(function () {
+            var pid = $(this).val();
+            var sid = 0; // You can set this dynamically if needed
+
+            if (pid) {
+                // 🔁 Redirect with query params so the page reloads with updated model
+                window.location.href = '/Order/CheckoutDetails?sid=' + sid + '&pid=' + pid;
+            }
+        });
+    });
+</script>*@
+
+
+  
+
+ <script>
+    function calc(val, usersPerPack, costPerPack) {
+                       
+                        // UI elements
+                        const pCountElem = document.getElementById('pCount');
+                        const uCountElem = document.getElementById('uCount');
+                        const pCostElem  = document.getElementById('pCost');
+
+                        let gstpercentage=parseFloat("@Model?.TaxPercentage");
+
+                        const totalAmount  = document.getElementById('totalAmount');
+                        const gstAmount  = document.getElementById('gstAmount');
+                        const discountAmount  = document.getElementById('hdndiscountvalue');
+
+
+                        const hdntotalvalue  = document.getElementById('hdntotalvalue');
+                        const hdntotaltaxvalue  = document.getElementById('hdntotaltaxvalue');
+                        // const taxAmtElem = document.getElementById('taxAmt_' + uid);// Tax UI
+
+                        // Hidden inputs
+                        
+                        const hPackElem  = document.getElementById('hPack');
+                        const hUsersElem = document.getElementById('hUsers');
+                        const hCostElem  = document.getElementById('hCost');
+                        // const hTaxElem   = document.getElementById('hTax_' + uid);  // Tax Hidden Input
+
+                        // Get Tax Percentage from ViewBag
+                        // const taxPercent = parseFloat('@ViewBag.TaxPercentage');
+                       
+
+                        let currentPacks = parseInt(pCountElem.innerText);
+                        let newPacks = Math.max(0, currentPacks + val);
+                        
+                        // Calculations
+                        let totalBaseCost = newPacks * costPerPack;
+                        let totalUsers    = newPacks * usersPerPack;
+                        // let taxAmount     = (totalBaseCost * taxPercent) / 100;
+
+                       
+                        // 🔹 Update UI
+                        pCountElem.innerText = newPacks;
+                        uCountElem.innerText = totalUsers;
+                        pCostElem.innerText  = totalBaseCost.toFixed(2);
+                        // taxAmtElem.innerText = taxAmount.toFixed(2); Display tax with 2 decimals
+
+                        // 🔥 Update hidden inputs
+                        hPackElem.value  = newPacks;
+                        hUsersElem.value = totalUsers;
+                        hCostElem.value  = totalBaseCost.toFixed(2);
+                        // hTaxElem.value   = taxAmount.toFixed(2); Send tax amount to controller
+                         
+                         let prevamount=parseFloat("@Model?.SelectedSubscription?.Amount");
+                        let prevtaxamount=parseFloat( hdntotaltaxvalue.value);
+                         
+                        let discount=parseFloat(discountAmount.value)|| 0;
+                        let newtotalValue=prevamount+totalBaseCost-discount;
+                        let newtaxamount=(newtotalValue*gstpercentage)/100;
+
+                        totalAmount.innerText=(newtotalValue+newtaxamount).toFixed(2);
+                        gstAmount.innerText="₹"+newtaxamount.toFixed(2);
+
+                         hdntotalvalue.value  = (newtotalValue+newtaxamount).toFixed(2);
+                        hdntotaltaxvalue.value = newtaxamount.toFixed(2);
+
+                    }
+         jQuery(document).ready(function () {
+             
+        $("#btnApplyDiscount").click(function () {
+            var pid = $("#pid").val();
+            var sid = $("#sid").val();
+            var dmcode = $("#couponCode").val();
+            var companyType = $("#companyType").val();
+
+            if (!pid) {
+                alert("Please select a product!");
+                return;
+            }
+
+            $.ajax({
+                url: '/Order/GetDiscountDetailsByCode',
+                type: 'GET',
+                data: { pid: pid, sid: sid, companyType: companyType, dmcode: dmcode },
+                success: function (response) {
+                    
+                    if (response && response.discountType) {
+                        console.log("Discount Type:", response.discountType);
+                        console.log("Discount Value:", response.discountValue);
+                        console.log("Discount ID:", response.dmId);
+
+
+                        // Get base and GST amounts from UI
+                        var baseAmount = parseFloat($("#baseAmount").text().replace(/[₹,]/g, "")) || 0;
+                        var gstPercent = parseFloat($("#gstPercent").text()) || 0;
+
+                        var discountAmount = 0;
+
+                        // Apply discount logic
+                        if (response.discountType.toLowerCase() === "fix" || response.discountType.toLowerCase() === "fixed") {
+                            discountAmount = response.discountValue;
+                        } else if (response.discountType.toLowerCase() === "percentage") {
+                            discountAmount = (baseAmount * response.discountValue) / 100;
+                        }
+                         discountAmount = parseFloat(discountAmount) || 0;
+
+                       $("#hdndiscountvalue").val(discountAmount.toFixed(2));
+
+                        const hdntotalvalue  = document.getElementById('hdntotalvalue');
+                        const hdntotaltaxvalue  = document.getElementById('hdntotaltaxvalue');
+
+                        let totalvalue=hdntotalvalue.value;
+                        let totaltaxvalue=hdntotaltaxvalue.value;
+
+                        let totalvaluewithoutTax=totalvalue-totaltaxvalue;
+
+
+
+                         // var newBaseAmount = baseAmount - discountAmount;
+                         var newBaseAmount = totalvaluewithoutTax - discountAmount;
+                        if (newBaseAmount < 0) newBaseAmount = 0;
+
+                        // Recalculate GST and total
+                        var gstAmount = (newBaseAmount * gstPercent) / 100;
+                        var totalAmount = newBaseAmount + gstAmount;
+                        $('#dmid').val(response.dmId);
+
+
+                        // Update UI
+                       // $("#discountType").text(response.discountType);
+                        $("#discountValue").text("₹" + discountAmount.toFixed(2));
+                        //$("#baseAmount").text("₹" + newBaseAmount.toFixed(2));
+                        $("#gstAmount").text("₹" + gstAmount.toFixed(2));
+                        $("#totalAmount").text("₹" + totalAmount.toFixed(2));
+                        $("#discountInput").val(discountAmount.toFixed(2));
+
+                        $("#totalValueInput").val(totalAmount.toFixed(2));
+                        
+
+
+                        hdntotalvalue.value  = totalAmount.toFixed(2);
+                        hdntotaltaxvalue.value = gstAmount.toFixed(2);
+
+
+
+
+
+                        //$("#couponCode").val("");
+                          $("#discountSuccessMsg")
+                    .text("🎉 You have successfully redeemed your discount coupon!")
+                    .css({ "color": "green", "font-weight": "bold", "margin-top": "10px" })
+                    .show();
+                    } else {
+                         vt.error("Please enter a valid discount code.", {
+                title: "Invalid Code",
+                position: "top-center",
+                duration: 2000
+            });
+            $("#couponCode").val("");
+             $("#discountSuccessMsg").hide();
+                    }
+                },
+                error: function (xhr, status, error) {
+                    console.error("Error:", error);
+                    //alert("Something went wrong while fetching discount details.");
+                     vt.error("Something went wrong while fetching discount details.", {
+                title: "Invalid operation",
+                position: "top-center",
+                duration: 2000
+            });
+                }
+            });
+        });
+
+         $("#dPlanId").change(function () {
+        var planId = $(this).val();
+        var sid = $("#sid").val();
+        var planName = $("#dPlanId option:selected").text().trim(); // ✅ get plan name dynamically
+
+        if (!planId) {
+            $("#subscriptionContainer").html("");
+            return;
+        }
+
+        $.ajax({
+            url: '/Order/GetSubscriptionsByPlanId',
+            type: 'GET',
+            data: { planId: planId,sid:sid },
+            success: function (subscriptions) {
+                var html = '';
+
+                if (subscriptions && subscriptions.length > 0) {
+                    $.each(subscriptions, function (index, sub) {
+                        // ✅ Calculate monthly equivalent based on plan type
+                        var monthlyValue = sub.amount; // default
+                        var planLabel = "Month";
+
+                        if (planName.toLowerCase().includes("year")) {
+                            monthlyValue = sub.amount / 12;
+                            planLabel = "Yearly";
+                        } else if (planName.toLowerCase().includes("quarter")) {
+                            monthlyValue = sub.amount / 3;
+                            planLabel = "Quarterly";
+                        } else if (planName.toLowerCase().includes("half")) {
+                            monthlyValue = sub.amount / 6;
+                            planLabel = "Half-Year";
+                        } else if (planName.toLowerCase().includes("month")) {
+                            planLabel = "Monthly";
+                        }
+
+                        // Split feature list
+                        var features = '';
+                        if (sub.details) {
+                            var featureList = sub.details.split('.');
+                            $.each(featureList, function (i, feature) {
+                                if (feature.trim() !== '') {
+                                    features += `
+                                        <li class="d-flex align-items-center mb-2">
+                                            <span class="pricing-check me-2">
+                                                <i class="bi bi-patch-check-fill text-primary"></i>
+                                            </span>${feature.trim()}
+                                        </li>`;
+                                }
+                            });
+                        }
+
+                        html += `
+                            <div class="col-md-6">
+                                <div class="card mb-3 rounded-custom">
+                                    <div class="card-body">
+                                        <h4 class="mb-1">${sub.subscriptionName}
+                                            <span>₹${sub.amount.toFixed(2)}</span>
+                                            <span class="d-inline-flex ms-1">/ ${planLabel}</span>
+                                        </h4>
+                                        ${planLabel !== "Month" ?
+                                            `<b><p class="text-muted mb-1">(≈ ₹${monthlyValue.toFixed(2)} per month)</p></b>`
+                                            : ""}
+                                        <p class="mb-0">Feature for up to ${sub.maximumMemberCount} users</p>
+                                        <ul>${features}</ul>
+                                            <a href="#"
+                                               class="btn btn-primary btn-lg w-100 mb-3 select-plan-btn"
+                                               data-sid="${sub.sid}"
+                                               data-pid="${planId}"
+                                                data-subscription="${sub.subscriptionName}"
+                                                 data-planname="${planName}">
+                                               Select
+                                            </a>
+                                                                           
+                                      </div>
+                                </div>
+                            </div>`;
+                    });
+                } else {
+                    html = '<p class="text-muted">No subscriptions found for this plan.</p>';
+                }
+
+                $("#subscriptionContainer").html(html);
+            },
+            error: function (xhr, status, error) {
+                console.error("Error fetching subscriptions:", error);
+                $("#subscriptionContainer").html('<p class="text-danger">Error loading subscriptions.</p>');
+            }
+        });
+    });
+    });
+
+    //select changes
+
+           $(document).on("click", ".select-plan-btn", function (e) {
+        e.preventDefault();
+
+        const sid = $(this).data("sid");
+        const pid = $(this).data("pid");
+        const subscription = $(this).data("subscription");
+        const planName = $(this).data("planname");
+        const url = `/Order/CheckoutDetails?sid=${sid}&pid=${pid}`;
+
+        // ✅ Update modal message dynamically
+        $("#planConfirmModal .modal-body").html(
+            `Are you sure you want to switch to the <b>${subscription}</b> subscription of the <b>${planName}</b> plan?`
+        );
+
+        // Show modal
+        const modal = new bootstrap.Modal(document.getElementById("planConfirmModal"));
+        modal.show();
+
+        // Handle confirm click
+        $("#confirmPlanBtn").off("click").on("click", function () {
+            modal.hide();
+                vt.success("Redirecting to checkout...", {
+      position: "top-center",
+      duration: 1500
+    });
+    setTimeout(() => { window.location.href = url; }, 1500);
+            window.location.href = url;
+        });
+    });
+
+
+</script>
+<script>
+    var newCompanyDetails = null;
+
+    $(document).ready(function () {
+
+        var isSubscriptionActive =
+            @((Model?.issubscriptionActive ?? false).ToString().ToLower());
+
+        /* SHOW MODAL */
+        if (isSubscriptionActive) {
+            new bootstrap.Modal(
+                document.getElementById('subscriptionActiveModal'),
+                { backdrop: 'static', keyboard: false }
+            ).show();
+        }
+
+        /* CANCEL */
+        $("#cancelSubscriptionModal").on("click", function () {
+            window.location.href =
+                '@Url.Action("SubscriptionDetails", "Subscription")';
+        });
+
+        /* SAVE (MODAL FORM SUBMIT) */
+        $("#subscriptionModalForm").on("submit", function (e) {
+            e.preventDefault();
+
+            var form = $(this);
+
+            form.removeData("validator");
+            form.removeData("unobtrusiveValidation");
+            $.validator.unobtrusive.parse(form);
+
+            if (!form.valid()) {
+                return false;
+            }
+
+            // ✅ COLLECT ALL VALUES
+            newCompanyDetails = {
+                OrganisationName: $("#modalorgName").val(),
+                EmailAddress: $("#modalemailId").val(),
+                PhoneNumber: $("#modalphoneNumber").val(),
+                Gstin: $("#modalGSTIN").val(),
+                Pan: $("#modelPan").val(),
+                CountryId: $("#ddlCountry").val(),
+                StateId: $("#ddlState").val(),
+                City: $("#modal_city").val(),
+                PostalCode: $("#modal_postal_code").val(),
+                Address: $("#modal_address").val()
+            };
+
+            $("#newCompanyDetails").val(JSON.stringify(newCompanyDetails));
+
+            vt.success("Details saved successfully", {
+                position: "top-center",
+                duration: 2000
+            });
+
+            bootstrap.Modal.getInstance(
+                document.getElementById('subscriptionActiveModal')
+            ).hide();
+
+            return false;
+        });
+
+        /* FINAL PAYMENT SUBMIT */
+        $("#razorpayForm").on("submit", function (e) {
+
+            if (!isSubscriptionActive) return true;
+
+            var modalForm = $("#subscriptionModalForm");
+
+            modalForm.removeData("validator");
+            modalForm.removeData("unobtrusiveValidation");
+            $.validator.unobtrusive.parse(modalForm);
+
+            if (!modalForm.valid()) {
+                e.preventDefault();
+
+                vt.error("Please complete subscription details.", {
+                    position: "top-center",
+                    duration: 2000
+                });
+
+                new bootstrap.Modal(
+                    document.getElementById('subscriptionActiveModal'),
+                    { backdrop: 'static', keyboard: false }
+                ).show();
+
+                return false;
+            }
+
+            if (!newCompanyDetails) {
+                e.preventDefault();
+                vt.error("Please click Save before proceeding.", {
+                    position: "top-center",
+                    duration: 2000
+                });
+                return false;
+            }
+
+            // ✅ MERGE JSON
+            var model = JSON.parse($("input[name='jsonData']").val());
+
+            model.PortalCustomerDetails.CompanyName   = newCompanyDetails.OrganisationName;
+            model.PortalCustomerDetails.EmailAddress  = newCompanyDetails.EmailAddress;
+            model.PortalCustomerDetails.Phonenumber   = newCompanyDetails.PhoneNumber;
+            model.PortalCustomerDetails.Gstinnumber   = newCompanyDetails.Gstin;
+            model.PortalCustomerDetails.Pancard       = newCompanyDetails.Pan;
+            model.PortalCustomerDetails.City          = newCompanyDetails.City;
+            model.PortalCustomerDetails.CountryId     = newCompanyDetails.CountryId;
+            model.PortalCustomerDetails.StateId       = newCompanyDetails.StateId;
+            model.PortalCustomerDetails.Address       = newCompanyDetails.Address;
+            model.PortalCustomerDetails.PostalCode    = newCompanyDetails.PostalCode;
+
+            $("input[name='jsonData']").val(JSON.stringify(model));
+            return true;
+        });
+
+    });
+</script>
+
+
+
+<script>
+    $(document).ready(function () {
+        var baseAmount = parseFloat($("#baseAmount").text().replace(/[₹,]/g, "")) || 0;
+        var gstPercent = parseFloat($("#gstPercent").text()) || 0;
+
+        var gstAmount = (baseAmount * gstPercent) / 100;
+        var totalAmount = baseAmount + gstAmount;
+
+        $("#hdntotalvalue").val(totalAmount.toFixed(2));
+    });
+
+</script>
+
+

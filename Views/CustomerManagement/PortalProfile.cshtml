@@ -1,0 +1,1107 @@
+﻿@using Microsoft.AspNetCore.Http
+@inject IHttpContextAccessor HttpContextAccessor
+@model HCMPortal.ViewModel.PortalCredentialViewModel;
+@{
+    ViewData["Title"] = "PortalProfile";
+    Layout = "_customerDashboardLayout";
+    <script src="https://www.google.com/recaptcha/api.js" async ></script>
+    <script src="https://www.google.com/recaptcha/api.js"></script>
+}
+
+<style>
+    .locked {
+        pointer-events: none;
+        background-color: #e9ecef !important;
+    }
+
+</style>
+
+@* <!doctype html>
+<html lang="en"> *@
+
+<head>
+    <meta charset="utf-8">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <title>Profile</title>
+
+    @*   <link href="~/assets/styles/bootstrap.min.css" rel="stylesheet">
+    <link href="~/assets/font/font-awsome/css/all.min.css" rel="stylesheet" />
+    <link href="~/assets/styles/style.css" rel="stylesheet">
+    <link href="~/assets/styles/dashboad.css" rel="stylesheet">
+    <link href="~/assets/dashboard_dataTable.css" rel="stylesheet">
+    <link href="~/assets/dataTable/css/dataTables.bootstrap5.min.css" />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <!-- DataTables CSS -->
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css"> *@
+
+
+</head>
+
+
+<!-- Profile Settings Section -->
+<section class="section_gap_large">
+    <div class="container">
+        <div class="row justify-content-center">
+            <!-- Left Side: Vertical Nav Pills -->
+            <div class="col-lg-3">
+                <div class="sidebar">
+                    <div class="nav flex-column nav-pills" id="profileTabs" role="tablist" aria-orientation="vertical">
+                        <a class="nav-link rounded-pill active py-3 px-4" id="personalInfo-tab" data-bs-toggle="tab" href="#personal-info" role="tab">
+                            <i class="bi bi-person me-2"></i> Profile
+                        </a>
+                        <a class="nav-link rounded-pill py-3 px-4" id="changePassword-tab" data-bs-toggle="tab" href="#password-change" role="tab">
+                            <i class="bi bi-key me-2"></i> Change Password
+                        </a>
+                        <a class="nav-link rounded-pill py-3 px-4" id="notification-tab" data-bs-toggle="tab" href="#notification" role="tab">
+                            <i class="bi bi-trash text-danger me-2"></i> Delete Account
+                        </a>
+                    </div>
+                </div>
+            </div>
+            <!-- Right Side: Tab Content -->
+            <div class="col-lg-9">
+                <div class="tab-content profileTabsContent">
+
+                    <div class="tab-pane fade show active" id="personal-info" role="tabpanel"
+                         aria-labelledby="personal-info-tab">
+                        <form asp-action="UpdatePortalProfile" asp-controller="CustomerManagement" method="post" enctype="multipart/form-data" id="profileForm">
+                            <div class="d-flex align-items-center justify-content-between mb-3">
+                                <h4 class="mb-0">Profile Details</h4>
+                                <div>
+                                    <a href="javascript:void(0);" id="btnEdit" class="btn btn-outline-primary btn-lg">
+                                        <i class="bi bi-pencil"></i> Edit
+                                    </a>
+                                    @*  <button type="submit" id="btnSave" class="btn btn-primary btn-lg d-none">Save</button> *@
+                                    <button type="button" id="btnSave" class="btn btn-primary btn-lg d-none">
+                                        Save
+                                    </button>
+                                    <button type="button" id="btnCancel" class="btn btn-secondary btn-lg d-none">Cancel</button>
+                                </div>
+                            </div>
+
+
+                            <input type="hidden" asp-for="Csid" />
+
+
+                            <input type="hidden" id="hdncompanyName" asp-for="CompanyName" />
+                            @* <input type="hidden" id="hdnPostalCode" asp-for="PostalCode" /> *@
+                            <input type="hidden" id="hiddenOEmail" asp-for="OldEmail" />
+                            <input type="hidden" id="hdnOphonenumber" asp-for="OldPhone" />
+                            @* <input type="hidden" id="hdnCountryId" name="CountryId" />
+                            <input type="hidden" id="hdnStateId" name="StateId" />
+                            <input type="hidden" id="hdnIndustryTypeID" name="IndustryTypeId" /> *@
+                            @*  <input type="hidden" id="hiddenUserName" value="@Model.PortalUserName" /> *@
+                            <input type="hidden" id="hiddenOldUserName" value="@Model.PortalUserName" />
+                            <div class="row mb-3">
+                                <div class="col-md-12">
+                                    <div class="card shadow border-0">
+                                        <div class="card-body p-4">
+
+                                            <div class="row">
+                                                <div class="col-md-4">
+                                                    <div class="d-flex flex-column align-items-center justify-content-center">
+                                                        <div class="company-logo position-relative">
+                                                            <img id="profileImagePreview" class="rounded-circle" src="@Model.CsProfileImage" height="120px" width="120px" />
+                                                            @*  @if (Model != null && Model.CsProfileImage != null)
+                                                    {
+                                                        <img id="profileImagePreview" class="rounded-circle" src="../../assets/UploadImg/@Model.CsProfileImage" height="120px" width="120px" />
+                                                    }
+                                                    else
+                                                    {
+                                                        <img id="profileImagePreview" class="rounded-circle" src="~/Pictures/user_icon.png" height="120px" width="120px" />
+                                                    } *@
+                                                            @*  <button type="button" class="close rounded-circle">
+                                                <i class="fas fa-times"></i>
+                                            </button> *@
+                                                        </div>
+                                                        <!-- File Upload (hidden until Edit is clicked) -->
+                                                        <div class="mb-3 text-center">
+                                                            <div class="image-upload position-relative d-none" id="imageUpload">
+                                                                <input type="file" asp-for="CsImageFile"
+                                                                       id="profileImageInput"
+                                                                       class="form-control  editable-field"
+                                                                       accept="image/*"
+                                                                       onchange="previewProfileImage(this)" />
+                                                                <a class="btn btn-success btn-xs">Upload Image</a>
+                                                            </div>
+                                                            <p class="mb-0"><strong>@Model.ContactPersonName</strong></p> @* Name did dynamic Daitari(25-11-2025) *@
+                                                            <div class="alert alert-primary rounded-pill py-2 px-3 small mb-0">
+                                                                Customer ID @Model.Csid
+                                                            </div>
+                                                        </div>
+
+                                                        <span asp-validation-for="CsProfileImage" class="text-danger"></span>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-8">
+                                                    <div class="row row-cols-2">
+                                                        <div class="col mb-3">
+                                                            <label class="col-form-label text-muted p-0">Username</label>
+                                                            <p class="mb-0">@Model.PortalUserName</p>
+                                                        </div>
+                                                        <div class="col mb-3">
+                                                            <label class="col-form-label text-muted p-0">Business Name</label>
+                                                            <p class="mb-0">@Model.CompanyName</p>
+                                                        </div>
+                                                        <div class="col mb-3">
+                                                            <label class="col-form-label text-muted p-0">Contact Person Name</label>
+                                                            <p class="mb-0">@Model.ContactPersonName</p>
+                                                        </div>
+                                                        <div class="col mb-3">
+                                                            <label class="col-form-label text-muted p-0">Phone Number</label>
+                                                            <p class="mb-0">@Model.Phonenumber</p>
+                                                        </div>
+                                                    </div>
+                                                    <div class="row row-cols-1">
+                                                        <div class="col mb-3">
+                                                            <label class="col-form-label text-muted p-0">Email</label>
+                                                            <p class="mb-0">@Model.EmailAddress</p>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                        </div>
+
+                                        @*  <div class="card-body">
+                                                    <div class="row">
+                                                        <div class="col-md-6 mb-1">
+                                                            <!-- Customer ID (always readonly) -->         
+                                                            <label class="col-form-label fw-bold pb-0">Customer ID</label>
+                                                            <input asp-for="Csid" class="form-control read-only-input" readonly />
+                                                        </div>
+
+                                                        <div class="col-md-6 mb-1">
+                                                            <!-- Username (always readonly) -->
+                                                            <label class="col-form-label fw-bold pb-0">Username</label>
+                                                            <input asp-for="PortalUserName" class="form-control read-only-input" readonly />
+                                                            
+                                                        </div>
+                                                    </div>
+                                                    <div class="row">
+                                                        <div class="col-md-6 mb-1">
+                                                            <!-- Business Name (always readonly) -->
+                                                            <label class="col-form-label fw-bold pb-0">Business Name</label>
+                                                            <input asp-for="CompanyName" class="form-control read-only-input" readonly />
+                                                        </div>
+                                                        <div class="col-md-6 mb-1">
+                                                            <!-- Contact Person Name (always readonly) -->
+                                                            <label class="col-form-label fw-bold pb-0">Contact Person Name</label>
+                                                            <input asp-for="ContactPersonName" class="form-control read-only-input" readonly />
+                                                        </div>
+                                                    </div>
+                                                    <div class="row">
+                                                        <div class="col-md-6 mb-1">
+                                                            <!-- Phone Number (always readonly) -->
+                                                            <label class="col-form-label fw-bold pb-0">Phone Number</label>
+                                                            <input asp-for="Phonenumber" class="form-control read-only-input" readonly />
+                                                        </div>
+                                                        <div class="col-md-6 mb-1">
+                                                            <!-- Email (always readonly) -->
+                                                            <label class="col-form-label fw-bold pb-0">Email</label>
+                                                            <input asp-for="EmailAddress" class="form-control read-only-input" readonly />
+                                                        </div>
+                                                    </div>
+                                                </div> *@
+                                    </div>
+                                </div>
+                            </div>
+
+
+                            <div class="card border-0 shadow">
+                                <div class="card-body p-4">
+                                    <div class="row">
+                                        <div class="col-md-6 mb-3">
+                                            <!-- PortalUserName (editable) -->
+                                            <label class="col-form-label text-muted">User Name</label>
+                                            <input asp-for="PortalUserName" id="userName" class="form-control editable-field read-only-input" readonly />
+                                            <span asp-validation-for="PortalUserName" class="text-danger"></span>
+                                        </div>
+                                        <div class="col-md-6 mb-3">
+                                            <!-- EmailAddress (editable) -->
+                                            <label class="col-form-label text-muted">Email Address</label>
+                                            <input asp-for="EmailAddress" id="emailAddress" class="form-control editable-field read-only-input" readonly />
+                                            <span asp-validation-for="EmailAddress" class="text-danger"></span>
+                                        </div>
+                                        <div class="col-md-6 mb-3">
+                                            <!-- ContactPersonName  (editable) -->
+                                            <label class="col-form-label text-muted">Contact Person</label>
+                                            <input asp-for="ContactPersonName" id="contactPersonName" class="form-control editable-field read-only-input" readonly />
+                                            <span asp-validation-for="ContactPersonName" class="text-danger"></span>
+                                        </div>
+                                        <div class="col-md-6 mb-3">
+                                            <!-- PortalUserName (editable) -->
+                                            <label class="col-form-label text-muted">Contact Number</label>
+                                            <input asp-for="Phonenumber" id="Phonenumber" class="form-control editable-field read-only-input" readonly />
+                                            <span asp-validation-for="Phonenumber" class="text-danger"></span>
+                                        </div>
+                                        <div class="col-md-6 mb-3">
+                                            <!-- GSTIN Number (editable) -->
+                                            <label class="col-form-label text-muted">GSTIN Number</label>
+                                            <input asp-for="Gstinnumber" id="gstin" class="form-control editable-field read-only-input" readonly />
+                                            <span asp-validation-for="Gstinnumber" class="text-danger"></span>
+                                            <small id="gstinError" class="text-danger"></small>
+                                        </div>
+                                        <div class="col-md-6 mb-3">
+                                            <!-- PAN Card (editable) -->
+                                            <label class="col-form-label text-muted">Pan Card</label>
+                                            <input asp-for="Pancard" id="panNumber" class="form-control editable-field read-only-input" readonly />
+                                            <span asp-validation-for="Pancard" class="text-danger"></span>
+                                        </div>
+                                        <div class="col-md-6 mb-3">
+                                            <!-- Address (editable) -->
+                                            <label class="col-form-label text-muted">Address</label>
+                                            <textarea asp-for="Address" class="form-control editable-field read-only-input" readonly></textarea>
+                                            <span asp-validation-for="CsProfileImage" class="text-danger"></span>
+                                        </div>
+                                        <div class="col-md-6 mb-3">
+                                            <!-- Country (editable) -->
+                                            <label class="col-form-label text-muted">Country</label>
+                                            <select asp-for="CountryId" id="ddlCountry" class="form-select" asp-items="@(new SelectList(ViewBag.CountryList, "CountryId", "CountryName"))" disabled>
+                                                <option value="">Select Country</option>
+                                            </select>
+
+                                            <span asp-validation-for="CountryId" class="text-danger"></span>
+                                            <input type="hidden" asp-for="CountryId">
+                                        </div>
+                                        <div class="col-md-6 mb-3">
+                                            <!-- State (editable) -->
+                                            <label class="col-form-label text-muted">State</label>
+                                            <select asp-for="StateId" id="ddlState"
+                                                    class="form-select editable-field read-only-select"
+                                                    asp-items="@(new SelectList(ViewBag.StateList, "StateId", "StateName"))"
+                                                    disabled>
+                                                <option value="">Select State</option>
+                                            </select>
+                                            <span asp-validation-for="StateId" class="text-danger"></span>
+                                        </div>
+                                        <div class="col-md-6 mb-3">
+                                            <!-- City (editable) -->
+                                            <label class="col-form-label text-muted">City</label>
+                                            <input asp-for="City" class="form-control editable-field read-only-input" readonly />
+                                        </div>
+                                        <div class="col-md-6 mb-3">
+                                            <!-- Postal Code (editable) -->
+                                            <label class="col-form-label text-muted">Postal Code</label>
+                                            <input asp-for="PostalCode" class="form-control editable-field read-only-input" readonly />
+                                            <span asp-validation-for="PostalCode" class="text-danger"></span>
+                                        </div>
+
+                                        <div class="col-md-6 mb-3">
+                                            <label class="col-form-label text-muted">Industry Type</label>
+                                            <select asp-for="IndustryTypeId"
+                                                    class="form-select editable-field read-only-select"
+                                                    asp-items="@(new SelectList(ViewBag.IndusryType, "Imid", "IndustryName"))"
+                                                    disabled>
+                                                <option value="">Select Industry Type</option>
+                                            </select>
+                                            <span asp-validation-for="IndustryTypeId" class="text-danger"></span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </form>
+                    </div>
+
+                    <!-- Change Password Tab -->
+                    <div class="tab-pane fade" id="password-change" role="tabpanel" aria-labelledby="changePassword-tab">
+
+                        <div class="d-flex align-items-center justify-content-between mb-3">
+                            <h4 class="mb-0">Change Password</h4>
+                            <a href="#" class="btn btn-link text-decoration-none d-flex align-items-center gap-2">
+                            </a>
+                        </div>
+
+                        <div class="card shadow border-0">
+                            <div class="card-body p-4">
+                                <form id="passwordForm" asp-controller="CustomerManagement" asp-action="ChangePortalpassword" method="post" autocomplete="off">
+                                    @*  <input type="hidden" id="Email" asp-for="EmailAddress" name="email" /> *@
+                                    <div class="mb-3">
+                                        <label for="currentPassword" class="form-label">Current Password</label>
+                                        <input type="password" class="form-control" id="currentPassword" name="currentPassword" placeholder="Enter Current password" required />
+                                        <span id="currentPasswordError" class="text-danger" style="display:none;"></span>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="newPassword" class="form-label">New Password</label>
+                                        <input type="password" class="form-control" id="newPassword" name="NewPassword" placeholder="Enter new password" required>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="confirmPassword" class="form-label">Confirm New Password</label>
+                                        <input type="password" class="form-control" id="confirmPassword"
+                                               placeholder="Confirm new password" required />
+                                        <span id="confirmPasswordError" class="text-danger" style="display:none;"></span>
+                                    </div>
+                                    <button type="submit" class="btn btn-primary" id="submitBtn" disabled>Update Password</button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Notification -->
+                    <div class="tab-pane fade" id="notification" role="tabpanel" aria-labelledby="notification-tab">
+                        <div class="d-flex align-items-center justify-content-between mb-3">
+                            <h4 class="mb-0">Delete Account</h4>
+                        </div>
+
+                        <div class="card border-0 shadow">
+                            <form>
+
+                                <div class="card-body p-4">
+                                    @if (ViewBag.Isexist == true)
+                                    {
+                                        <div class="alert alert-warning text-center fw-bold">
+                                            <i class="bi bi-trash text-danger me-2"></i>
+                                            We have received your account delete request and your
+                                            request is under process, we will update you soon.
+
+                                        </div>
+                                        <a asp-action="InvokeDeleteRequest" asp-controller="CustomerManagement" class="btn btn-danger">
+                                            <i class="bi bi-person-x-fill me-2"></i> Revoke Request
+                                        </a>
+                                    }
+                                    else
+                                    {
+                                        <div class="mb-3">
+                                            <label for="tesimonial-client-Review" class="form-label fw-bold">Reason Of the Deletion of the Account</label>
+                                            <textarea type="text" id="deleteReason" class="form-control" placeholder="Enter The reason of Delete" rows="5" required></textarea>
+                                        </div>
+                                        <div class="mb-3">
+                                            <div class="form-check">
+                                                <input class="form-check-input"
+                                                       type="checkbox"
+                                                       id="privacyCheck"
+                                                       required />
+
+                                                <label class="form-check-label text-muted" for="privacyCheck">
+                                                    To Delete your account, please review our
+                                                    <a href="javascript:void(0)"
+                                                       onclick="showPrivacyModal()"
+                                                       class="text-danger text-decoration-none">
+                                                        Privacy-Policy
+                                                    </a>.
+                                                </label>
+                                            </div>
+
+                                            <!-- Validation Message -->
+                                            <span id="privacyCheckError" class="text-danger" style="display:none;">
+                                                Please accept the Privacy Policy to continue.
+                                            </span>
+                                        </div>
+                                        <div class="mb-3">
+                                            <div class="g-recaptcha" data-sitekey="6LcP1r4rAAAAAHNiLqWilMZWVAroHkjaHZAEAIT9" data-callback="recaptchaValidated"></div>
+                                            <span asp-validation-summary="ModelOnly" class="text-danger"></span>
+                                            @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+                                            <input type="hidden" name="g-recaptcha-response" id="g-recaptcha-response">
+                                        </div>
+                                        <button type="button" class="btn btn-danger" id="btnDeactivateAccount">
+                                            <i class="bi bi-person-x-fill me-2"></i> Delete Account
+                                        </button>
+                                    }
+
+                                    @*  @if (ViewBag.Isexist == true)
+                                    {
+                                        <div class="alert alert-warning text-center fw-bold">
+                                            <i class="bi bi-hourglass-split me-2"></i>
+                                            Your delete request is already in progress.
+                                        </div>
+                                    }
+                                    else
+                                    {
+                                        <button type="button" class="btn btn-danger" id="btnDeactivateAccount">
+                                            <i class="bi bi-person-x-fill me-2"></i> Delete Account
+                                        </button>
+                                    }
+ *@
+
+
+                                </div>
+                            </form>
+
+                        </div>
+                    </div>
+                    @*OTP modal*@
+                    <div class="modal fade" id="otpModal" tabindex="-1">
+                        <div class="modal-dialog modal-dialog-centered">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title">OTP Verification</h5>
+                                </div>
+                                <div class="modal-body">
+                                    <p>An OTP has been sent to your registered email.</p>
+                                    <input type="text" id="otpInput" class="form-control" placeholder="Enter OTP">
+                                    <small id="otpError" class="text-danger"></small>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" id="verifyOtpBtn" class="btn btn-primary">Verify</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 🔸 Deactivation Confirmation Modal -->
+                    <div class="modal fade" id="deactivateAccountModal" tabindex="-1" aria-labelledby="deactivateAccountLabel" aria-hidden="true">
+                        <div class="modal-dialog modal-dialog-centered">
+                            <div class="modal-content border-0 shadow-lg">
+                                <div class="modal-header bg-danger text-white">
+                                    <h5 class="modal-title" id="deactivateAccountLabel">
+                                        <i class="bi bi-exclamation-triangle-fill me-2"></i> Confirm Delete
+                                    </h5>
+                                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                                </div>
+
+                                <div class="modal-body">
+                                    <p class="mb-3">Are You Sure you want to delete your account ?</p>
+                                </div>
+
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                                    <button type="button" class="btn btn-danger" id="confirmDeactivateBtn">Yes</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Privacy & Policy Modal -->
+                    <div class="modal fade" id="privacyModal" tabindex="-1" aria-labelledby="privacyLabel" aria-hidden="true">
+                        <div class="modal-dialog modal-xl modal-dialog-scrollable">
+                            <div class="modal-content">
+
+                                <div class="modal-header">
+                                    <h5 class="modal-title" id="privacyLabel">Privacy Policy</h5>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                                </div>
+
+                                <div class="modal-body p-0">
+
+                                    <!-- Loader -->
+                                    @*  <div id="privacyLoader" class="d-flex justify-content-center align-items-center" 
+                     style="height:80vh;">
+                    <div class="spinner-border text-danger" role="status">
+                        <span class="visually-hidden">Loading...</span>
+                    </div>
+                </div> *@
+
+                                    <!-- iFrame -->
+                                    <iframe id="privacyFrame"
+                                            src=""
+                                            style="width:100%; height:80vh; border:0; display:none;">
+                                    </iframe>
+
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+
+
+                    <div class="modal fade" id="feedbackModal" tabindex="-1" aria-labelledby="feedbackModalLabel" aria-hidden="true">
+                        <div class="modal-dialog modal-dialog-centered">
+                            <div class="modal-content border-0 shadow-lg rounded-3">
+                                <div class="modal-header">
+                                    <h5 class="modal-title" id="feedbackModalLabel">
+                                        <i id="feedbackIcon" class="bi"></i>
+                                        <span id="feedbackTitle"></span>
+                                    </h5>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                                </div>
+                                <div class="modal-body text-center py-4">
+                                    <p id="feedbackMessage" class="fs-6 mb-0"></p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+</section>
+
+
+
+<script src="~/assets/js/jquery.min.js"></script>
+<script src="~/assets/js/vanilla-toast.min.js"></script>
+
+<script>
+    const toggle = document.getElementById('billingToggle');
+    const monthlyPlan = document.getElementById('monthly-plan');
+    const yearlyPlan = document.getElementById('yearly-plan');
+
+    toggle.addEventListener('change', function () {
+      if (this.checked) {
+        // Show Yearly, Hide Monthly
+        yearlyPlan.style.display = 'block';
+        monthlyPlan.style.display = 'none';
+      } else {
+        // Show Monthly, Hide Yearly
+        monthlyPlan.style.display = 'block';
+        yearlyPlan.style.display = 'none';
+      }
+    });
+
+</script>
+<script>
+    function showPrivacyModal() {
+
+        let url = "https://www.thecloudtree.ai/privacy-policy";
+
+        let iframe = document.getElementById("privacyFrame");
+        //let loader = document.getElementById("privacyLoader");
+
+        // Reset UI
+       // loader.style.display = "flex";
+        iframe.style.display = "none";
+        iframe.src = "";
+
+        // Load the privacy-policy page
+        iframe.src = url;
+
+        // When iframe content loads, hide loader
+        iframe.onload = function () {
+           // loader.style.display = "none";
+            iframe.style.display = "block";
+        };
+
+        // Show modal
+        var modal = new bootstrap.Modal(document.getElementById('privacyModal'));
+        modal.show();
+    }
+</script>
+
+<script>
+        $(document).ready(function () {
+            // $('#notification_table').DataTable();
+            $("#ddlCountry").change(function () {
+                        var countryId = parseInt($(this).val());
+
+                        if (!isNaN(countryId) && countryId > 0) {
+                            var ddlState = $('#ddlState');
+                            ddlState.empty();
+                            ddlState.append($("<option></option>").val('').html('Please wait ...'));
+
+                            $.ajax({
+                                url: '/CustomerManagement/GetStateList',
+                                type: 'GET',
+                                dataType: 'json',
+                                data: { countryId: countryId },
+                                success: function (states) {
+                                    ddlState.empty(); // Clear the please wait
+                                    ddlState.append($("<option></option>").val('').html('Select State'));
+                                    $.each(states, function (i, state) {
+                                        ddlState.append($("<option></option>").val(state.stateId).html(state.stateName));
+                                    });
+                                },
+                                error: function () {
+                                    alert('Error retrieving states!');
+                                }
+                            });
+                        } else {
+                            $('#ddlState').empty();
+                            $('#ddlState').append($("<option></option>").val('').html('Select'));
+                        }
+                    });
+
+         $("#currentPassword").on("blur", function () {
+
+        var enteredPassword = $(this).val().trim();
+        var $error = $("#currentPasswordError");
+        var $submitBtn = $("#submitBtn");
+
+        if (enteredPassword === "") {
+            $error.text("Current password is required.").show();
+            $submitBtn.prop("disabled", true);
+            return;
+        }
+
+        $.ajax({
+            url: '/CustomerManagement/ValidateCurrentPassword',
+            type: 'POST',
+            data: { currentPassword: enteredPassword },
+            success: function (isValid) {
+                
+                if (isValid === true) {
+                  $error.hide().text("");
+                    $submitBtn.prop("disabled", false);
+                } else {
+                    $error.text("Wrong password! Enter correct one.").show();
+                    $submitBtn.prop("disabled", true);
+                }
+            },
+            error: function () {
+                $error.text("Unable to validate password. Try again.").show();
+                $submitBtn.prop("disabled", true);
+            }
+        });
+    });
+
+
+            $("#confirmPassword").on("blur", function () {
+
+                        var confirmPassword = $(this).val();
+                          var newPassword = $("#newPassword").val().trim();
+                          var currentPassword = $("#currentPassword").val().trim();
+                var $error = $("#confirmPasswordError");
+                var $submitBtn = $("#submitBtn");
+
+                if (confirmPassword === "") {
+                    $error.text("confirm Password is required.").show();
+                    $submitBtn.prop("disabled", true);
+                }
+                else if (confirmPassword !== newPassword) {
+                    $error.text("New password and confirm password must be same").show();
+                    $submitBtn.prop("disabled", true);
+                }
+                // else if (currentPassword === "") {
+                //     $error.text("Current Paaword Required").show();
+                //     $submitBtn.prop("disabled", true);
+               // }
+                else {
+                    $error.text("").hide();
+                    $submitBtn.prop("disabled", false);
+                }
+                    });
+
+           $("#newPassword").on("blur", function () {
+            var newPassword = $(this).val().trim();
+
+            // Clear confirm password whenever new password changes
+            $("#confirmPassword").val("");
+
+            // Also clear any existing error message
+            $("#confirmPasswordError").text("").hide();
+
+            // Disable submit button until confirm password is re-entered
+            $("#submitBtn").prop("disabled", true);
+
+
+        });
+         $("#profileImageInput").change( function (event) {
+
+                const file = event.target.files[0];
+                const preview = document.getElementById("profileImagePreview");
+
+                if (file) {
+                    const fileType = file.type; // Get the file type
+
+                    // Check if the file type is either 'image/jpeg' or 'image/png'
+                    if (fileType === "image/jpeg" || fileType === "image/png"||fileType === "image/jpg") {
+                        const reader = new FileReader();
+
+                            reader.onload = function (e) {
+                preview.src = e.target.result; // Correct: use the file data URL
+            };
+
+
+                        reader.readAsDataURL(file); // Read the file as a data URL
+                    } else {
+                        // If the file is not JPEG or PNG, show an alert
+                        alert("Please upload a valid image file (JPEG, PNG or JPG only).");
+                         event.target.value = "";
+                        @* preview.src = "~/Pictures/user_icon.png"; // Set the default image *@
+                        preview.src = "~/assets/images/user_icon.png"; // Set the default image
+                    }
+                }
+                else {
+                    // If no file is selected, show the default image
+                    preview.src = "/assets/images/user_icon.png";
+                }
+            });
+    });
+
+</script>
+
+<script>
+        document.addEventListener("DOMContentLoaded", function () {
+
+            // Store the original field values when the page loads
+            const originalData = {};
+            document.querySelectorAll(".editable-field").forEach(function (el) {
+                if (el.name) {
+                    originalData[el.name] = el.value;
+                }
+            });
+
+            // Hide file input initially
+            document.getElementById("imageUpload").classList.add("d-none");
+
+            // Handle Edit click
+            document.getElementById("btnEdit").addEventListener("click", function () {
+                document.querySelectorAll(".editable-field").forEach(function (el) {
+                    const tag = el.tagName.toLowerCase();
+                    if (tag === "input" || tag === "textarea") {
+                        el.removeAttribute("readonly");
+                    }
+                    if (tag === "select") {
+                        el.removeAttribute("disabled");
+                    }
+                });
+
+                document.getElementById("imageUpload").classList.remove("d-none");
+
+                this.classList.add("d-none");
+                document.getElementById("btnSave").classList.remove("d-none");
+                document.getElementById("btnCancel").classList.remove("d-none");
+            });
+
+            // Handle Cancel click
+            document.getElementById("btnCancel").addEventListener("click", function () {
+                // Restore original values
+                document.querySelectorAll(".editable-field").forEach(function (el) {
+                    if (el.name && originalData.hasOwnProperty(el.name)) {
+                        el.value = originalData[el.name];
+                    }
+                });
+
+                // Disable fields again
+                document.querySelectorAll(".editable-field").forEach(function (el) {
+                    if (el.tagName === "INPUT" || el.tagName === "TEXTAREA") {
+                        el.setAttribute("readonly", true);
+                    }
+                    if (el.tagName === "SELECT") {
+                        el.setAttribute("disabled", true);
+                    }
+                });
+                // remove the error message
+                document.querySelectorAll("span.text-danger").forEach(function (span) {
+        span.textContent = "";
+    });
+                // Hide file input again
+                document.getElementById("imageUpload").classList.add("d-none");
+
+                // Toggle buttons
+                this.classList.add("d-none");
+                document.getElementById("btnSave").classList.add("d-none");
+                document.getElementById("btnEdit").classList.remove("d-none");
+
+
+                // Reset profile image preview if changed
+                const imgPreview = document.getElementById('profileImagePreview');
+                if (imgPreview && originalData["profileImagePreviewSrc"]) {
+                    imgPreview.src = originalData["profileImagePreviewSrc"];
+                }
+
+
+            });
+
+            // Handle image preview
+            window.previewProfileImage = function (input) {
+                if (input.files && input.files[0]) {
+                    const reader = new FileReader();
+                    reader.onload = function (e) {
+                        document.getElementById('profileImagePreview').src = e.target.result;
+                    };
+                    reader.readAsDataURL(input.files[0]);
+                }
+            };
+
+            // Store original image source too
+            const imgPreview = document.getElementById('profileImagePreview');
+            if (imgPreview) {
+                originalData["profileImagePreviewSrc"] = imgPreview.src;
+            }
+
+        //         function isValidGstin(gstin) {
+        //     if (!gstin) return false;
+        //     gstin = gstin.toUpperCase().trim();
+        //     const re = /^[0-9]{2}[A-Z]{5}[0-9]{4}[A-Z][1-9A-Z]Z[0-9A-Z]$/;
+        //     return re.test(gstin);
+        // }
+
+        // document.getElementById("gstin").addEventListener("blur", function () {
+
+        //     const gstin = this.value.trim();
+
+        //     if (gstin === ""){
+        //          vt.warn("You did not enter any GSTIN.", {
+        //         title: "Validation Warning",
+        //         position: "top-center",
+        //         duration: 3000
+        //     });
+        //     this.focus();
+        //     return;
+        //     }
+        //     if (!isValidGstin(gstin)) {
+        //         vt.error("Invalid GSTIN format. Please enter a valid one.", {
+        //             title: "Validation Error",
+        //             position: "top-center",
+        //             duration: 3000
+        //         });
+        //         this.value = ""; // clear field
+        //         this.focus();    // focus again
+        //     }
+        // });
+
+
+        //     function isValidPAN(pan) {
+        //     if (!pan) return false;
+        //     pan = pan.toUpperCase().trim();
+        //     const re = /^[A-Z]{5}[0-9]{4}[A-Z]{1}$/;
+        //     return re.test(pan);
+        // }
+
+        // document.getElementById("panNumber").addEventListener("blur", function () {
+        //     const pan = this.value.trim();
+
+        //     // Case 1: Blank field
+        //     if (pan === "") {
+        //         vt.warn("You did not enter any PAN number.", {
+        //             title: "Validation Warning",
+        //             position: "top-center",
+        //             duration: 3000
+        //         });
+        //         this.focus();
+        //         return;
+        //     }
+
+        //     // Case 2: Invalid format
+        //     if (!isValidPAN(pan)) {
+        //         vt.error("Invalid PAN format. Please enter a valid one (e.g., ABCDE1234F).", {
+        //             title: "Validation Error",
+        //             position: "top-center",
+        //             duration: 3000
+        //         });
+        //         this.value = "";  // clear field
+        //         this.focus();
+        //         return;
+        //     }
+
+        //     // Case 3: Valid PAN → do nothing
+        //});
+
+
+    });
+</script>
+
+<script>
+    // function showFeedbackModal(isSuccess, title, message) {
+    //     const modal = new bootstrap.Modal(document.getElementById('feedbackModal'));
+    //     const icon = $("#feedbackIcon");
+    //     const header = $("#feedbackModal .modal-header");
+
+    //     $("#feedbackTitle").text(title);
+    //     $("#feedbackMessage").text(message);
+
+    //     if (isSuccess) {
+    //         icon.attr("class", "bi bi-check-circle-fill text-success me-2 fs-4");
+    //         header.removeClass("bg-danger text-white").addClass("bg-success text-white");
+    //     } else {
+    //         icon.attr("class", "bi bi-x-circle-fill text-danger me-2 fs-4");
+    //         header.removeClass("bg-success text-white").addClass("bg-danger text-white");
+    //     }
+
+    //     modal.show();
+    // }
+           // Elements
+     document.getElementById('btnDeactivateAccount').addEventListener('click', function () {
+
+        const reason = document.getElementById("deleteReason").value.trim();
+        const privacyChecked = document.getElementById("privacyCheck").checked;
+        const recaptchaResponse = grecaptcha.getResponse();
+
+        // Validation 1 – Reason required
+        if (reason.length === 0) {
+            showFeedbackModal("warning", "Warning", "Please enter the reason for deleting your account.");
+            return;
+        }
+
+        // Validation 2 – Privacy Policy must be accepted
+        if (!privacyChecked) {
+            showFeedbackModal("warning", "Warning", "You must accept the Privacy Policy before deleting your account.");
+            return;
+        }
+
+        // Validation 3 – reCAPTCHA required
+        if (!recaptchaResponse) {
+            showFeedbackModal("warning", "Warning", "Please complete the reCAPTCHA verification.");
+            return;
+        }
+
+        // If everything is valid → now show confirmation modal
+        const modal = new bootstrap.Modal(document.getElementById('deactivateAccountModal'));
+        modal.show();
+    });
+
+
+
+         document.getElementById('confirmDeactivateBtn').addEventListener('click', function () {
+             
+        let reason = document.getElementById('deleteReason').value.trim();
+         let recaptchaToken = document.getElementById("g-recaptcha-response").value;
+
+        $.ajax({
+            url: '/CustomerManagement/DeleteAccount',
+            type: 'POST',
+            data: { reason: reason,
+             "g-recaptcha-response": recaptchaToken
+            },
+
+            success: function (response) {
+                
+                $('#deactivateAccountModal').modal('hide');
+
+                if (response.isSuccess) {
+                    showFeedbackModal("success", "Success", response.message);
+                     window.reloadAfterModal = true;
+                } else {
+                    showFeedbackModal("warning", "Warning", response.message);
+                     window.reloadAfterModal = false;
+                }
+            },
+
+            error: function () {
+                $('#deactivateAccountModal').modal('hide');
+                showFeedbackModal("danger", "Error", "Something went wrong!");
+                window.reloadAfterModal = false;
+            }
+        });
+    });
+
+        $('#feedbackModal').on('hidden.bs.modal', function () {
+        if (window.reloadAfterModal === true) {
+            location.reload();
+        }
+    });
+
+     // Feedback Modal Function
+     function showFeedbackModal(type, title, message) {
+         let icon = document.getElementById("feedbackIcon");
+         let modalTitle = document.getElementById("feedbackTitle");
+         let modalMessage = document.getElementById("feedbackMessage");
+
+        icon.className = "bi me-2";
+
+    // Set icon based on type
+    if (type === "success") {
+        icon.classList.add("bi-check-circle-fill", "text-success");
+    }
+    else if (type === "danger") {
+        icon.classList.add("bi-x-circle-fill", "text-danger");
+    }
+    else if (type === "warning") {
+        icon.classList.add("bi-exclamation-triangle-fill", "text-warning");
+    }
+
+         modalTitle.innerText = title;
+         modalMessage.innerText = message;
+
+         let modal = new bootstrap.Modal(document.getElementById("feedbackModal"));
+         modal.show();
+     }
+
+
+
+
+</script>
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+
+        var type = '@TempData["ModalType"]';
+        var title = '@TempData["ModalTitle"]';
+        var message = '@TempData["ModalMessage"]';
+
+        if (message && message.length > 0) {
+            showFeedbackModal(type, title, message);
+        }
+    });
+</script>
+<script>
+    $(document).ready(function () {
+        //   $("#privacyCheck").change(function () {
+        //     if ($(this).is(":checked")) {
+        //         $("#btnDeactivateAccount").prop("disabled", false); // Enable button
+        //     } else {
+        //         $("#btnDeactivateAccount").prop("disabled", true);  // Disable button
+        //     }
+        // });
+    });
+</script>
+<script>
+    let otpVerified = false;
+
+    $("#btnSave").on("click", function (e) {
+        
+        e.preventDefault(); // VERY IMPORTANT
+        @*  if (!form.valid()) {
+        // ❌ Validation failed → DO NOT send OTP
+        return;
+    } *@
+
+    // 🔹 Extra safety: check if any asp-validation span has text
+    if (hasAspNetValidationErrors()) {
+        return;
+    }
+        const oldEmail = $("#hiddenOEmail").val();
+        const newEmail = $("#emailAddress").val();
+
+        const oldUserName = $("#hiddenOldUserName").val();
+        const newUserName = $("#userName").val();
+
+        if (oldEmail !== newEmail || oldUserName !== newUserName) {
+            sendOtp();
+        } else {
+            otpVerified = true;
+            submitProfileForm();
+        }
+    });
+
+    function sendOtp() {
+        $.post('/CustomerManagement/SendOtp', function (res) {
+            if (res.success) {
+                $("#otpModal").modal("show"); // ✅ NOW IT WILL SHOW
+            } else {
+                alert(res.message);
+            }
+        });
+    }
+
+    $("#verifyOtpBtn").on("click", function () {
+        const otp = $("#otpInput").val();
+
+        $.post('/CustomerManagement/VerifyOtp', { otp: otp }, function (res) {
+            if (res.success) {
+                otpVerified = true;
+
+                $("#verifyOtpBtn").prop("disabled", true);
+                $("#otpModal").modal("hide");
+
+                submitProfileForm(); // FINAL submit
+            } else {
+                $("#otpError").text("Invalid OTP");
+            }
+        });
+    });
+
+    function submitProfileForm() {
+        // Enable disabled selects before submit
+        $("#profileForm select:disabled").prop("disabled", false);
+
+        $("#profileForm")[0].submit(); // PURE HTML submit
+    }
+
+
+
+
+
+            function hasAspNetValidationErrors() {
+        let hasError = false;
+
+        $("#profileForm span.text-danger").each(function () {
+            if ($(this).text().trim().length > 0) {
+                hasError = true;
+                return false; // break loop
+            }
+        });
+
+        return hasError;
+    }
+
+</script>
+

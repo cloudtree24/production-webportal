@@ -1,0 +1,81 @@
+﻿@using HCMPortal.Helper
+@{
+	Layout = "_LayoutWithoutEnquiryForm";
+}
+
+
+<div class="ct-inner_banner ct-gray__bg">
+    <div class="container">
+        <div class="d-flex gap-2 align-items-center py-4 justify-content-between">
+            <div class="ct-inner__content mb-4 w-50">
+                <h2 class="display-4 fw-bold mb-3">Our Story</h2>
+                <p class="text-muted">
+                    <a href="@Common.GetUrlForOwnBaseAddress()">
+                        <img src="~/assets/images/logos/cloudtree-logo.webp" alt="thecloudtree.ai" style="height: 18px; margin-top: -5px; margin-right: 4px;">
+                          </a>is a SaaS company, helping businesses stay relevant in a highly connected
+                    and rapidly evolving world. We strive to provide best-in-class products and services to businesses across
+                    geographies. Our unparalleled Technical skills, robust R&amp;D mechanism, People-oriented practices set us
+                    apart. Our focus makes us agile and enables us to power businesses for global operations
+                </p>
+            </div>
+            <img class="img-fluid banner-img" alt="Career" src="~/assets/images/banner/ourstories-banner.png">
+        </div>
+    </div>
+</div>
+
+@* <div class="ct-padding__120">
+
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="ct-heading__section text-center mb-5">
+                    <h2 class="ct-fs-48 fw-bold">About Us</h2>
+                    <p class="mx-auto opacity-50">"Inspiration In Every Turn"</p>
+                </div>
+                <div class="content text-end ps-5 fs-20">
+                    <p>
+                        TheCloudTree is a  SaaS company, helping businesses stay relevant
+                        in a highly connected
+                        and rapidly evolving world. We strive to provide best-in-class products and services
+                        to
+                        businesses across geographies. Our unparalleled Technical skills, robust R&D
+                        mechanism,
+                        People-oriented
+                        practices set us apart. Our focus makes us agile and enables us to power businesses
+                        for
+                        global operations
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div> *@
+
+<!-- Team START -->
+<section class="ct-team__section">
+    <div class="container">
+        <div class="ct-heading__section text-center mb-5">
+            <h2 class="ct-fs-48">Meet our executive team</h2>
+            <p class="mx-auto opacity-50">Meet our team of professionals to serve you</p>
+        </div>
+        <div class="row justify-content-center g-5">
+            @await Component.InvokeAsync("OurTeam")
+        </div>
+    </div>
+</section>
+<script>
+        document.querySelectorAll('.btn-drawer-open').forEach(btn => {
+        btn.addEventListener('click', function (e) {
+            e.preventDefault();
+            this.closest('.card').classList.add('drawer-open');
+        });
+    });
+
+    document.querySelectorAll('.btn-drawer-close').forEach(btn => {
+        btn.addEventListener('click', function (e) {
+            e.preventDefault();
+            this.closest('.card').classList.remove('drawer-open');
+        });
+    });
+</script>

@@ -1,0 +1,23 @@
+/* ---------- Variables ---------- */
+:root {
+    /* --ct-primary: #224F2B; */
+    --ct-primary: #10b981;
+    --ct-dark: #000;
+    --ct-white: #fff;
+    --ct-gray: rgba(var(--bs-light-rgb));
+    --ct-border: #f6f6f6;
+    --ct-fs-90: 90px;
+    --ct-fs-80: 80px;
+    --ct-fs-70: 70px;
+    --ct-fs-60: 60px;
+    --ct-fs-48: 48px;
+    --ct-fs-30: 30px;
+    --ct-fs-24: 24px;
+    --ct-fs-18: 18px;
+    --ct-fs-16: 16px;
+    --ct-radius-sm: 4px;
+    --ct-radius-md: 10px;
+    --ct-radius-lg: 24px;
+    --ct-padding-60: 60px;
+    --ct-padding-120: 120px;
+}

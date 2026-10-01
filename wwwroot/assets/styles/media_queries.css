@@ -1,0 +1,225 @@
+@media (max-width: 1199.98px) {
+    .ct-hrManagement__section .nav-item {
+        flex: 0 0 calc(50% - .75rem) !important;
+    }
+    .ct-hrManagement__section .nav-link {
+        width: 100%;
+    }
+    .ct-hrManagement__section .nav {
+        gap: .75rem;
+    }
+}
+
+@media (min-width: 1199.98px) {
+      #ct-main__banner {
+            min-height: calc(100vh - 70px);
+      }
+}
+
+@media (min-width: 992px) and (max-width: 1199.98px) {
+    .modern-banner h1 {
+        font-size: 2.8rem;
+    }
+}
+
+
+@media (min-width: 992px) {
+   .ct-contact__card .col-lg-6:first-child iframe {
+       border-radius: var(--ct-radius-md) 0 0 var(--ct-radius-md);
+   }
+
+   .ct-contact__card .col-lg-6:last-child {
+       border-radius: 0 var(--ct-radius-md) var(--ct-radius-md) 0;
+   }
+}
+
+
+@media (max-width: 991.98px) {
+
+   section {
+      padding: 70px 0;
+   }
+
+   .ct-header {
+       box-shadow: 0 .125rem .25rem rgba(0, 0, 0, .075);
+   }
+
+   .ct-we__section img {
+        width: 50%;
+   }
+
+   .payroll-flow {
+        flex-direction: column;
+        gap: 20px;
+   }
+
+   .hero-overlay-content {
+        background: rgba(6, 78, 59, 0.85);
+        text-align: center;
+        padding: 30px 20px;
+   }
+
+   .modern-pills {
+       justify-content: center !important;
+       margin-left: 0 !important;
+   }
+
+  .ct-banner__text {
+      text-align: center;
+      padding: 40px 0;
+  }
+
+  .ct-banner__section img {
+      width: 100%;
+      max-width: 600px;
+  }
+
+    .hero-overlay-content {
+        background: rgba(6, 78, 59, 0.85);
+        text-align: center;
+    }
+
+    .modern-pills {
+        justify-content: center !important;
+        margin-left: 0 !important;
+    }
+
+    .contact-section {
+        border-radius: 30px;
+    }
+
+    .ct-modern-banner.ct-gray-bg {
+        padding: var(--ct-padding-60) 0;
+        text-align: center;
+    }
+
+    .ct-banner-title {
+        font-size: var(--ct-fs-48);
+        margin-bottom: 3rem;
+    }
+
+    .ct-contactUs .ct-contactUs__content {
+        flex-direction: column;
+        padding-top: 80px;
+    }
+
+    .ct-contactUs .ct-contactUs__content {
+        flex-direction: column;
+        padding-top: 80px;
+    }
+
+    .ct-contactUs {
+        background-size: 100% auto!important;
+        background-repeat: no-repeat;
+    }
+
+    .ct-contactUs__form {
+        max-width: 100% !important;
+        min-width: 100% !important;
+        margin: 0 !important;
+    }
+
+}
+
+
+@media (max-width: 767.98px) {
+
+    section {
+        padding: 50px 0;
+    }
+
+    .ct-padding__60 {
+        padding: 40px 0;
+    }
+
+    .ct-padding__120 {
+        padding: 70px 0;
+    }
+
+    .ct-fs-90 {
+        font-size: 4rem;
+    }
+
+    .ct-fs-80 {
+        font-size: 3.5rem;
+    }
+
+    .ct-fs-60 {
+        font-size: 2.8rem;
+    }
+
+    .ct-fs-48 {
+        font-size: 32px;
+    }
+
+    .ct-fs-30 {
+        font-size: 24px;
+    }
+
+    .ct-fs-24 {
+        font-size: 20px;
+    }
+
+    .ct-fs-18 {
+        font-size: 16px;
+    }
+
+    .timeline::before {
+        left: 35px;
+    }
+
+    .timeline-item .row > div {
+        margin-bottom: 20px;
+    }
+
+    .ct-btn__darkTrans {
+        padding: 10px 22px;
+        font-size: 16px;
+    }
+
+    .ct-heading__section .bar {
+        width: 70px;
+    }
+
+    .ct-hrManagement__section .nav {
+        gap: .75rem;
+    }
+
+    .ct-hrManagement__section .nav-item {
+        flex: 0 0 100% !important;
+    }
+
+    .ct-hrManagement__section .nav-link {
+        width: 100%;
+        padding: 16px;
+        font-size: 15px;
+    }
+}
+
+
+@media (max-width: 575.98px) {
+
+    .ct-banner__text {
+        padding: 30px 0;
+    }
+
+    .hero-overlay-content {
+        padding: 25px 15px;
+    }
+
+    .ct-features {
+        gap: 10px;
+    }
+
+    .ct-features .icons {
+        width: 28px;
+        height: 28px;
+        min-width: 28px;
+        font-size: 12px;
+    }
+
+    .ct-features .title p,
+    .ct-features .title span {
+        font-size: 13px;
+    }
+}

@@ -1,0 +1,564 @@
+﻿@model HCMPortal.ViewModel.DemoBookingViewModel
+@{
+    ViewData["Title"] = "Demo Booking | Human Resource Management Software India";
+    Layout = "_LayoutWithoutEnquiryForm";
+}
+
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <title>Book a Demo</title>
+
+    <link rel="canonical" href="https://thecloudtree.ai/" />
+
+    <link href="~/assets/styles/bootstrap/bootstrap.css" rel="stylesheet">
+    <link href="~/assets/styles/bootstrap/bootstrap-icons.css" rel="stylesheet">
+    <link href="~/assets/fonts/font-awsome/css/all.min.css" rel="stylesheet">
+    <link href="~/assets/datatable/css/datatables.bootstrap5.min.css" rel="stylesheet" />
+    <link href="~/assets/datatable/css/buttons.bootstrap5.min.css" rel="stylesheet" />
+    <link href="~/assets/styles/owl.theme.default.min.css" rel="stylesheet">
+    <link href="~/assets/styles/owl.carousel.min.css" rel="stylesheet">
+    <link href="~/assets/styles/style.min.css" rel="stylesheet" />
+
+</head>
+
+<body>
+
+
+
+        <div class="row g-0">
+            <div class="col-lg-5">
+                <div class="leftBg d-flex flex-column justify-content-center align-items-center">
+
+                    <figure class="text-center">
+                        <img class="img-fluid" src="~/assets/images/bg/demo.svg" alt="" title="Login">
+                    </figure>
+                    <div class="logIn-screen-testimonial owl-carousel">
+
+                        <!-- Slide 1 -->
+                        <div class="item text-center">
+                            <p class="text-muted">"Book a demo to see our HRM in action."</p>
+                        </div>
+                        <div class="item text-center">
+                            <p class="text-muted">"Schedule a quick demo and explore HRM features."</p>
+                        </div>
+                        <div class="item text-center">
+                            <p class="text-muted">"Experience smarter HR management – book your demo today."</p>
+                        </div>
+                        <div class="item text-center">
+                            <p class="text-muted">"See how our HRM can simplify your work. Book a demo now."</p>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+            <div class="col-lg-7">
+                <div class="d-flex flex-column justify-content-center align-items-center h-100">
+                    <div class="login-wrapper">
+                        <div class="login-content demo-login w-100">
+
+                            <h4 class="fw-bold">Book a Demo</h4>
+                            <p class="text-muted">Schedule a Demo with
+                            <a href="/Home/Index">
+                                <img src="/assets/images/logos/cloudtree-logo.webp" alt="thecloudtree.ai" style="height: 18px; margin-top: -5px;"></a> HRMS
+                        </p>
+
+                        <form asp-route="ProductDemoBook" id="demoForm" method="post">
+                                <div class="row g-3">
+                                    <div class="col-md-12">
+                                        <div class="row">
+                                            <div class="col-md-4">
+                                                <label class="form-label">Full Name<span class="text-danger">*</span></label>
+                                                <input asp-for="Name" class="form-control" placeholder="Enter Your Full Name" required />
+                                                <span asp-validation-for="Name" class="text-danger"></span>
+                                            </div>
+                                            <div class="col-md-4">
+                                                <label class="form-label">Email Address<span class="text-danger">*</span></label>
+                                                <input asp-for="Email" type="text" id="EmailAddress" class="form-control" placeholder="Enter Email Address" required />
+                                                <span asp-validation-for="Email" class="text-danger"></span>
+                                            </div>
+                                            <div class="col-md-4">
+                                                <label class="form-label">Phone Number<span class="text-danger">*</span></label>
+                                                <input asp-for="Phone" type="text" id="Phonenumber" class="form-control" placeholder="Enter Phone number" required />
+                                                <span asp-validation-for="Phone" class="text-danger"></span>
+                                            </div>
+                                        </div>
+                                    </div>                                    
+                                    <div class="col-md-6">
+                                        <label class="form-label">Industry Type</label>
+                                        <select asp-for="IndustryTypeId" class="form-select" asp-items="@(new SelectList(ViewBag.IndusryType, "Imid", "IndustryName"))">
+                                            <option value="0">Select Industry</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label class="form-label">Country</label>
+                                        <select asp-for="CountryId" id="ddlCountry" class="form-select" asp-items="@(new SelectList(ViewBag.CountryList, "CountryId", "CountryName"))" disabled>
+                                            <option value="0">Select Country</option>
+                                        </select>
+                                        <input type="hidden" asp-for="CountryId">
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label class="form-label">State</label>
+                                        <select asp-for="StateId" id="ddlState" class="form-select" asp-items="@(new SelectList(ViewBag.StateList, "StateId", "StateName"))">
+                                            <option value="0">Select State</option>
+                                        </select>
+
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label class="form-label">Prefer Date</label>
+                                        <input asp-for="SlotDate" type="date" class="form-control" min="@DateTime.Now.ToString("yyyy-MM-dd")" id="slotDate" />
+
+                                    </div>
+                                    <div class="col-md-6 d-none" id="weeklySlotsBox">
+
+                                        <h5 class="mb-0 py-3 px-4 bg-success text-white rounded-top">
+                                            <i class="fa-regular fa-clock"></i> Available Slots
+                                        </h5>
+
+                                        <div class="border border-top-0 rounded-bottom p-4 bg-light">
+                                            <div id="slotContainer" class="d-flex flex-wrap gap-2"></div>
+                                        </div>
+                                    </div>
+                                    <div class="alert alert-success mt-4 mb-1 text-center fw-bold d-none" id="selectedSlotTiming">
+                                        Selected: <span id="finalSelectedText">None</span>
+                                    </div>
+                                    <input type="hidden" id="slottime" asp-for="SlotTime" />
+                                    <input type="hidden" id="timeslotid" asp-for="slottimeId" />
+                                    <div class="col-md-12">
+                                        <div class="row">
+                                            <div class="col-6">
+                                                <label class="form-label">Address</label>
+                                                <textarea asp-for="Address" type="text" TextMode="MultiLine" class="form-control" placeholder="Enter Address"></textarea>
+
+                                            </div>
+                                            <div class="col-6">
+                                                <label class="form-label">Remarks</label>
+                                                <textarea asp-for="Remarks" type="text" TextMode="MultiLine" class="form-control" placeholder="Your Remark Here"></textarea>
+
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-12 text-center mt-3">
+                                        <button type="submit" class="btn btn-primary btn-lg px-5 py-3 fs-4 w-100">
+                                            <i class="bi bi-check-circle"></i> Confirm & Book Demo
+                                        </button>
+                                    </div>
+                                    <div class="col-md-12 text-center mt-4">
+                                        <p class="text-muted">
+                                            Already have an account?
+                                        <a asp-route="CustomerLogin" class="text-primary text-decoration-none">Sign In →</a>
+                                        </p>
+                                    </div>
+                                </div>
+                            </form>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    <div class="modal fade" id="slotWarningModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+
+                <div class="modal-header bg-warning text-dark">
+                    <h5 class="modal-title">Slot Not Selected</h5>
+
+                    <!-- Close button (X) -->
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+
+                <div class="modal-body text-center">
+                    <i class="fa fa-exclamation-triangle text-warning" style="font-size:60px;"></i>
+                    <h4 class="mt-3">Please select a slot</h4>
+                    <p>You must choose a time slot before submitting the form.</p>
+                </div>
+
+                <!-- Removed the modal-footer completely -->
+
+            </div>
+        </div>
+    </div>
+    <div class="modal fade" id="successModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+
+                <div class="modal-header bg-success text-white">
+                    <h5 class="modal-title">Success</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+
+                <div class="modal-body text-center">
+                    <i class="fa fa-check-circle text-success" style="font-size:60px;"></i>
+                    <h4 class="mt-3">Success!</h4>
+                    <p id="successMessage"></p>
+                </div>
+
+            </div>
+        </div>
+    </div>
+    <div class="modal fade" id="errorModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+
+                <div class="modal-header bg-danger text-white">
+                    <h5 class="modal-title">Error</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+
+                <div class="modal-body text-center">
+                    <i class="fa fa-times-circle text-danger" style="font-size:60px;"></i>
+                    <h4 class="mt-3">Something went wrong!</h4>
+                    <p id="errorMessage"></p>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+
+    <script src="~/assets/js/jquery.min.js"></script>
+    <script src="~/assets/js/owl.carousel.min.js"></script>
+    <script src="~/assets/js/vanilla-toast.min.js"></script>
+    <script src="~/lib/jquery-validation/dist/jquery.validate.min.js"></script>
+    <script src="~/lib/jquery-validation-unobtrusive/dist/jquery.validate.unobtrusive.min.js"></script>
+    <script src="~/assets/js/bootstrap/bootstrap.bundle.js"></script>
+    <script src="https://code.jquery.com/ui/1.13.2/jquery-ui.min.js"></script>
+    <link rel="stylesheet" href="https://code.jquery.com/ui/1.13.2/themes/base/jquery-ui.css">
+
+    <script src="https://www.google.com/recaptcha/api.js" async ></script>
+    <script src="https://www.google.com/recaptcha/api.js"></script>
+
+</body>
+</html>
+
+@{
+    if (ViewBag.Success != null)
+    {
+        <script type="text/javascript">
+
+            vt.success("@ViewBag.Success", {
+                title: "Successfull",
+                position: "top-center",
+                closable: true,
+               focusable: true, duration: 10000,
+                //callback: function () {
+                //    vt.success()
+                //}
+            });
+        </script>
+    }
+    if (ViewBag.Exception != null)
+    {
+        <script type="text/javascript">
+
+            vt.error("@ViewBag.Exception", {
+                title: "Alert",
+                position: "top-center",duration: 10000,
+                //callback: function () {
+                //    vt.success()
+                //}
+            });
+        </script>
+    }
+    if (ViewBag.Delete != null)
+    {
+        <script type="text/javascript">
+            vt.warn("@ViewBag.Delete", {
+                title: "Alert",
+                position: "top-center",duration: 10000,
+                //callback: function () {
+                //    vt.success()
+                //}
+            });
+        </script>
+    }
+}
+<script>
+    $(document).ready(function () {
+      $('.logIn-screen-testimonial').owlCarousel({
+        loop: true,
+        margin: 10,
+        nav: false,
+        dots: true,
+        autoplay: true,
+        autoplayTimeout: 3000,
+        autoplayHoverPause: true,
+        items: 1
+      });
+    });
+
+</script>
+<script>
+    const slotSelect = document.getElementById("slotSelect");
+    const selectedSlotDiv = document.getElementById("selectedSlotTiming");
+    
+    if (slotSelect) {
+    slotSelect.addEventListener("change", function () {
+        const selected = this.value;
+
+        if (!selected) {
+            // Hide the alert if no slot is selected
+            selectedSlotDiv.classList.add("d-none");
+            return;
+        }
+
+        // Show the alert and update text
+        selectedSlotDiv.classList.remove("d-none");
+        selectedSlotDiv.innerHTML = "Selected: " + selected;
+    });
+    }
+</script>
+
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+
+        $("#weeklySlotsBox").addClass("d-none");
+        $("#selectedSlotTiming").addClass("d-none");
+
+        // ✅ TODAY DATE AUTO SELECT
+        if (!$("#slotDate").val()) {
+            let today = new Date();
+            let yyyy = today.getFullYear();
+            let mm = String(today.getMonth() + 1).padStart(2, '0');
+            let dd = String(today.getDate()).padStart(2, '0');
+
+            let formattedDate = `${yyyy}-${mm}-${dd}`;
+            $("#slotDate").val(formattedDate).trigger("change");
+        }
+
+        function parseDDMMYYYY(dateStr) {
+            if (!dateStr) return null;
+
+            const parts = dateStr.split("-");
+            if (parts.length !== 3) return null;
+
+            return new Date(parts[2], parts[1] - 1, parts[0]);
+        }
+
+        $("#slotDate").change(function () {
+
+            let inputDate = $(this).val();
+
+            // ❌ VALIDATION COMMENTED
+            /*
+            if (!inputDate) return;
+            */
+
+            
+            let selectedDate = new Date(inputDate);
+
+            // ❌ VALIDATION COMMENTED
+            /*
+            if (isNaN(selectedDate.getTime())) {
+                console.error("Invalid date:", inputDate);
+                return;
+            }
+            */
+
+            let dayName = selectedDate.toLocaleDateString("en-US", { weekday: "long" });
+
+            $.ajax({
+                url: "/Order/GetSlotsByDay",
+                type: "GET",
+                data: {
+                    dayName: dayName,
+                    inputDate: inputDate
+                },
+                success: function (response) {
+
+                    
+                    $("#weeklySlotsBox").removeClass("d-none");
+                    $("#slotContainer").empty();
+
+                    if (!response || response.length === 0) {
+                        $("#slotContainer").html(
+                            "<p class='text-danger fw-bold'>No Slots Available</p>"
+                        );
+                        return;
+                    }
+
+                    response.forEach(slot => {
+
+                        let start = convertToAmPm(slot.slotStartTime);
+                        let end = convertToAmPm(slot.slotEndTime);
+
+                        let btn = `
+                            <button type="button"
+                                    class="btn btn-outline-success btn-sm slot-btn"
+                                    data-start="${start}"
+                                    data-end="${end}"
+                                    data-day="${slot.day}"
+                                    data-slotid="${slot.slid}">
+                                ${start} - ${end}
+                            </button>`;
+
+                        $("#slotContainer").append(btn);
+                    });
+                },
+                error: function (err) {
+                    console.error("Slot fetch error:", err);
+                    $("#slotContainer").html(
+                        "<p class='text-danger fw-bold'>Error loading slots</p>"
+                    );
+                }
+            });
+
+        });
+
+        function convertToAmPm(timeString) {
+            let time = timeString.split(":");
+            let hour = parseInt(time[0]);
+            let minutes = time[1];
+
+            let suffix = hour >= 12 ? "PM" : "AM";
+            hour = ((hour + 11) % 12 + 1);
+
+            return `${hour}:${minutes} ${suffix}`;
+        }
+
+        function convertTo24Hour(time) {
+            let [timePart, modifier] = time.split(" ");
+            let [hours, minutes] = timePart.split(":");
+
+            hours = parseInt(hours);
+
+            if (modifier === "PM" && hours < 12) hours += 12;
+            if (modifier === "AM" && hours === 12) hours = 0;
+
+            return `${hours.toString().padStart(2, '0')}:${minutes}:00`;
+        }
+
+        $(document).on("click", ".slot-btn", function () {
+
+            let start = $(this).data("start");
+            let end = $(this).data("end");
+            let day = $(this).data("day");
+            let slotId = $(this).data("slotid");
+
+            let converted = convertTo24Hour(start);
+
+            $("#slottime").val(converted);
+            $("#timeslotid").val(slotId);
+
+            $("#selectedSlotTiming").removeClass("d-none");
+            $("#finalSelectedText").text(`${day} | ${start} - ${end}`);
+
+            $(".slot-btn").removeClass("active");
+            $(this).addClass("active");
+        });
+
+    });
+</script>
+<script>
+
+    function formatDate(dateStr) {
+        if (!dateStr) return "";
+        let d = new Date(dateStr);
+        let day = String(d.getDate()).padStart(2, '0');
+        let month = String(d.getMonth() + 1).padStart(2, '0');
+        let year = d.getFullYear();
+        return `${day}-${month}-${year}`;
+    }
+
+    $(document).ready(function () {
+
+        var existingDate = $("#slotDate").val();
+
+        
+
+        // ❌ BUGGY FORMAT COMMENTED (type="date" issue)
+        /*
+        if(existingDate)
+        {
+            $("#slotDate").val(formatDate(existingDate));
+        }
+        */
+
+        const formSelector = "#demoForm";
+        const hiddenSlotSelector = "#slottime";
+        const warningModalEl = document.getElementById("slotWarningModal");
+
+        function isZeroTime(val) {
+            if (!val) return true;
+            val = val.toString().trim();
+            return /^0{1,2}:\d{2}(:\d{2})?$/.test(val) && /^0{1,2}:[0]{2}(:[0]{2})?$/.test(val);
+        }
+
+        let initial = $(hiddenSlotSelector).val();
+        if (isZeroTime(initial)) {
+            $(hiddenSlotSelector).val("");
+        }
+
+        $(formSelector).on("submit", function (e) {
+
+            
+
+            let slotTime = $("#slottime").val();
+            let selectedDate = $("#slotDate").val();
+
+            // ❌ VALIDATION COMMENTED ONLY
+            /*
+            if (selectedDate && (!slotTime || isZeroTime(slotTime))) {
+                e.preventDefault();
+
+                if (warningModalEl) {
+                    const modal = new bootstrap.Modal(warningModalEl);
+                    modal.show();
+                } else {
+                    alert("Please select a slot before submitting.");
+                }
+
+                return false;
+            }
+            */
+
+        });
+
+    });
+
+    // SUCCESS MODAL
+    @if (TempData["Success"] != null)
+    {
+            <text>
+                $("#successMessage").text("@TempData["Success"]");
+                var modal = new bootstrap.Modal(document.getElementById('successModal'));
+                modal.show();
+            </text>
+    }
+
+    // ERROR MODAL
+    @if (TempData["Execption"] != null)
+    {
+            <text>
+                $("#errorMessage").text("@TempData["Execption"]");
+                var modal = new bootstrap.Modal(document.getElementById('errorModal'));
+                modal.show();
+            </text>
+    }
+
+</script>
+
+
+
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+
+        const successModalEl = document.getElementById("successModal");
+
+        if (successModalEl) {
+            successModalEl.addEventListener("hidden.bs.modal", function () {
+                // window.location.href = "/Dashboard/Index";
+                // change as per url changes--Anshuman-24.07.2026
+                window.location.href = "/hcm-solution";
+            });
+        }
+
+    });
+</script>

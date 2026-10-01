@@ -1,0 +1,312 @@
+﻿@using HCMPortal.Helper
+@using Microsoft.AspNetCore.Http
+@using Microsoft.Extensions.Hosting.Internal
+@using Microsoft.AspNetCore.Hosting
+@inject Microsoft.AspNetCore.Hosting.IWebHostEnvironment WebHostEnvironment
+@using System.IO
+@using Microsoft.AspNetCore.Hosting
+@inject IHttpContextAccessor HttpContextAccessor
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+    <meta charset="utf-8" />
+    <meta name="author" content="thecloudtree" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <meta name="keywords" content="Get top-notch HR and payroll management software" />
+    <meta name="description" content="HR and payroll management software in India at Thecloudtree.ai" />
+    @{
+        string title = Convert.ToString(ViewData["Title"]) ?? string.Empty;
+        string metadescription = Convert.ToString(ViewData["MetaDescription"]) ?? string.Empty;
+        string googleanalyticsId = GlobalProperty.GoogleAnalyticsId ?? string.Empty;
+        if (string.IsNullOrEmpty(title))
+
+        {
+            title = GlobalProperty.MetaTitle + "-HCM Portal" ?? "HCM Portal";
+        }
+        if (string.IsNullOrEmpty(metadescription))
+        {
+            metadescription = GlobalProperty.MetaDescription + "-HCM Portal" ?? "HCM Portal";
+        }
+    }
+    <title>@title</title>
+    <meta name="description" content="@metadescription" />
+
+    <script src="https://www.google.com/recaptcha/api.js" async defer></script>
+    @if (!string.IsNullOrEmpty(googleanalyticsId))
+    {
+        <script async src="https://www.googletagmanager.com/gtag/js?id=@googleanalyticsId"></script>
+        <script>
+            window.dataLayer = window.dataLayer || [];
+            function gtag() {
+                dataLayer.push(arguments);
+            }
+            gtag('js', new Date());
+            @* Fixed: Added quotes around the ID for the JS config *@
+            gtag('config', '@googleanalyticsId');
+        </script>
+    }
+    <script type="importmap"></script>
+
+    <link rel="canonical" href="https://thecloudtree.ai/" />
+
+    <link href="~/assets/styles/bootstrap/bootstrap.css" rel="stylesheet">
+    <link href="~/assets/styles/bootstrap/bootstrap-icons.css" rel="stylesheet">
+    <link href="~/assets/fonts/font-awsome/css/all.min.css" rel="stylesheet">
+    <link href="~/assets/datatable/css/datatables.bootstrap5.min.css" rel="stylesheet" />
+    <link href="~/assets/datatable/css/buttons.bootstrap5.min.css" rel="stylesheet" />
+    <link href="~/assets/styles/owl.theme.default.min.css" rel="stylesheet">
+    <link href="~/assets/styles/owl.carousel.min.css" rel="stylesheet">
+    <link href="~/assets/styles/style.min.css" rel="stylesheet" />
+    <link href="~/assets/styles/animate.min.css" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+    <script src="~/assets/js/jquery.min.js"></script>
+    <script src="~/assets/js/vanilla-toast.min.js"></script>
+    <script src="~/assets/js/owl.carousel.min.js"></script>
+    <script src="~/assets/js/html2pdf.bundle.min.js"></script>
+    <script src="~/lib/jquery-validation/dist/jquery.validate.min.js"></script>
+    @* <script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js"></script> *@
+    <script src="~/lib/jquery-validation-unobtrusive/dist/jquery.validate.unobtrusive.min.js"></script>
+
+    <meta name="google-site-verification" content="yX0mBFdVFzVSa4CsHUCoXNnyZkJDgvvn-9sj_PHXH0Y " />
+    <link rel="alternate" hreflang="en-IN" href="https://www.thecloudtree.ai/" />
+</head>
+<body>
+
+    @{
+        bool isEnterprise = false;
+
+        var sessionValue = Context.Session.GetString("IsEnterprise");
+
+        if (!string.IsNullOrEmpty(sessionValue))
+        {
+            isEnterprise = Convert.ToBoolean(sessionValue);
+        }
+    }
+
+
+    @*    @{
+        var ProfileImage = "../../assets/UploadImg/" + (
+		@HttpContextAccessor.HttpContext?.Session.GetString("ProfileImage") ?? "user_icon.png");
+    } *@
+    @{
+        string sessionImg = HttpContextAccessor.HttpContext?.Session.GetString("ProfileImage");
+        //string ProfileImage = string.IsNullOrEmpty(sessionImg) ? "../../assets/UploadImg/18102025104152.png" : "../../assets/UploadImg/" + sessionImg;
+        if (String.IsNullOrEmpty(sessionImg))
+        {
+            sessionImg = "/assets/images/user_icon.png";
+        }
+        else
+        {
+            // 1. Define the relative path within the wwwroot folder
+            string relativePath = System.IO.Path.Combine("assets", "UploadImg", sessionImg);
+
+            // 2. Get the full physical path on the server
+            // The WebRootPath points to the application's wwwroot folder.
+            string absolutePath = System.IO.Path.Combine(WebHostEnvironment.WebRootPath, relativePath);
+
+            // 3. Check if the file exists
+            bool fileExists = System.IO.File.Exists(absolutePath);
+
+            if (fileExists)
+            {
+                // The file is present
+                sessionImg = $"/{relativePath}";
+            }
+            else
+            {
+                // The file is not present
+                sessionImg = Common.ImageAndDocSavePageAddress() + "assets/UploadImg/" + sessionImg;
+            }
+        }
+    }
+
+    <!-- Menu Bar -->
+    <nav class="ct-dashboard__menu navbar navbar-expand-lg sticky-top">
+      <div class="container">
+
+            <a asp-route="HCMProduct" class="navbar-brand">
+           <img src="~/assets/images/logos/cloudtree-logo.webp" alt="CloudTree" class="img-fluid" style="height: 22px; margin-top: -5px;">
+        </a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+          aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
+            
+          <ul class="navbar-nav">
+
+                    <li class="nav-item">
+                        @* <a class="nav-link active" aria-current="page" asp-controller="CustomerManagement" asp-action="PortalDashboard"> *@
+                        <a class="nav-link active" aria-current="page" asp-route="CustomerDashboard">
+                            <i class="fas fa-tachometer-alt"></i> Dashboard
+                        </a>
+                    </li>                   
+                        <li class="nav-item">
+                            <a class="nav-link" asp-route="CustomerTraining">
+                                <i class="fas fa-graduation-cap"></i> Training
+                            </a>
+                        </li>
+                    
+            <!-- Notification Dropdown -->
+            <li class="dropdown" id="notificationArea">
+                  @await Component.InvokeAsync("Notification")
+            </li>             
+                    <li class="dropdown profile">
+                        <a href="#" class="profile-btn nav-link">
+                            <img src="@sessionImg" class="img-fluid" alt="user" />
+                        </a>
+                        <ul class="dropdown-menu p-2">
+                            <li class="p-2">
+                                <div class="profile-text">
+                                    <h5 class="mb-0 text-ellipsis">@HttpContextAccessor.HttpContext?.Session.GetString("Contactperson")</h5>
+                                    <div><span>@HttpContextAccessor.HttpContext?.Session.GetString("UserName")</span></div>
+                                    @* <div class="small text-muted">
+                                        <span>
+                                            @{
+                                                var memberId = HttpContextAccessor.HttpContext?.Session.GetString("MemberId");
+                                            }
+                                            @(string.IsNullOrEmpty(memberId) || memberId == "NA" ? string.Empty : memberId)
+                                        </span>
+                                    </div> *@
+                                </div>
+
+                            </li>
+
+                            <li class="divider"></li>
+
+                            <li class="nav-item">
+                                @* <a asp-action="PortalProfile" asp-controller="CustomerManagement" class="nav-link"> *@
+                                <a asp-route="CustomerProfile" class="nav-link">
+                                    <span class="profile-menu-icon">
+                                        <i class="fa-regular fa-user pe-2"></i> Profile
+                                    </span>
+                                    <i class="bi bi-chevron-right profile-menu-arrow"></i>
+                                </a>
+                            </li>
+
+                            <li class="divider"></li>
+
+                            <li class="nav-item">
+                                @* <a asp-action="Logout" asp-controller="CustomerManagement" class="nav-link"> *@
+                                <a asp-route="CustomerLogout" class="nav-link">
+                                    <span class="profile-menu-icon">
+                                        <i class="bi bi-box-arrow-right pe-2"></i> Logout
+                                    </span>
+                                    <i class="bi bi-chevron-right profile-menu-arrow"></i>
+                                </a>
+                            </li>
+                        </ul>
+                    </li>
+
+                </ul>
+            </div>
+
+        </div>
+</nav>
+   
+    <div>
+        @RenderBody()
+    </div>
+
+    <!-- FOOTER START -->
+    <footer class="footer pt-3">
+        <div class="container">
+            @await Component.InvokeAsync("FooterContact")
+            <!-- BOTTOM START -->
+            <div class="bottom">
+                <div class="container">
+                    <div class="d-flex justify-content-between py-4">
+                    <a href="@Common.GetUrlForOwnBaseAddress()" class="logo">
+                            <img src="/assets/images/logos/cloudtree-logo-white.webp" alt="thecloudtree">
+                        </a>
+                        <p class="m-0">
+                        © Copyright <span id="year"></span> <a href="@Common.GetUrlForOwnBaseAddress()" class="text-white">thecloudtree</a> All Rights Reserved.
+                        </p>
+                        <div>
+                            <a href="https://www.linkedin.com/company/thecloudtree/" class="text-light"><i class="bi bi-linkedin"></i></a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+
+
+    <!-- Required datatable js -->
+	<script src="~/assets/dataTable/js/dataTables-2.1.8.min.js"></script>
+	<script src="~/assets/dataTable/js/dataTables.bootstrap5.min.js"></script>
+	<script src="~/assets/dataTable/js/dataTables.buttons.js"></script>
+	<script src="~/assets/dataTable/js/buttons.bootstrap5.min.js"></script>
+	<script src="~/assets/dataTable/js/dataTables.fixedColumns.js"></script>
+	<script src="~/assets/dataTable/js/dataTables.scroller.js"></script>
+	<script src="~/assets/dataTable/js/scroller.bootstrap5.js"></script>
+	<script src="~/assets/dataTable/js/jszip.min.js"></script>
+	<script src="~/assets/dataTable/js/pdfmake.min.js"></script>
+	<script src="~/assets/dataTable/js/vfs_fonts.js"></script>
+	<script src="~/assets/dataTable/js/buttons.html5.min.js"></script>
+	<script src="~/assets/dataTable/js/buttons.print.min.js"></script>
+	<script src="~/assets/dataTable/js/buttons.colVis.min.js"></script>
+	<script src="~/assests/js/pages/datatables.init.js"></script>
+
+    <script src="~/assets/js/bootstrap/bootstrap.bundle.js"></script>
+
+
+    @await RenderSectionAsync("Scripts", required: false)
+
+
+</body>
+@{
+                if (ViewBag.Success != null)
+                {
+        <script type="text/javascript">
+
+            vt.success("@ViewBag.Success", {
+                title: "Successfull",
+                position: "top-center",
+                closable: true,
+               focusable: true, duration: 10000,
+                //callback: function () {
+                //    vt.success()
+                //}
+            });
+        </script>
+                }
+                if (ViewBag.Exception != null)
+                {
+        <script type="text/javascript">
+            vt.error("@ViewBag.Exception", {
+                title: "Alert",
+                position: "top-center",duration: 10000,
+                //callback: function () {
+                //    vt.success()
+                //}
+            });
+        </script>
+                }
+                if (ViewBag.Delete != null)
+                {
+        <script type="text/javascript">
+            vt.warn("@ViewBag.Delete", {
+                title: "Alert",
+                position: "top-center",duration: 10000,
+                //callback: function () {
+                //    vt.success()
+                //}
+            });
+        </script>
+                }
+}
+
+
+</html>
+<script>
+    $.ajaxSetup({
+        headers: { "X-Requested-With": "XMLHttpRequest" }
+    });
+</script>

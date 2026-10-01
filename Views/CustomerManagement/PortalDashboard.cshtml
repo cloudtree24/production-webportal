@@ -1,0 +1,621 @@
+﻿@using HCMPortal.Helper
+@using Microsoft.AspNetCore.Http
+@inject IHttpContextAccessor HttpContextAccessor
+@model HCMPortal.ViewModel.PortalDashboardViewModel
+
+<style>
+    /* Scope all styles to the specific ID to prevent global interference */
+    #hcmModal .modal-content {
+        font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+        border: none;
+        border-radius: 16px;
+        box-shadow: 0 20px 40px rgba(0,0,0,0.12);
+        background-color: #ffffff;
+        overflow: hidden;
+    }
+
+    #hcmModal .modal-accent {
+        height: 6px;
+        background: linear-gradient(90deg, #2563eb, #3b82f6);
+        border-radius: 16px 16px 0 0;
+    }
+
+    #hcmModal .modal-body {
+        padding: 45px 35px;
+        text-align: center;
+    }
+
+    #hcmModal .module-icon-box {
+        width: 72px;
+        height: 72px;
+        background: #f0f7ff;
+        color: #2563eb;
+        border-radius: 14px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto 24px;
+        transition: transform 0.3s ease;
+    }
+
+    #hcmModal:hover .module-icon-box {
+        transform: scale(1.05);
+    }
+
+    #hcmModal .modal-title {
+        color: #0f172a;
+        font-weight: 700;
+        font-size: 1.5rem;
+        margin-bottom: 12px;
+    }
+
+    #hcmModal .modal-text {
+        color: #64748b;
+        font-size: 0.95rem;
+        line-height: 1.6;
+        margin-bottom: 24px;
+    }
+
+    #hcmModal .module-features {
+        background: #f8fafc;
+        border-radius: 12px;
+        padding: 18px;
+        margin-bottom: 30px;
+        text-align: left;
+        border: 1px solid #edf2f7;
+    }
+
+    #hcmModal .feature-item {
+        display: flex;
+        align-items: center;
+        font-size: 0.88rem;
+        color: #475569;
+        margin-bottom: 10px;
+        font-weight: 500;
+    }
+
+        #hcmModal .feature-item:last-child {
+            margin-bottom: 0;
+        }
+
+    #hcmModal .feature-dot {
+        width: 8px;
+        height: 8px;
+        background: #3b82f6;
+        border-radius: 50%;
+        margin-right: 12px;
+        flex-shrink: 0;
+    }
+
+    #hcmModal .btn-hcm-primary {
+        background-color: #2563eb;
+        color: #ffffff;
+        border: none;
+        border-radius: 10px;
+        padding: 14px 20px;
+        font-weight: 600;
+        width: 100%;
+        transition: all 0.2s ease;
+        box-shadow: 0 4px 6px -1px rgba(37, 99, 235, 0.2);
+    }
+
+        #hcmModal .btn-hcm-primary:hover {
+            background-color: #1d4ed8;
+            transform: translateY(-2px);
+            box-shadow: 0 10px 15px -3px rgba(37, 99, 235, 0.3);
+            color: #ffffff;
+        }
+</style>
+
+
+@{
+    bool isEnterprise = false;
+
+    var sessionValue = Context.Session.GetString("IsEnterprise");
+
+    if (!string.IsNullOrEmpty(sessionValue))
+    {
+        isEnterprise = Convert.ToBoolean(sessionValue);
+    }
+}
+
+@{
+    Layout = "_customerDashboardLayout";
+    <script src="~/assets/js/jquery.min.js"></script>
+    <script src="~/assets/js/vanilla-toast.min.js"></script>
+}
+
+@* <script src="https://code.jquery.com/jquery-3.7.1.min.js" crossorigin="anonymous"></script> *@
+<script src="~/assets/js/bootstrap.bundle.js"></script>
+<script src="~/assets/js/owl.carousel.min.js"></script>
+<script src="~/lib/apexcharts/apexcharts.min.js"></script>
+@* <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script> *@
+
+
+<div class="container p-0">
+    <div class="section_gap_large pb-0">
+        <div class="dashboard_welcome_section text-center">
+            <h2 class="fw-bold mb-1">Welcome to Your HCM Dashboard</h2>
+            <p class="mb-0 opacity-75">
+                Track your team’s performance, update employee records, and streamline HR operations —
+                all in one place
+            </p>
+        </div>
+    </div>
+</div>
+
+@if (Model.isCompanySetupPending)
+{
+    <div class="container mt-4">
+        <div class="alert alert-warning border-0 shadow-sm d-flex align-items-center justify-content-between p-3" role="alert">
+            <div class="d-flex align-items-center">
+                <i class="fas fa-exclamation-circle fa-2x text-warning me-3"></i>
+                <div>
+                    <h5 class="mb-0 fw-bold">Action Required: Complete Your Company Setup</h5>
+                    <p class="mb-0 text-muted">Your Subscription is almost ready! Finish your organization profile set-up.</p>
+                </div>
+            </div>
+            <a href="@Common.GetLandingPageAddress()" class="btn btn-warning px-4 fw-bold" target="_blank">
+                Go to Setup <i class="fas fa-arrow-right ms-2"></i>
+            </a>
+        </div>
+    </div>
+}
+<div class="container p-0">
+    <div class="section_gap_large pb-0">
+        <div class="d-flex align-items-center justify-content-between mb-4">
+            <div>
+                <h3 class="fw-bold mb-1">Quick Access</h3>
+                <p class="text-muted small mb-0">Jump directly into key sections of your management console.</p>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-3 mb-3">
+                <div class="quick-access-card">
+                    <div>
+                        <div class="icon subscription_icon">
+                            <i class="fas fa-repeat"></i>
+                        </div>
+                        <div class="mb-3">
+                            <h5 class="mb-1 heading-05">My Subscription</h5>
+                            <p class="text-muted mb-0">Manage your subscription and explore more product features to get the best experience.</p>
+                        </div>
+                    </div>
+                    <div class="d-flex flex-column">
+                        @* <a asp-controller="Subscription" asp-action="MySubscriptionDetails" class="btn btn-primary btn-lg"> *@
+                        <a asp-route="MySubscriptionDetails" class="btn-card-action">
+                            See Details <i class="fas fa-arrow-right"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-3 mb-3">
+                <div class="quick-access-card">
+                    <div>
+                        <div class="icon billing_icon">
+                            <i class="fas fa-file-invoice-dollar"></i>
+                        </div>
+                        <div class="mb-3">
+                            <h5 class="mb-1 heading-05">Billing</h5>
+                            <p class="text-muted mb-0">Seamlessly integrate payroll systems for efficient processing.</p>
+                        </div>
+                    </div>
+                    <div class="d-flex flex-column">
+                        <div class="status-badge badge-danger-soft">
+                            <i class="fa-solid fa-circle-info"></i>
+                            @(Model.pendingBillingCount) Pending Invoices
+                        </div>
+                        @* <a asp-action="BillingDetails" asp-controller="Order" class="btn btn-primary btn-lg"> *@
+                        <a asp-route="BillingDetails" class="btn-card-action">
+                            See Details <i class="fas fa-arrow-right"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-3 mb-3">
+                <div class="quick-access-card">
+                    <div>
+                        <div class="icon training_icon">
+                            <i class="fas fa-graduation-cap"></i>
+                        </div>
+                        <div class="mb-3">
+                            <h5 class="mb-1 heading-05">Training Modules</h5>
+                            <p class="text-muted mb-0">Access customizable training programs for employee development.</p>
+                        </div>
+                    </div>
+                    <div class="d-flex flex-column">
+                        <div class="status-badge badge-success-soft">
+                            <i class="fa-solid fa-circle-check"></i>
+                            @(Model.trainingModuleCount) Modules Available
+                        </div>
+                        <a asp-controller="Training" asp-action="TrainingDetails" class="btn-card-action">
+                            See Details <i class="fas fa-arrow-right"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-3 mb-3">
+                <div class="quick-access-card last">
+                    <div>
+                        <div class="icon support_icon">
+                            <i class="fas fa-headset"></i>
+                        </div>
+                        <div class="mb-3">
+                            <h5 class="mb-1 heading-05">Support</h5>
+                            <p class="text-muted mb-0">
+                                Navigate help topics, system guides, and user support tools tailored to
+                                your HR
+                            </p>
+                        </div>
+                    </div>
+                    <div class="d-flex flex-column">
+                        <div class="status-badge badge-warning-soft">
+                            <i class="fa-solid fa-clock"></i>
+                            @(Model.openTicketCount) Open Tickets
+                        </div>
+                        <a asp-controller="SupportManagement" asp-action="SupportDetails" class="btn-card-action">
+                            See Details <i class="fas fa-arrow-right"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="section_gap_large">
+        <div class="row">
+            <div class="col-md-6">
+                <div class="normal-card">                    
+                    <h5 class="mb-0">Resource Usage</h5>
+                    @{
+                       @if (Model.CreatedCompany.Count() > 1)
+                          {
+                            <div class="d-flex">
+                               <select id="company-select" class="form-select form-select-sm"
+                                   asp-items="@(new SelectList(Model.CreatedCompany, "CompanyId", "OrgName"))">
+                                   <option value="0" selected="0">All Company</option>
+                               </select>
+                            </div>
+                           }
+                     }                  
+                     <div class="card-analytics mb-3">
+                         <div id="resource-usage-content">
+                             <div id="loader" class="text-center" style="display:none;">
+                                 <div class="spinner-border text-primary" role="status">
+                                     <span class="visually-hidden">Loading...</span>
+                                 </div>
+                                 <p>Loading Resource Data...</p>
+                             </div>
+                             <div id="resource_usage_chart"></div>
+                         </div>
+                     </div>                   
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+    
+<div class="modal fade" id="hcmModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered " style="max-width: 610px;">
+        <div class="modal-content">
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"
+                    style="position: absolute; right: 1rem; top: 1rem; z-index: 1051;"></button>
+            <div class="modal-accent"></div>
+            <div class="modal-body">
+               
+                <div class="module-icon-box">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" fill="currentColor" viewBox="0 0 16 16">
+                        <path d="M7 14s-1 0-1-1 1-4 5-4 5 3 5 4-1 1-1 1H7zm4-6a3 3 0 1 0 0-6 3 3 0 0 0 0 6zM2 12.5a.5.5 0 0 1 .5-.5h7a.5.5 0 0 1 0 1h-7a.5.5 0 0 1-.5-.5zm0-3a.5.5 0 0 1 .5-.5h11a.5.5 0 0 1 0 1h-11a.5.5 0 0 1-.5-.5zm0-3a.5.5 0 0 1 .5-.5h11a.5.5 0 0 1 0 1h-11a.5.5 0 0 1-.5-.5zm0-3a.5.5 0 0 1 .5-.5h11a.5.5 0 0 1 0 1h-11a.5.5 0 0 1-.5-.5z" />
+                    </svg>
+                </div>
+
+                <h3 class="modal-title">HCM Module Activated</h3>
+                <div class="trial-badge">
+                    ⏳ 15-Day Trial Period
+                </div>
+                <p class="modal-text">
+                    Your trial access to the <strong>Core HR & Workforce Management</strong> suite is now active. You can start managing employee records and payroll cycles immediately.
+                </p>
+
+                <div class="module-features">
+                    <div class="feature-item"><div class="feature-dot"></div> Employee Self-Service Portal</div>
+                    <div class="feature-item"><div class="feature-dot"></div> Automated Payroll Processing</div>
+                    <div class="feature-item"><div class="feature-dot"></div> Expenses/Advance Management</div>
+                </div>
+
+                <a href="@(Common.GetLandingPageAddress()+"?userKey="+APIEncryptionHelper.Encrypt(Model.EmpEmail??String.Empty))"
+                   target="_blank"
+                   class="btn btn-hcm-primary"
+                   @* data-bs-dismiss="modal"> *@
+                   >
+                    Launch HCM Dashboard
+                </a>
+
+
+
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+<!-- Excel Upload Modal -->
+<div class="modal fade" id="uploadModal" tabindex="-1" aria-labelledby="uploadModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-xl">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="uploadModalLabel">📑 Upload Your Excel Sheet</h5>
+                <button type="button" class="btn-close close-btn" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p class="error">
+                    <span class="error-message-container">
+                        ⚠️ Please upload only leave details with an 'Approved' status. Any other status will be automatically
+                        treated as 'Approved'.
+                    </span>
+                </p>
+                <p class="error" id="globalWarning" style="display:none">
+                    <span id="errorCountMessage" class="error-message-container">
+                        ⚠️ Resolve all highlighted errors before submitting.
+                    </span>
+                    <button class="btn btn-outline-secondary btn-sm go-to-button" id="goToErrorBtn" style="display:none;">
+                        Go
+                        To Error
+                    </button>
+                </p>
+                <p class="success-message" id="globalSuccess" style="display:none">
+                    ✅ All data is valid! You can now save your data.
+                </p>
+                <input type="file" class="form-control mb-3" id="excelFile" accept=".xlsx, .xls" />
+                <div class="button-row">
+                    <button class="btn btn-primary me-2" id="importFileBtn">Import Sheet</button>
+                    <button class="btn btn-outline-primary me-2" id="downloadTemplateBtn">⬇️ Download Template</button>
+                    <button class="btn btn-success" id="saveDataButton" style="display:none;">💾 Save Data</button>
+                </div>
+                <div id="previewTableContainer" style="overflow: auto; max-width: 100%; max-height: calc(90vh - 200px);">
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="main">
+    <div class="green-line"></div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+
+
+
+        // Razor check for null/empty
+        var hasTrialStarted = '@(ViewBag.TrialStart != null ? "true" : "false")';
+
+        if (hasTrialStarted === "true") {
+            const hcmModalElement = document.getElementById('hcmModal');
+            const hcmModalInstance = new bootstrap.Modal(hcmModalElement);
+            hcmModalInstance.show();
+        }
+
+
+
+           
+    });
+</script>
+<script>
+     function handleLaunchClick(e) {
+        e.preventDefault();
+
+        // 1. Open the URL in a new tab
+        const url = "@(Common.GetLandingPageAddress() + "?userKey=" + APIEncryptionHelper.Encrypt(Model.EmpEmail ?? String.Empty))";
+        window.open(url, '_blank');
+
+        // 2. Hide the modal using Bootstrap's Instance
+        const modalElement = document.querySelector('#yourModalId'); // Replace with your actual Modal ID
+        const modalInstance = bootstrap.Modal.getInstance(modalElement);
+        if (modalInstance) {
+            modalInstance.hide();
+        }
+    }
+        // Global variable to hold the chart instance
+    var resourceUsageChart;
+    var chartElementId = 'resource-usage-chart-instance';
+
+    /**
+     * Initializes (or re-initializes) the ApexCharts Donut instance.
+     * Note: This function includes an explicit destroy() of the old chart to prevent memory leaks.
+     */
+    // function initializeResourceUsageChart(used, total) {
+    //     // 1. Explicitly DESTROY any existing chart instance to prevent memory leaks.
+    //     if (resourceUsageChart) {
+    //         resourceUsageChart.destroy();
+    //         resourceUsageChart = null; // Clear the reference
+    //     }
+
+    //     // Calculate the 'Remaining' slice size
+    //     var remaining = total - used;
+    //     if (remaining < 0) remaining = 0;
+
+    //     // Check if the DOM element exists before attempting to render
+    //     const chartContainer = document.querySelector("#resource_usage_chart");
+    //     if (!chartContainer) {
+    //         console.error("Chart container #resource_usage_chart not found in DOM.");
+    //         return;
+    //     }
+
+    //     var options = {
+    //         // Data Series: An array representing the size of each slice [Used, Remaining]
+    //         series: [used, remaining],
+
+    //         chart: {
+    //             id: chartElementId,
+    //             type: 'donut',
+    //             height: 350
+    //         },
+    //         labels: ['Registered Employees', 'Remaining Capacity'],
+    //         responsive: [{
+    //             breakpoint: 480,
+    //             options: {
+    //                 chart: { width: 200 },
+    //                 legend: { position: 'bottom' }
+    //             }
+    //         }],
+    //         plotOptions: {
+    //             pie: {
+    //                 donut: {
+    //                     size: '65%',
+    //                     labels: {
+    //                         show: true,
+    //                         total: {
+    //                             show: true,
+    //                             label: 'Total Allotted',
+    //                             // Dynamically calculate total from the current series data
+    //                             formatter: function (w) {
+    //                                 const totalCapacity = w.globals.series[0] + w.globals.series[1];
+    //                                 return totalCapacity.toString();
+    //                             }
+    //                         }
+    //                     }
+    //                 }
+    //             }
+    //         },
+    //         tooltip: {
+    //             y: {
+    //                 formatter: function (value) {
+    //                     return value + " Employees"
+    //                 }
+    //             }
+    //         }
+    //     };
+
+    //     // 2. Create the new chart instance and assign it to the global variable
+    //     resourceUsageChart = new ApexCharts(chartContainer, options);
+    //     resourceUsageChart.render();
+    // }
+        function initializeResourceUsageChart(used, total) {
+        // 1. Explicitly DESTROY any existing chart instance
+        if (resourceUsageChart) {
+            resourceUsageChart.destroy();
+            resourceUsageChart = null;
+        }
+
+        const chartContainer = document.querySelector("#resource_usage_chart");
+        if (!chartContainer) return;
+
+        // --- LOGIC FOR NO SUBSCRIPTION ---
+        var isInactive = (total <= 0);
+
+        var chartSeries = isInactive ? [1] : [used, Math.max(0, total - used)];
+        var chartLabels = isInactive ? ['Activate A Plan To Unlock User Allotments.'] : ['Registered Employees', 'Remaining Capacity'];
+        var chartColors = isInactive ? ['#D3D3D3'] : undefined; // Grey color if inactive
+        var centerLabel = isInactive ? 'No Active Subscription' : 'Total Allotted';
+
+        var options = {
+            series: chartSeries,
+            chart: {
+                id: 'resource_usage_chart',
+                type: 'donut',
+                height: 350
+            },
+            colors: chartColors,
+            labels: chartLabels,
+            plotOptions: {
+                pie: {
+                    donut: {
+                        size: '65%',
+                        labels: {
+                            show: true,
+                            total: {
+                                show: true,
+                                label: centerLabel,
+                                color: isInactive ? '#FF0000' : '#373d3f', // Optional: Red text for warning
+                                formatter: function (w) {
+                                    // If inactive, return empty string or specific text under the label
+                                    if (isInactive) return "";
+                                    return (w.globals.series[0] + w.globals.series[1]).toString();
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            // Disable tooltips if inactive to prevent showing "1 Employees" on the grey ring
+            tooltip: {
+                enabled: !isInactive,
+                y: {
+                    formatter: function (value) {
+                        return value + " Employees";
+                    }
+                }
+            },
+            legend: {
+                position: 'bottom'
+            }
+        };
+
+        resourceUsageChart = new ApexCharts(chartContainer, options);
+        resourceUsageChart.render();
+
+        // --- BANNER/INFO LINE LOGIC ---
+        // Assuming you have a div for the banner, e.g., <div id="subscription-banner"></div>
+        const banner = document.getElementById("subscription-banner");
+        if (banner) {
+            if (isInactive) {
+                banner.innerHTML = "<strong>Activate a plan to unlock user allotments.</strong>";
+                banner.style.display = "block";
+            } else {
+                banner.style.display = "none";
+            }
+        }
+    }
+
+    // Ensure this runs once all other scripts and the DOM are ready
+    $(document).ready(function () {
+        // 1. INITIAL SETUP
+        // Assuming initial data is available via the Razor Model properties
+        var initialUsed = @Model.employeeRegisteredCount;
+        var initialTotal = @Model.totalAllotedemployeeRegisteredCount;
+
+        // Initialize the chart instance on page load
+        initializeResourceUsageChart(initialUsed, initialTotal);
+
+        // 2. DROPDOWN CHANGE HANDLER
+        $('#company-select').change(function () {
+            var selectedCompanyId = $(this).val();
+            var loader = $('#loader');
+            // Check if a valid company ID is selected
+            if (selectedCompanyId && selectedCompanyId !== "") {
+
+                $('#resource_usage_chart').hide();
+                loader.show();
+
+                $.ajax({
+                    type: 'GET',
+                    url: '/CustomerManagement/GetResourceUsageData', // Make sure this URL is correct
+                    data: { companyId: selectedCompanyId },
+                    dataType: 'json',
+                    success: function (data) {
+                        
+                        // --- WORKING LOGIC ---
+                        // Re-initialize the chart every time to ensure the redraw and total calculation is correct.
+                        initializeResourceUsageChart(data.employeeUsed, data.employeeTotal);
+
+                        $('#resource_usage_chart').show();
+                    },
+                    error: function (xhr, status, error) {
+                        console.error("AJAX Error:", status, error);
+                        $('#resource_usage_chart').html('<p class="text-danger">Failed to load resource usage data.</p>').show();
+                    },
+                    complete: function () {
+                        loader.hide();
+                    }
+                });
+            } else {
+                $('#resource_usage_chart').hide();
+                loader.hide();
+            }
+        });
+    });
+</script>

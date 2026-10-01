@@ -1,0 +1,164 @@
+﻿@model List<HCMPortal.Models.TblCrmcommunicationTransaction>
+@using Microsoft.AspNetCore.Http
+@inject IHttpContextAccessor HttpContextAccessor
+
+
+@if (Model != null && Model.Count > 0)
+{
+    <a href="#" class="nav-link notification-icon" aria-label="Notifications">
+        <i class="bi bi-bell"></i>
+        <span class="badge bg-danger rounded-pill">@Model.Count()</span>
+    </a>
+    @* <ul class="dropdown-menu">
+        <li class="dropdown-header bg-light">
+            <div class="text-end">
+                <a href="javascript:void(0);" class="text-secondary" id="clearallnotification">Mark all as read</a>
+            </div><h5 class="mb-0 text-primary text-ellipsis">Notifications</h5>
+        </li>
+        @foreach(var list in Model)
+        {
+            // Calculate the time difference (TimeSpan)
+            TimeSpan timeDifference = DateTime.Now.Subtract(list.SendDate);
+            string timeAgo = "";
+
+            if (timeDifference.TotalMinutes < 1)
+            {
+                timeAgo = "Just now";
+            }
+            else if (timeDifference.TotalHours < 1)
+            {
+                // Minutes ago
+                timeAgo = $"{(int)timeDifference.TotalMinutes} min ago";
+            }
+            else if (timeDifference.TotalDays < 1)
+            {
+                // Hours ago
+                timeAgo = $"{(int)timeDifference.TotalHours} hr ago";
+            }
+            else if (timeDifference.TotalDays < 10)
+            {
+                // Days ago
+                timeAgo = $"{(int)timeDifference.TotalDays} days ago";
+            }
+            else
+            {
+                // Or display the actual date if it's much older
+                timeAgo = list.SendDate.ToString("MMM dd, yyyy");
+            }
+            <li class="nav-item border-bottom">
+                <a href="#" class="nav-link d-flex justify-content-between align-items-center py-2">
+                    <div class="d-flex align-items-center">
+                        <i class="bi bi-exclamation-circle me-2 text-warning"></i>
+                        <span class="text-truncate" style="max-width: 200px;">@list.Message</span>
+                    </div>
+                    <small class="text-muted ms-3" style="white-space: nowrap;">@timeAgo</small>
+                </a>
+            </li>
+        }
+       
+    
+    </ul> *@
+    <ul class="dropdown-menu shadow" style="width: 350px; max-height: 450px; overflow-y: auto; padding: 0;">
+        <li class="dropdown-header bg-light sticky-top border-bottom py-2">
+            <div class="d-flex justify-content-between align-items-center">
+                <h5 class="mb-0 text-primary" style="font-weight: 600;">Notifications</h5>
+                <a href="javascript:void(0);" class="small text-secondary text-decoration-none" id="clearallnotification">Mark all as read</a>
+            </div>
+        </li>
+
+        @if (Model != null && Model.Any())
+        {
+            @foreach (var list in Model.OrderByDescending(e=>e.SendDate))
+            {
+                TimeSpan timeDifference = DateTime.Now.Subtract(list.SendDate);
+                string timeAgo = "";
+
+                if (timeDifference.TotalMinutes < 1) { timeAgo = "Just now"; }
+                else if (timeDifference.TotalHours < 1) { timeAgo = $"{(int)timeDifference.TotalMinutes} min ago"; }
+                else if (timeDifference.TotalDays < 1) { timeAgo = $"{(int)timeDifference.TotalHours} hr ago"; }
+                else if (timeDifference.TotalDays < 10) { timeAgo = $"{(int)timeDifference.TotalDays} days ago"; }
+                else { timeAgo = list.SendDate.ToString("MMM dd, yyyy"); }
+
+                <li class="border-bottom">
+                    <a href="#" class="d-flex align-items-start py-3 px-3 text-decoration-none"
+                       style="white-space: normal; transition: background 0.2s; background: transparent;"
+                       onmouseover="this.style.backgroundColor='#0d6efd'; this.querySelectorAll('.text-primary, .text-muted, i, p').forEach(el => el.style.setProperty('color', 'white', 'important'))"
+                       onmouseout="this.style.backgroundColor='transparent'; this.querySelectorAll('.text-primary').forEach(el => el.style.setProperty('color', '#0d6efd', 'important')); this.querySelectorAll('.text-muted').forEach(el => el.style.setProperty('color', '#6c757d', 'important')); this.querySelector('p').style.color='black'; this.querySelector('i').style.color='#ffc107';">
+                        <div class="flex-shrink-0 me-3">
+                            <i class="bi bi-exclamation-circle text-warning fs-5"></i>
+                        </div>
+                        <div class="flex-grow-1 overflow-hidden">
+                            <p class="mb-0 text-success small" style="line-height: 1.4;">@list.Message</p>
+                            <small class="text-muted" style="font-size: 0.7rem;">@timeAgo</small>
+                        </div>
+                    </a>
+                </li>
+            }
+        }
+        else
+        {
+            <li class="p-4 text-center text-muted">
+                <i class="bi bi-bell-slash d-block fs-3 mb-2"></i>
+                <small>No new notifications</small>
+            </li>
+        }
+    </ul>
+}
+else
+{
+    <a href="#" class="nav-link notification-icon" aria-label="Notifications">
+        <i class="bi bi-bell"></i>
+        <span class="badge bg-danger rounded-pill">0</span>
+    </a>
+
+
+}
+@* <a href="#" class="nav-link notification-icon" aria-label="Notifications">
+    <i class="bi bi-bell"></i>
+    <span class="badge bg-danger rounded-pill">@Model.Count()</span>
+</a>
+<ul class="dropdown-menu">
+    <li class="dropdown-header bg-light">
+        <div class="text-end">
+            <a href="#" class="text-secondary">Mark all a read</a>
+        </div><h5 class="mb-0 text-primary text-ellipsis">Notifications</h5>
+    </li>
+    <li class="nav-item">
+        <a href="profile-notifications.html" class="nav-link">
+            <i class="bi bi-exclamation-circle"></i>
+            <span>Your subscription has been renewed successfully</span>
+        </a>
+    </li>
+    <li class="divider"></li>
+    <li class="nav-item">
+        <a href="profile-notifications.html" class="nav-link">
+            <i class="bi bi-check-circle"></i>
+            <span>
+                Billing statement for July is ready to view
+            </span>
+        </a>
+    </li>
+</ul> *@
+
+<script type="text/javascript">
+       $(document).on("click", "#clearallnotification", function (e) {
+        e.preventDefault();
+        
+
+        if (!confirm("Are you sure you want to clear your Notification?")) {
+            return;
+        }
+
+        $.ajax({
+            url: '/CustomerManagement/ClearNotification',
+            type: 'POST',
+            success: function (response) {
+                 $("#notificationArea").load("/CustomerManagement/ReloadNotification");
+            },
+            error: function () {
+                alert("An error occurred while clearing your Notification.");
+            }
+        });
+    });
+
+</script>

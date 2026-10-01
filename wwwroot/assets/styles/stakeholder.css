@@ -1,0 +1,341 @@
+```css
+/* =========================================
+   FAQ / CEO SECTION
+========================================= */
+.faq-section {
+    background: #fff;
+}
+
+.ceo-badge {
+    display: inline-block;
+    background: rgba(95, 191, 115, 0.12);
+    color: #2e7d32;
+    padding: 10px 18px;
+    border-radius: 50px;
+    font-size: 14px;
+    font-weight: 600;
+}
+
+/* Accordion */
+.ceoFaq .accordion-item {
+    background: #f8f9fa;
+    border: 1px solid #eceff3;
+    border-radius: 14px !important;
+    overflow: hidden;
+    margin-bottom: 5px;
+}
+
+.ceoFaq .accordion-button {
+    color: #1f2937;
+    font-weight: 600;
+    padding: 1.25rem 1.5rem;
+    box-shadow: none;
+}
+
+    .ceoFaq .accordion-button:not(.collapsed) {
+        background: #f3f4f6;
+        color: #111827;
+        box-shadow: none;
+    }
+
+    .ceoFaq .accordion-button:focus {
+        box-shadow: none;
+        border-color: transparent;
+    }
+
+.ceoFaq .accordion-body {
+    background: #f3f4f6;
+    padding: 0 1.5rem 1.5rem;
+}
+
+    .ceoFaq .accordion-body p {
+        opacity: 0.75;
+        margin-bottom: 0;
+        line-height: 1.7;
+    }
+
+/* CEO Cards */
+.ceo-card {
+    border: 1px solid #edf2f7;
+    border-radius: 24px;
+    padding: 30px;
+    height: 100%;
+    transition: all 0.3s ease;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.04);
+}
+
+    .ceo-card:hover {
+        transform: translateY(-8px);
+        border-color: #5fbf73;
+        box-shadow: 0 20px 50px rgba(95, 191, 115, 0.15);
+    }
+
+/* CEO Feature List */
+.ceo-feature {
+    display: flex;
+    gap: 15px;
+    padding: 15px 0;
+    border-bottom: 1px solid #f1f5f9;
+}
+
+    .ceo-feature:last-child {
+        border-bottom: none;
+    }
+
+/* CEO Capability Chips */
+.ceo-chip {
+    color: #fff;
+    border: 1px solid rgba(95, 191, 115, 0.2);
+    border-radius: 50px;
+    padding: 12px 18px;
+    font-size: 14px;
+    font-weight: 600;
+    background: #000;
+}
+
+/* CEO Metrics */
+.ceo-metric {
+    background: #fff;
+    border: 1px solid #edf2f7;
+    border-radius: 20px;
+    padding: 30px;
+    text-align: center;
+    transition: all 0.3s ease;
+}
+
+    .ceo-metric:hover {
+        transform: translateY(-5px);
+        border-color: #5fbf73;
+    }
+
+    .ceo-metric h3 {
+        color: #5fbf73;
+        font-weight: 700;
+    }
+
+/* =========================================
+   STAKEHOLDER CARDS
+========================================= */
+.stakeholder-highlights {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.highlight-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    color: #334155;
+    font-size: 15px;
+}
+
+    .highlight-item i {
+        color: #5fbf73;
+    }
+
+.stakeholder-card {
+    position: relative;
+    overflow: hidden;
+    border: 1px solid #e5e7eb;
+    border-radius: 20px;
+    transition: all 0.35s ease;
+    background: #fff;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.06);
+    padding: 40px 32px;
+}
+
+    .stakeholder-card:hover {
+        transform: translateY(-12px);
+        box-shadow: 0 25px 60px rgba(16, 185, 129, 0.15);
+        border-color: #b3b3b3;
+    }
+
+    .stakeholder-card::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        border-radius: inherit;
+        padding: 2px;
+        pointer-events: none;
+        opacity: 0;
+        transition: opacity 0.25s ease;
+        z-index: 2;
+        background: radial-gradient( 600px circle at var(--x, 50%) var(--y, 50%), #00d82d 0%, rgb(0, 190, 40) 12%, rgba(0, 208, 43, 0.7) 24%, rgba(0, 199, 41, 0.35) 38%, rgba(95, 191, 115, 0.12) 52%, transparent 68% );
+        -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+        -webkit-mask-composite: xor;
+        mask-composite: exclude;
+    }
+
+    .stakeholder-card:hover::before {
+        opacity: 1;
+    }
+
+.stakeholder-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 12px;
+    background: rgba(95, 191, 115, 0.15);
+    color: #5fbf73;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+    flex-shrink: 0;
+}
+
+.stakeholder-list {
+    list-style: none;
+    padding: 0;
+    margin: 24px 0 20px;
+}
+
+    .stakeholder-list li {
+        padding: 9px 0;
+        color: #475569;
+        border-bottom: 1px solid #f1f5f9;
+    }
+
+        .stakeholder-list li:last-child {
+            border-bottom: none;
+        }
+
+/* =========================================
+   ROLE SIDEBAR / ROLE CONTENT
+========================================= */
+.role-sidebar-card {
+    background-color: #ffffff !important;
+    border: 1px solid #e2e8f0 !important;
+    padding: 18px 20px !important;
+    border-radius: 14px !important;
+    transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1) !important;
+}
+
+    .role-sidebar-card:hover:not(.active) {
+        transform: translateX(4px);
+        border-color: #cbd5e1 !important;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
+    }
+
+    .role-sidebar-card.active {
+        border-color: #0f172a !important;
+        box-shadow: 0 10px 25px rgba(15, 23, 42, 0.06) !important;
+        position: relative;
+    }
+
+        .role-sidebar-card.active .role-main-title {
+            color: #0f172a !important;
+        }
+
+.role-icon-wrapper {
+    background: rgba(169, 169, 169, 0.15);
+    color: #000;
+    width: 40px;
+    height: 40px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.1rem;
+    flex-shrink: 0;
+    transition: transform 0.2s ease;
+}
+
+.role-content-display-box {
+    border-radius: 20px;
+    border-color: #e2e8f0 !important;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.02);
+}
+
+/* =========================================
+   OUTCOME PILLS
+========================================= */
+.outcome-pill {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 16px;
+    background-color: #f8fafc;
+    border: 1px solid #f1f5f9;
+    border-radius: 10px;
+    height: 100%;
+}
+
+    .outcome-pill i {
+        color: #5fbf73;
+    }
+
+    .outcome-pill span {
+        font-size: 0.88rem;
+        font-weight: 500;
+        color: #1e293b;
+        line-height: 1.3;
+    }
+
+/* =========================================
+   TRANSITION LINKS
+========================================= */
+.transition-link {
+    transition: all 0.2s ease;
+}
+
+    .transition-link:hover {
+        transform: translateY(-1px);
+        box-shadow: 0 6px 18px rgba(0, 0, 0, 0.1) !important;
+    }
+
+/* =========================================
+   CTA BUTTONS
+========================================= */
+.cta-primary,
+.cta-secondary,
+.cta-expert {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 14px 24px;
+    border-radius: 16px;
+    font-weight: 600;
+    transition: 0.3s ease;
+    text-decoration: none;
+}
+
+/* Main CTA */
+.cta-primary {
+    background: linear-gradient(135deg, #5fbf73, #4ea963);
+    color: #fff;
+    box-shadow: 0 12px 30px rgba(95, 191, 115, 0.25);
+}
+
+    .cta-primary:hover {
+        transform: translateY(-3px);
+        color: #fff;
+    }
+
+/* Secondary CTA */
+.cta-secondary {
+    background: #fff;
+    border: 1px solid #dfe7e2;
+    color: #334155;
+}
+
+    .cta-secondary:hover {
+        border-color: #5fbf73;
+        color: #5fbf73;
+        transform: translateY(-3px);
+    }
+
+/* Expert CTA */
+.cta-expert {
+    background: rgba(95, 191, 115, 0.08);
+    border: 1px solid rgba(95, 191, 115, 0.15);
+    color: #2f7d42;
+}
+
+    .cta-expert:hover {
+        background: rgba(95, 191, 115, 0.15);
+        transform: translateY(-3px);
+        color: #2f7d42;
+    }
+
+```

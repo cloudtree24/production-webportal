@@ -1,0 +1,286 @@
+﻿@using HCMPortal.Helper
+@* @model HCMPortal.Models.DynamicPage *@
+@model HCMPortal.ViewModel.DynamicPageViewModel
+
+@{
+    // Set the browser tab title using the Meta Title if available, otherwise use the regular Title
+    ViewData["Title"] = !string.IsNullOrEmpty(Model.MetaTitle) ? Model.MetaTitle : "thecloudtree.ai";
+    ViewData["MetaDescription"] = @Html.Encode(Model.MetaDescription);
+    ViewData["MetaTag"]=@Html.Encode(Model.MetaTag);
+    Layout = "_LayoutWithoutEnquiryForm";
+
+}
+
+@*these needs to be maintained inside the header page  Anshuman 06.05.2026*@
+@* @if (!string.IsNullOrEmpty(Model.MetaDescription))
+{
+    <meta name="description" content="@Html.Encode(Model.MetaDescription)" />
+}
+@if (!string.IsNullOrEmpty(Model.MetaKeywords))
+{
+	<meta name="keywords" content="@Model.MetaKeywords" />
+} *@
+
+
+@if (Model.PageType=="General")
+{
+
+    <div class="carousel slide" data-bs-ride="carousel">
+        @{
+            string url = Common.ImageAndDocSavePageAddress();
+            string staticpath = Model.BannerImagePath.Contains("DefaultBanner")
+
+                                ? "assets/images/"
+                                : "assets/UploadImg/";
+            string imagepath = url + staticpath + Model.BannerImagePath;
+            string defaultImagePath = url + "assets/images/DefaultBanner.png";
+        }
+        @if (!String.IsNullOrEmpty(Model.BannerImagePath))
+        {
+            <div class="ct-inner_banner ct-gray__bg">
+                <div class="container">
+                    <div class="row align-items-center g-1">
+                        <div class="col-md-12 wow animate__animated animate__fadeInRight" data-wow-delay="0.5s" ">
+                            <img src="@imagepath" class="img-fluid banner-img" alt="Career"
+                                 onerror="this.onerror=null; this.src='@defaultImagePath';">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+
+    @Html.Raw(Model.HtmlContent)
+
+    <script>
+        function filterDemos(category) {
+          document.querySelectorAll('.demo-item').forEach(item => {
+
+            const show = category === 'all' ||
+              item.dataset.category === category;
+
+            item.classList.toggle('hide', !show);
+          });
+        }
+    </script>
+
+
+}
+else if (Model.PageType=="Blog")
+{
+
+    <div class="ct-inner_banner ct-gray__bg">
+        <div class="container">
+            <div class="row align-items-center g-1">
+                @* <div class="col-md-5 wow animate__animated animate__fadeInLeft" data-wow-delay="0.1s" ">
+
+                        <div class=" ct-inner__content mb-5">
+                            <h2 class="ct-fs-80 fw-bold">All around the world!</h2>
+                        </div>
+                    </div> *@
+                <div class="col-md-12 wow animate__animated animate__fadeInRight" data-wow-delay="0.5s" ">
+                    <img src="/assets/images/bg/inner_bg.png" class="img-fluid banner-img" alt="Banner Image">
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- BLOG details START -->
+    <div class="container ct-padding__120 ct-blog">
+        <div class="row">
+            <div class="col-md-8">
+
+                <div class="mb-5 border-bottom">
+                    <div class="ct-blog__content mb-3">
+                        <h3 class="fw-bold ct-fs-30 mb-3">@Model.Title</h3>
+                        @* <div class="ct-blog__meta mb-2 d-flex gap-3 text-muted small"> *@
+                        <div class="ct-blog__share gap-2 text-muted small">
+                            <div class="d-flex gap-3">
+                                <span><i class="bi bi-calendar-date"></i> @Model.CreatedDate.ToString("dd MMM yyyy")</span>
+                                @* <span><i class="bi bi-eye"></i> @Model.ViewsCount View</span> *@
+                            </div>
+                            @*<button class="btn-like">
+                            <i class="bi bi-heart-fill"></i>
+                        </button>*@
+                            <button class="btn-like"
+                                    data-slug="@Model.Slug">
+
+                                <i class="bi bi-heart"></i>
+
+                                <span id="likeCount">
+                                    @Model.LikeCount
+                                </span>
+
+                            </button>
+                            <!-- SHARE ICON -->
+                            <div class="position-relative">
+                                <button class="share-button">
+                                    <i class="bi bi-share-fill share-toggle" style="cursor:pointer;"></i>
+                                </button>
+                                <!-- DROPDOWN -->
+                                <div class="share-dropdown d-none">
+                                    <a href="#" class="share-link" data-platform="facebook">
+                                        <i class="bi bi-facebook"></i> Facebook
+                                    </a>
+                                    <a href="#" class="share-link" data-platform="twitter">
+                                        <i class="bi bi-twitter-x"></i> X(Twitter)
+                                    </a>
+                                    <a href="#" class="share-link" data-platform="linkedin">
+                                        <i class="bi bi-linkedin"></i> LinkedIn
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                        @Html.Raw(Model.HtmlContent)
+
+                    </div>
+
+                    <div class="d-flex">
+                        <a href="#" class="share-link" data-platform="facebook">
+                            <i class="bi bi-facebook"></i> Facebook
+                        </a>
+                        <a href="#" class="share-link" data-platform="twitter">
+                            <i class="bi bi-twitter-x"></i> X(Twitter)
+                        </a>
+                        <a href="#" class="share-link" data-platform="linkedin">
+                            <i class="bi bi-linkedin"></i> LinkedIn
+                        </a>
+                    </div>
+                </div>
+
+            </div>
+            <div class="col-md-4">
+
+                <div class="card border rounded-4 p-4 mb-4 bg-white">
+                    <h3 style="" class="ct-recentpost-title">
+                        Related Posts
+                        <span class="position-absolute bottom-0 start-0 bg-primary"></span>
+                    </h3>
+                    @{
+                        @if (Model.relatedBlogs != null)
+                        {
+                            @foreach (var item in Model.relatedBlogs)
+                            {
+                                string reimageurl = Common.GetUrlImageAndDocAddress() + ((!item.ImagePath.Contains("DefaultBlogBanner")) ? "assets/UploadImg/" + item.ImagePath
+                                : "assets/users/" + item.ImagePath);
+                                <div class="d-flex flex-column gap-3">
+                                    <a asp-controller="DynamicPage" asp-action="Page" asp-route-slug="@item.WebSlugName" class="ct-recentpost">
+                                        <!-- Image -->
+                                        <div class="flex-shrink-0 ct-recentpost__img">
+                                            <img src="@reimageurl" alt="Blog-Image" class="w-100 h-100 object-fit-cover transition-transform">
+                                        </div>
+
+                                        <!-- Content -->
+                                        <div class="flex-grow-1 overflow-hidden">
+                                            <div class="ct-blog__meta text-muted small mb-1">
+                                                <i class="bi bi-calendar-date"></i> @item.PostedDate.ToString("dd MMM yyyy")
+                                            </div>
+                                            @{
+                                                string input = item.PostTitle;
+                                                string result = string.Join(" ", input.Split(' ').Take(5)) + ".....";
+                                            }
+                                            <p class="fs-6 fw-semibold text-dark text-truncate-2 mb-0 line-clamp-2">@result</p>
+                                        </div>
+                                    </a>
+                                </div>
+                            }
+                        }
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+            $(document).ready(function () {
+
+                let url = window.location.href;
+                let title = document.title;
+
+                // Toggle dropdown
+                $('.share-toggle').click(function () {
+                    $('.share-dropdown').toggleClass('d-none');
+                });
+
+                // Share click
+                $('.share-link').click(function (e) {
+                    e.preventDefault();
+
+                    let platform = $(this).data('platform');
+                    let shareUrl = '';
+
+                    if (platform === 'facebook') {
+                        shareUrl = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(url)}`;
+                    }
+                    else if (platform === 'twitter') {
+                        shareUrl = `https://twitter.com/intent/tweet?url=${encodeURIComponent(url)}&text=${encodeURIComponent(title)}`;
+                    }
+                    else if (platform === 'linkedin') {
+                        shareUrl = `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(url)}`;
+                    }
+
+                    window.open(shareUrl, '_blank');
+                });
+
+                // Close when clicking outside
+                $(document).click(function (e) {
+                    if (!$(e.target).closest('.share-toggle, .share-dropdown').length) {
+                        $('.share-dropdown').addClass('d-none');
+                    }
+                });
+
+            });
+           $(".btn-like").click(function () {
+               
+            let btn = $(this);
+
+            let slugName = btn.data("slug");
+
+            $.ajax({
+
+                url: "/DynamicPage/AddLike",
+
+                type: "POST",
+
+                data: {
+                    slugName: slugName
+                },
+
+                success: function (response) {
+
+                    if (response.success) {
+
+                        let count = parseInt($("#likeCount").text());
+
+                        $("#likeCount").text(count + 1);
+
+                        btn.find("i")
+                            .removeClass("bi-heart")
+                            .addClass("bi-heart-fill text-danger");
+                    }
+                    else {
+
+                        alert("Unable to like this blog.");
+
+                    }
+                },
+
+                error: function () {
+
+                    alert("Something went wrong.");
+
+                }
+
+            });
+
+        });
+    </script>
+}
+
+
+
+
+
+
+
+

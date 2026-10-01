@@ -1,0 +1,78 @@
+﻿@using System.Text.RegularExpressions
+@using System.Net
+
+@model List<HCMPortal.Models.TblExecutiveDetail>
+
+@foreach (var item in Model)
+{
+    
+        var plainDescription = Regex.Replace(item.Description ?? "", "<[^>]*>", "");
+        plainDescription = WebUtility.HtmlDecode(plainDescription);
+        plainDescription = Regex.Replace(plainDescription, @"\s+", " ").Trim();
+    
+
+    <div class="col-md-4 d-flex height-100 wow animate__animated animate__fadeInUp"
+         data-wow-delay="0.1s">
+
+        <div class="card ct-gray__bg ct-border h-100 w-100">
+
+            <div class="card-body d-flex flex-column p-4">
+
+                <div class="img">
+                    <img src="@item.ExecutiveImage"
+                         alt="@item.Name"
+                         class="img-fluid w-100" />
+                </div>
+
+                <div class="content d-flex flex-column flex-grow-1">
+
+                    <h5 class="ct-fs-24 mb-0">
+                        @item.Name
+                    </h5>
+
+                    <p class="ct-fs-18 opacity-75">
+                        @item.Designation
+                    </p>
+
+                    <div class="three-line-ellipsis">
+                       @*  @plainDescription *@
+                       @Html.Raw(item.Description)
+                    </div>
+
+                    <p class="mt-auto text-end">
+                        <button class="btn-drawer-open ct-btn__line btn btn-expand m-auto">
+                            <span class="btn-text">Expand</span>
+                            <span class="arrow">
+                                <i class="bi bi-arrow-right-circle"></i>
+                            </span>
+                        </button>
+                    </p>
+
+                </div>
+
+            </div>
+
+            <div class="info-drawer">
+
+                <h5 class="ct-fs-24 mb-0">
+                    @item.Name
+                </h5>
+
+                <p class="small opacity-75">
+                    @item.Designation
+                </p>
+
+                <div>
+                    @Html.Raw(item.Description)
+                </div>
+
+                <button class="btn-drawer-close btn btn-outline-dark mt-auto">
+                    Close
+                </button>
+
+            </div>
+
+        </div>
+
+    </div>
+}

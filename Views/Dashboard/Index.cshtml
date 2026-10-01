@@ -1,0 +1,1005 @@
+﻿@model HCMPortal.ViewModel.SubscriptionPageViewModel
+@inject IHttpContextAccessor httpContextAccessor
+
+@{
+    ViewData["Title"] = "HR Payroll Software India | Human Capital Management";
+    Layout = "_LayoutWithoutEnquiryForm";
+    }
+<!-- metas -->
+<meta charset="utf-8" />
+<meta name="author" content="thecloudtree" />
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+<meta name="keywords" content="Get top-notch HR and payroll management software" />
+<meta name="description" content="Find the best HR Software in India for efficient human resource management, payroll management software. For more visit Thecloudtree.ai now.
+" />
+<meta property="og:title" content="HR Payroll Software India | Human Capital Management" />
+<meta property="og:description" content="Find the best HR Software in India for efficient human resource management, payroll management software. For more visit Thecloudtree.ai now.
+" />
+<meta property="og:url" content="https://hcmportal.anantatek.com/Dashboard/Index" />
+<meta property="og:site_name" content="thecloudtree" />
+<meta property="og:type" content="website" />
+<meta name="fb_admins_meta_tag" content="thecloudtree" />
+<meta property="fb:admins" content="thecloudtree" />
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:title" content="HR Payroll Software India | Human Capital Management" />
+<meta name="twitter:description" content="Find the best HR Software in India for efficient human resource management, payroll management software. For more visit Thecloudtree.ai now." />
+
+@* <link href="~/assets/styles/bootstrap/bootstrap.css" rel="stylesheet">
+<link href="~/assets/styles/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="~/assets/fonts/font-awsome/css/all.min.css" rel="stylesheet">
+<link href="~/assets/datatable/css/datatables.bootstrap5.min.css" rel="stylesheet" />
+<link href="~/assets/datatable/css/buttons.bootstrap5.min.css" rel="stylesheet" />
+<link href="~/assets/styles/owl.theme.default.min.css" rel="stylesheet">
+<link href="~/assets/styles/owl.carousel.min.css" rel="stylesheet">
+<link href="~/assets/styles/style.css" rel="stylesheet" />
+<link href="~/assets/styles/animate.min.css" rel="stylesheet"> *@
+
+@* <link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin> *@
+
+@* <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@300;400;600;700&display=swap" rel="stylesheet"> *@
+@* <link href="https://cdn.jsdelivr.net/npm/@@n8n/chat/dist/style.css" rel="stylesheet" /> *@
+@* 
+<script src="~/lib/jquery/jquery.min.js"></script>
+<script src="~/assets/js/bootstrap.bundle.js"></script>
+<script src="~/assets/js/main.js"></script>
+<script src="~/assets/js/vanilla-toast.min.js"></script>
+<script src="~/assets/js/owl.carousel.min.js"></script>
+<script src="~/assets/js/html2pdf.bundle.min.js"></script>
+<script src="~/assets/js/sweetalert.js"></script>
+<script src="~/assets/js/wow/wow.min.js"></script>
+<script src="~/assets/js/jquery.easing.min.js"></script>
+
+<script src="https://www.google.com/recaptcha/api.js" async ></script> *@
+   
+
+<div id="slider" class="carousel slide hero-centered-layout" data-bs-ride="carousel">
+
+    @if (Model?.bannerList != null && Model.bannerList.Where(e => e.PageFor == "Product").ToList().Any())
+    {
+            <div class="carousel-indicators modern-pills justify-content-center ms-5">
+            @for (int i = 0; i < Model.bannerList.Where(e => e.PageFor == "Product").ToList().Count(); i++)
+            {
+                <button type="button"
+                        data-bs-target="#slider"
+                        data-bs-slide-to="@i"
+                        class="@(i == 0 ? "active" : "")"
+                        aria-label="Slide @(i + 1)">
+                </button>
+            }
+        </div>
+    }
+    <div class="carousel-inner">
+        @{
+            var index = 0;
+        }
+        @if (Model.bannerList != null)
+        {
+            foreach (var item in Model.bannerList.Where(e => e.PageFor == "Product").ToList())
+            {
+                var imagePath = item.ImageName;
+                <div class="carousel-item @(index == 0 ? "active" : "")">
+                    <div class="hero-item-wrapper">
+                         <img src="@imagePath" class="hero-img" alt="HCM banner @(index + 1)" />
+                         <div class="hero-overlay-content">
+                             <div class="container">
+                                 <div class="row">
+                                     <div class="col-md-6">
+                                            <div class="hero-text-box animate-up text-white ct-fs-30 fw-bold">
+                                                @Html.Raw(item.TextContent)
+                                                @* <a href="#" class="btn btn-green-gradient px-5 py-2 rounded-pill shadow">
+                                                    Book a Demo
+                                                </a> *@
+                                            </div>
+                                    </div>
+                                </div>
+                             </div>
+                         </div>
+                    </div>
+                </div>
+                index++;
+            }
+        }
+    </div>
+    @* <button class="carousel-control-prev" type="button" data-bs-target="#slider" data-bs-slide="prev">
+        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+        <span class="visually-hidden">Previous</span>
+    </button>
+    <button class="carousel-control-next" type="button" data-bs-target="#slider" data-bs-slide="next">
+        <span class="carousel-control-next-icon" aria-hidden="true"></span>
+        <span class="visually-hidden">Next</span>
+    </button> *@
+</div>
+
+<section class="stakeholder-section">
+    <div class="px-4 px-lg-0 container-lg">
+
+        <!-- ==================== MAIN HEADER SECTION ==================== -->
+        <div class="text-center mb-5">
+            <h2 class="ct-fs-48 fw-bold mb-2">
+                Designed for Every Decision Maker
+            </h2>
+            <p class="text-secondary fs-5 mb-0">
+                What business outcome does this create for my role?
+            </p>
+        </div>
+
+        <!-- ==================== SIDE TABS ARCHITECTURE ==================== -->
+        <div class="row g-4 justify-content-center">
+
+            <!-- Left Role Navigation Bar (col-lg-4) -->
+            <div class="col-lg-4">
+                <ul id="stakeholderTabs" role="tablist" class="nav nav-pills d-flex flex-column gap-3 border-0 h-100">
+
+                    <!-- CEO Tab Trigger -->
+                    <li class="nav-item m-0" role="presentation">
+                        <button id="ceo-tab" data-bs-toggle="tab" data-bs-target="#ceo-content" type="button" role="tab" aria-controls="ceo-content" aria-selected="true" class="nav-link role-sidebar-card active w-100">
+                            <div class="d-flex align-items-center gap-3 w-100">
+                                <div class="role-icon-wrapper"><i class="bi bi-briefcase-fill"></i></div>
+                                <div class="text-start">
+                                    <span class="fw-bold text-dark d-block">CEO / Director / Founder</span>
+                                </div>
+                            </div>
+                        </button>
+                    </li>
+
+                    <!-- CFO Tab Trigger -->
+                    <li class="nav-item m-0" role="presentation">
+                        <button id="cfo-tab" data-bs-toggle="tab" data-bs-target="#cfo-content" type="button" role="tab" aria-controls="cfo-content" aria-selected="false" class="nav-link role-sidebar-card w-100" tabindex="-1">
+                            <div class="d-flex align-items-center gap-3 w-100">
+                                <div class="role-icon-wrapper"><i class="bi bi-graph-up-arrow"></i></div>
+                                <div class="text-start">
+                                    <span class="fw-bold text-dark d-block">CFO / Finance Controller</span>
+                                </div>
+                            </div>
+                        </button>
+                    </li>
+
+                    <!-- CHRO Tab Trigger -->
+                    <li class="nav-item m-0" role="presentation">
+                        <button id="chro-tab" data-bs-toggle="tab" data-bs-target="#chro-content" type="button" role="tab" aria-controls="chro-content" aria-selected="false" class="nav-link role-sidebar-card w-100" tabindex="-1">
+                            <div class="d-flex align-items-center gap-3 w-100">
+                                <div class="role-icon-wrapper"><i class="bi bi-people-fill"></i></div>
+                                <div class="text-start">
+                                    <span class="fw-bold text-dark d-block">CHRO / HR Head</span>
+                                </div>
+                            </div>
+                        </button>
+                    </li>
+
+                    <li class="nav-item m-0" role="presentation">
+                        <button id="startupFounder-tab" data-bs-toggle="tab" data-bs-target="#startupFounder-content" type="button" role="tab" aria-controls="chro-content" aria-selected="false" class="nav-link role-sidebar-card w-100" tabindex="-1">
+                            <div class="d-flex align-items-center gap-3 w-100">
+                                <div class="role-icon-wrapper"><i class="bi bi-rocket-takeoff-fill"></i></div>
+                                <div class="text-start">
+                                    <span class="fw-bold text-dark d-block">Startup Founders</span>
+                                </div>
+                            </div>
+                        </button>
+                    </li>
+
+                    <li class="nav-item m-0" role="presentation">
+                        <button id="smbOwner-tab" data-bs-toggle="tab" data-bs-target="#smbOwner-content" type="button" role="tab" aria-controls="chro-content" aria-selected="false" class="nav-link role-sidebar-card w-100" tabindex="-1">
+                            <div class="d-flex align-items-center gap-3 w-100">
+                                <div class="role-icon-wrapper"><i class="bi bi-shop"></i></div>
+                                <div class="text-start">
+                                    <span class="fw-bold text-dark d-block">SMB Owners </span>
+                                </div>
+                            </div>
+                        </button>
+                    </li>
+
+                    <li class="nav-item m-0" role="presentation">
+                        <button id="itSecurityTeam-tab" data-bs-toggle="tab" data-bs-target="#itSecurityTeam-content" type="button" role="tab" aria-controls="chro-content" aria-selected="false" class="nav-link role-sidebar-card w-100" tabindex="-1">
+                            <div class="d-flex align-items-center gap-3 w-100">
+                                <div class="role-icon-wrapper"><i class="bi bi-shield-lock-fill"></i></div>
+                                <div class="text-start">
+                                    <span class="fw-bold text-dark d-block">IT / Security Teams</span>
+                                </div>
+                            </div>
+                        </button>
+                    </li>
+
+                </ul>
+            </div>
+
+            <!-- Right Workspace Dynamic Content Window (col-lg-8) -->
+            <div class="col-lg-8">
+                <div id="stakeholderTabsContent" class="tab-content role-content-display-box p-4 p-md-5 bg-white h-100 border">
+
+                    <div class="tab-pane fade show active h-100" id="ceo-content" role="tabpanel" aria-labelledby="ceo-tab">
+                        <div class="d-flex flex-column h-100 justify-content-between">
+                            <div>
+                                <h3 class="fw-semibold mb-2 tracking-tight">
+                                    Scale Workforce Operations Without Scaling Complexity
+                                </h3>
+                                <p class="text-muted fs-6 mb-4">
+                                    Gain real-time visibility into your entire cross-branch workforce, automate workflows, and scale
+                                    underlying HR operational pipelines cleanly as your business metrics compound globally.
+                                </p>
+
+                                <div class="row g-2 mb-4">
+                                    <div class="col-md-6">
+                                        <div class="outcome-pill">
+                                            <i class="bi bi-check-circle-fill"></i> <span>
+                                                Centralized
+                                                workforce visibility
+                                            </span>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="outcome-pill">
+                                            <i class="bi bi-check-circle-fill"></i>
+                                            <span>Multi-location branch support</span>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="outcome-pill">
+                                            <i class="bi bi-check-circle-fill"></i> <span>
+                                                Scalable
+                                                plug-and-play workflows
+                                            </span>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="outcome-pill">
+                                            <i class="bi bi-check-circle-fill"></i> <span>
+                                                Executive
+                                                leadership dashboards
+                                            </span>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="outcome-pill">
+                                            <i class="bi bi-check-circle-fill"></i> <span>
+                                                Real-time
+                                                workforce data analytics
+                                            </span>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="outcome-pill">
+                                            <i class="bi bi-check-circle-fill"></i> <span>
+                                                Accelerated
+                                                executive decisions
+                                            </span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div>
+            <a href="/hcm-Solution/director-founder" class="ct-arrow__dark rounded-2">
+                                    Explore Leadership Solutions <i class="bi bi-arrow-right ms-1"></i>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="tab-pane fade h-100" id="cfo-content" role="tabpanel" aria-labelledby="cfo-tab">
+                        <div class="d-flex flex-column h-100 justify-content-between">
+                            <div>
+                                <h3 class="fw-semibold mb-2 tracking-tight">
+                                    Gain Control Over Workforce Costs
+                                </h3>
+                                <p class="text-muted fs-6 mb-4">
+                                    Reduce payroll processing time, improve compliance accuracy, and gain real-time workforce cost
+                                    visibility.
+                                </p>
+
+                                <div class="row g-2 mb-4">
+                                    <div class="col-md-6">
+                                        <div class="outcome-pill">
+                                            <i class="bi bi-check-circle-fill"></i> <span>Payroll accuracy</span>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="outcome-pill">
+                                            <i class="bi bi-check-circle-fill"></i>
+                                            <span>Cost optimization</span>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="outcome-pill">
+                                            <i class="bi bi-check-circle-fill"></i> <span>Compliance risk</span>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="outcome-pill"><i class="bi bi-check-circle-fill"></i> <span>ROI</span></div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="outcome-pill">
+                                            <i class="bi bi-check-circle-fill"></i> <span>
+                                                Operational
+                                                efficiency
+                                            </span>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="outcome-pill">
+                                            <i class="bi bi-check-circle-fill"></i> <span>
+                                                Workforce cost
+                                                analytics
+                                            </span>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="outcome-pill">
+                                            <i class="bi bi-check-circle-fill"></i> <span>
+                                                Budget
+                                                predictability
+                                            </span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div>
+    <a href="/hcm-Solution/cfo" class="ct-arrow__dark rounded-2">
+                                    Explore Leadership Solutions <i class="bi bi-arrow-right ms-1"></i>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="tab-pane fade h-100" id="chro-content" role="tabpanel" aria-labelledby="chro-tab">
+                        <div class="d-flex flex-column h-100 justify-content-between">
+                            <div>
+                                <h3 class="fw-semibold mb-2 tracking-tight">
+                                    Transform HR from Administrative to Strategic
+                                </h3>
+                                <p class="text-muted fs-6 mb-4">
+                                    Empower employees and managers with self-service workflows that reduce HR dependency and improve
+                                    employee experience.
+                                </p>
+
+                                <div class="row g-2 mb-4">
+                                    <div class="col-md-6">
+                                        <div class="outcome-pill">
+                                            <i class="bi bi-check-circle-fill"></i> <span>HR efficiency</span>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="outcome-pill">
+                                            <i class="bi bi-check-circle-fill"></i>
+                                            <span>Employee experience</span>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="outcome-pill">
+                                            <i class="bi bi-check-circle-fill"></i> <span>Talent retention</span>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="outcome-pill"><i class="bi bi-check-circle-fill"></i> <span>Recruitment</span></div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="outcome-pill"><i class="bi bi-check-circle-fill"></i> <span>Automation</span></div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="outcome-pill">
+                                            <i class="bi bi-check-circle-fill"></i> <span>
+                                                Performance
+                                                management
+                                            </span>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="outcome-pill">
+                                            <i class="bi bi-check-circle-fill"></i> <span>HR analytics</span>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="outcome-pill"><i class="bi bi-check-circle-fill"></i> <span>Engagement</span></div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="outcome-pill">
+                                            <i class="bi bi-check-circle-fill"></i> <span>Policy governance</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div>
+        <a href="/hcm-Solution/hrhead" class="ct-arrow__dark rounded-2">
+                                    Explore Leadership Solutions <i class="bi bi-arrow-right ms-1"></i>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="tab-pane fade h-100" id="startupFounder-content" role="tabpanel" aria-labelledby="startupFounder-tab">
+                        <div class="d-flex flex-column h-100 justify-content-between">
+                            <div>
+                                <h3 class="fw-semibold mb-2 tracking-tight">
+                                    HR Software Built for Fast-Growing Teams
+                                </h3>
+                                <p class="text-muted fs-6 mb-4">
+                                    Set up HR, payroll, attendance, and employee workflows quickly — without building a large HR team.
+                                </p>
+
+                                <div class="row g-2 mb-4">
+                                    <div class="col-md-6">
+                                        <div class="outcome-pill">
+                                            <i class="bi bi-check-circle-fill"></i> <span>Simplicity</span>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="outcome-pill">
+                                            <i class="bi bi-check-circle-fill"></i>
+                                            <span>Speed</span>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="outcome-pill">
+                                            <i class="bi bi-check-circle-fill"></i> <span>
+                                                Low admin
+                                                overhead
+                                            </span>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="outcome-pill">
+                                            <i class="bi bi-check-circle-fill"></i> <span>Affordability</span>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="outcome-pill"><i class="bi bi-check-circle-fill"></i> <span>Scalability</span></div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="outcome-pill">
+                                            <i class="bi bi-check-circle-fill"></i> <span>
+                                                Fast
+                                                implementation
+                                            </span>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="outcome-pill">
+                                            <i class="bi bi-check-circle-fill"></i> <span>Ease of use</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div>
+    <a href="/hcm-Solution/startup-founders" class="ct-arrow__dark rounded-2">
+                                    Explore Leadership Solutions <i class="bi bi-arrow-right ms-1"></i>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="tab-pane fade h-100" id="smbOwner-content" role="tabpanel" aria-labelledby="smbOwner-tab">
+                        <div class="d-flex flex-column h-100 justify-content-between">
+                            <div>
+                                <h3 class="fw-semibold mb-2 tracking-tight">
+                                    Simplify HR Operations Without Enterprise Complexity
+                                </h3>
+                                <p class="text-muted fs-6 mb-4">
+                                    Replace spreadsheets and disconnected HR tools with one simple platform for payroll, attendance,
+                                    and employee management.
+                                </p>
+
+                                <div class="row g-2 mb-4">
+                                    <div class="col-md-6">
+                                        <div class="outcome-pill">
+                                            <i class="bi bi-check-circle-fill"></i> <span>Value for money</span>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="outcome-pill">
+                                            <i class="bi bi-check-circle-fill"></i>
+                                            <span>Ease of use</span>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="outcome-pill">
+                                            <i class="bi bi-check-circle-fill"></i> <span>Support quality</span>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="outcome-pill">
+                                            <i class="bi bi-check-circle-fill"></i> <span>Time savings</span>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="outcome-pill"><i class="bi bi-check-circle-fill"></i> <span>Simplicity</span></div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="outcome-pill"><i class="bi bi-check-circle-fill"></i> <span>Reliability</span></div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div>
+            <a href="/hcm-Solution/smb" class="ct-arrow__dark rounded-2">
+                                    Explore Leadership Solutions <i class="bi bi-arrow-right ms-1"></i>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="tab-pane fade h-100" id="itSecurityTeam-content" role="tabpanel" aria-labelledby="smbOwner-tab">
+                        <div class="d-flex flex-column h-100 justify-content-between">
+                            <div>
+                                <h3 class="fw-semibold mb-2 tracking-tight">
+                                    Secure, Integrate, and Scale Workforce Technology
+                                </h3>
+                                <p class="text-muted fs-6 mb-4">
+                                    Ensure secure workforce management with enterprise-grade security, seamless integrations, access
+                                    controls, and reliable infrastructure that supports business growth.
+                                </p>
+
+                                <div class="row g-2 mb-4">
+                                    <div class="col-md-6">
+                                        <div class="outcome-pill">
+                                            <i class="bi bi-check-circle-fill"></i> <span>Security</span>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="outcome-pill">
+                                            <i class="bi bi-check-circle-fill"></i>
+                                            <span>APIs</span>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="outcome-pill">
+                                            <i class="bi bi-check-circle-fill"></i> <span>Integrations</span>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="outcome-pill">
+                                            <i class="bi bi-check-circle-fill"></i> <span>Access controls</span>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="outcome-pill">
+                                            <i class="bi bi-check-circle-fill"></i> <span>Data governance</span>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="outcome-pill"><i class="bi bi-check-circle-fill"></i> <span>Reliability</span></div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div>
+            <a href="/hcm-Solution/it-security-team" class="ct-arrow__dark rounded-2">
+                                    Explore Leadership Solutions <i class="bi bi-arrow-right ms-1"></i>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+        </div>
+    </div>
+</section>
+
+<section class="ct-gray__bg">
+    <div class="px-4 px-lg-0 container-lg">
+        <div class="d-flex flex-column w-75 mb-5 text-center px-5 m-auto">
+            <h2 class="ct-fs-48">
+                       The Only HRMS in India with Microsoft GenAI and smHRt AI</h2>
+            <p class="mx-auto opacity-50">Revolutionize Employee Management with AI-enabled HR Operations</p>
+        </div>
+
+        <div class="hcm-tabs mb-5 mt-5">
+            <div class="container">
+                @{
+                    var hrmIcons = new string[]
+                    {
+                        "bi bi-graph-up fs-2", // Unified HR
+                        "bi bi-currency-rupee fs-2", // Payroll/Money
+                        "bi bi-person-fill-gear fs-2", // Core HR/Settings
+                        "bi bi-person-rolodex fs-2", // Directory/Chatbot
+                        "bi bi-file-earmark-person fs-2", // Recruitment/File
+                        "bi bi-graph-up fs-2", // Performance/Growth
+                        "bi bi-calendar-check fs-2", // Attendance/Schedule
+                        "bi bi-shield-lock fs-2", // Security/Compliance
+                        "bi bi-clock-history fs-2" // Time/Leave
+                    };
+
+                    // Setup for random selection
+                    var random = new Random();
+                    var isFirst = true; // Flag for setting the 'active' class
+                }
+
+                <div class="row">
+
+                    <div class="col-md-12">
+                        <div class="nav nav-pills h-100 gap-3" id="v-pills-tab" role="tablist" aria-orientation="vertical">
+                            @foreach (var feature in Model.featureList)
+                            {
+                                // Select a random icon from the array
+                                var randomIndex = random.Next(hrmIcons.Length);
+                                var selectedIconClass = hrmIcons[randomIndex];
+
+                                // Create unique IDs
+                                var targetId = $"v-pills-{feature.Hmid}";
+                                var tabId = $"{targetId}-tab";
+
+                                <button class="nav-link @(isFirst ? "active" : "")"
+                                        id="@tabId"
+                                        data-bs-toggle="pill"
+                                        data-bs-target="#@targetId"
+                                        type="button"
+                                        role="tab"
+                                        aria-controls="@targetId"
+                                        aria-selected="@(isFirst ? "true" : "false")">
+
+                                    @* Add the randomly selected icon here *@
+                                    <i class="@selectedIconClass"></i> @feature.Title
+                                </button>
+
+                                isFirst = false;
+                            }
+                        </div>
+                    </div>
+                    <div class="col-md-12">
+                        <div class="tab-content" id="v-pills-tabContent">
+                            @{
+                                isFirst = true; // Reset flag for content panels
+                            }
+                            @foreach (var feature in Model.featureList)
+                            {
+                                // Use the same unique ID structure
+                                var targetId = $"v-pills-{feature.Hmid}";
+                                var tabId = $"{targetId}-tab";
+
+                                <div class="tab-pane fade @(isFirst ? "show active" : "")"
+                                     id="@targetId"
+                                     role="tabpanel"
+                                     aria-labelledby="@tabId">
+
+                                        <div class="content">
+                                            <h3>@feature.Title</h3>
+                                            @* Use @Html.Raw() to render content that includes HTML like <br> or <h3> *@
+                                            @Html.Raw(feature.Content)
+                                        </div>
+                                </div>
+
+                                isFirst = false;
+                            }
+
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+    </div>
+</section>
+
+<section class="smhrt-light-section">
+    <div class="px-4 px-lg-0 container-lg">
+
+        <div class="header-content text-center mb-5">
+            <h2 class="display-5 fw-bold text-white">What makes us smHRt?</h2>
+            <p class="lead text-white">Advanced Technology paired with Intuitive User Experience for The Modern HR</p>
+        </div>
+        <div class="row g-4 justify-content-center">
+            <div class="col-md-6 col-lg-3">
+                <div class="section_card">
+                    <div class="icon-circle">
+                        <i class="bi bi-cpu-fill"></i>
+                    </div>
+                    <h4>AI-based HR Experience</h4>
+                    <p>
+                        Unleash the Computing Power of the Cloud augmented with AI to provide a Complete Digital HR Experience
+                    </p>
+                </div>
+            </div>
+            <div class="col-md-6 col-lg-3">
+                <div class="section_card">
+                    <div class="icon-circle">
+                        <i class="bi bi-person-fill-gear"></i>
+                    </div>
+                    <h4>Employee Self Service</h4>
+                    <p>
+                        Empower your Staff to be Self-sufficient with AI Chatbot, Intuitive Mobile App and Browser-based ESS
+                        portal
+                    </p>
+                </div>
+            </div>
+            <div class="col-md-6 col-lg-3">
+                <div class="section_card">
+                    <div class="icon-circle">
+                        <i class="bi bi-bar-chart-line-fill"></i>
+                    </div>
+                    <h4>Real-time Analytics</h4>
+                    <p>
+                        Gather in-depth real-time Insights into your Company and Employee data for Quick Data-backed Decisions
+                    </p>
+                </div>
+            </div>
+            <div class="col-md-6 col-lg-3">
+                <div class="section_card">
+                    <div class="icon-circle">
+                        <i class="bi bi-database-fill-lock"></i>
+                    </div>
+                    <h4>Advance Data Security</h4>
+                    <p>
+                        Unparalleled Enterprise-grade Data Security and Integrity with Microsoft Azure-powered Cloud Architecture
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section>
+    <div class="px-4 px-lg-0 container-lg">
+    <div class="cta-banner-gradient rounded-5 p-5 text-center text-white position-relative overflow-hidden">
+        <div class="cta-content position-relative z-1">
+             <h3 class="fw-bold">Ready to see the future of HR?</h3>
+            <p class="opacity-75 mb-4">
+                Get In-depth information on the various next-gen features of the most feature-rich HRMS Softwae in india
+             </p>
+            <button class="btn btn-warning btn-lg px-5 fw-bold text-white rounded-pill shadow" data-bs-toggle="modal" data-bs-target="#brochureModal">
+                        <i class="bi bi-download"></i> Download Brochure
+             </button>
+              @*   <button class="btn btn-warning btn-lg text-white"><i class="bi bi-download"></i> Download Brochure</button> *@
+            <div class="cta-decorator"></div>
+         </div>
+    </div>
+</div>
+</section>
+
+@*   Dynamic Testimonial  Added By Daitari(12-11-2025) *@
+@* <section class="testimonial-section">
+    <div class="px-4 px-lg-0 container-lg">
+        <div class="text-center mb-5">
+            <h2 class="display-5 fw-bold">What
+                <span class="text-green-gradient">our customers</span> are saying
+            </h2>
+            <p class="text-muted">Trusted by industry leaders to streamline HR operations.</p>
+        </div>
+
+        <div id="testimonialCarousel" class="carousel slide" data-bs-ride="carousel">
+             <ol class="carousel-indicators">
+                 @{
+                    int slideIndex = 0;
+                    for (int i = 0; i < Model.testimonialList.Count; i += 2)
+                    {
+                       <li data-bs-target="#testimonialCarousel"
+                          data-bs-slide-to="@slideIndex"
+                          class="@(slideIndex == 0 ? "active" : "")"></li>;
+                          slideIndex++;
+                     }
+                 }
+             </ol>
+             <div class="carousel-inner pb-5">
+                 @{
+                    int counter = 0;
+                 }
+                 @for (int i = 0; i < Model.testimonialList.Count; i += 2)
+                     {
+                        var t1 = Model.testimonialList[i];
+                        var t2 = (i + 1 < Model.testimonialList.Count) ? Model.testimonialList[i + 1] : null;
+                        <div class="carousel-item @(counter == 0 ? "active" : "")">
+                             <div class="row">
+                                 <div class="col-sm-6">
+                                <div class="testimonial-card shadow-sm">
+                                    <div class="quote-mark">“</div>
+                                    <div class="rating-stars mb-3">
+                                        <i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i>
+                                    </div>
+                                    <p class="testimonial-comment">@t1.review</p>
+                                    <div class="client-info">
+                                         <img src="@t1.pimage" class="mr-3 border border-light" alt=""> 
+                                         <div class="ms-3">
+                                             <h6 class="mb-0 fw-bold text-dark">@t1.name</h6>
+                                             <p class="text-muted small">@t1.designation</p>
+                                         </div>
+                                    </div>
+                                     </div>
+                                 </div>
+                                        @if (t2 != null)
+                                        {
+                                            <div class="col-sm-6">
+                                                <div class="testimonial-card shadow-sm">
+                                                    <div class="quote-mark">“</div>
+                                                    <div class="rating-stars mb-3">
+                                                        <i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i>
+                                                    </div>
+                                                    <p class="testimonial-comment">@t2.review</p>
+                                                    <div class="client-info">
+                                                        <img src="@t2.pimage" class="mr-3 border border-light" alt="">                                                    
+                                                        <div class="ms-3">
+                                                            <h6 class="mb-0 fw-bold text-dark">@t2.name</h6>
+                                                            <p class="text-muted small">@t2.designation</p>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        }
+                                    </div>
+                                </div>
+                                counter++;
+                            }
+                        </div>
+                    </div>
+
+    </div>
+</section> *@
+
+<div class="modal fade" id="brochureModal" tabindex="-1" aria-labelledby="brochureModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content rounded-4 shadow">
+            <div class="modal-header border-0">
+                <h5 class="modal-title" id="brochureModalLabel">Get Brochure Link</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+
+
+                <div class="modal-body">
+                    <form id="brochureForm">
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold">Full Name</label>
+                            <input type="text" class="form-control" name="FullName" placeholder="Enter Full Name" required />
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold">Email Address</label>
+                            <input type="email" class="form-control" name="Email" placeholder="Enter Email Address" required />
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold">Phone Number</label>
+                            <input type="text" class="form-control" name="Phone" placeholder="Enter Phone Number" required maxlength="15" pattern="^(?:[6-9]\d{9}|[1-9]\d{1,14})$" oninvalid="this.setCustomValidity(
+         this.validity.valueMissing
+           ? 'Phone number is required'
+           : 'Please enter phone number in E.164 format without '+' (e.g., 919876543210).'
+       )"
+                                   oninput="this.setCustomValidity('')" />
+                        </div>
+                        <div class="mb-3">
+
+                        <div class="g-recaptcha" data-sitekey="6LcP1r4rAAAAAHNiLqWilMZWVAroHkjaHZAEAIT9"></div>
+                        <span asp-validation-summary="ModelOnly" class="text-danger"></span>
+                    </div>
+                    <div class="d-flex justify-content-end">
+                        <button type="submit" class="btn btn-primary">
+                            <i class="bi bi-send"></i> Submit
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="feedbackModal" tabindex="-1" aria-labelledby="feedbackModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content shadow-lg border-0">
+            <div id="feedbackModalHeader" class="modal-header text-white bg-success">
+                <h5 class="modal-title" id="feedbackModalLabel">Success</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body text-center">
+                <i id="feedbackIcon" class="bi bi-check-circle-fill text-success fs-1 mb-3"></i>
+                <p id="feedbackMessage">Your operation was successful!</p>
+            </div>
+            <div class="modal-footer justify-content-center">
+                <button type="button" class="btn btn-success px-4" data-bs-dismiss="modal">OK</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<script>
+    const toggle = document.getElementById('billingToggle');
+    const monthlyPlan = document.getElementById('monthly-plan');
+    const yearlyPlan = document.getElementById('yearly-plan');
+
+    toggle.addEventListener('change', function () {
+      if (this.checked) {
+        // Show Yearly, Hide Monthly
+        yearlyPlan.style.display = 'block';
+        monthlyPlan.style.display = 'none';
+      } else {
+        // Show Monthly, Hide Yearly
+        monthlyPlan.style.display = 'block';
+        yearlyPlan.style.display = 'none';
+      }
+    });
+</script>
+
+<script>
+        function showFeedbackModal(isSuccess, message) {
+        const header = document.getElementById('feedbackModalHeader');
+        const title = document.getElementById('feedbackModalLabel');
+        const icon = document.getElementById('feedbackIcon');
+        const msg = document.getElementById('feedbackMessage');
+        const btn = document.querySelector('#feedbackModal .btn');
+
+        // Update text message
+        msg.textContent = message;
+
+        if (isSuccess) {
+            header.classList.remove('bg-danger');
+            header.classList.add('bg-success');
+            icon.className = 'bi bi-check-circle-fill text-success fs-1 mb-3';
+            title.textContent = 'Success';
+            btn.className = 'btn btn-success px-4';
+        } else {
+            header.classList.remove('bg-success');
+            header.classList.add('bg-danger');
+            icon.className = 'bi bi-x-circle-fill text-danger fs-1 mb-3';
+            title.textContent = 'Error';
+            btn.className = 'btn btn-danger px-4';
+        }
+
+        // Show the modal
+        const feedbackModal = new bootstrap.Modal(document.getElementById('feedbackModal'));
+        feedbackModal.show();
+    }
+    $(document).ready(function () {
+        $("#brochureForm").on("submit", function (e) {
+            e.preventDefault();
+
+            const formData = $(this).serialize();
+
+            $.ajax({
+                url: '/Dashboard/SendBrochureLink',
+                type: 'POST',
+                data: formData,
+                success: function (response) {
+                   if (response.success) {
+                    $('#brochureModal').modal('hide');
+                    showFeedbackModal(true, response.message || "The download link has been sent to your email!");
+                } else {
+                    // ❗ Show error without closing modal
+                    showFeedbackModal(false, response.message || "Please validate reCAPTCHA.");
+                }
+            },
+                error: function (xhr, status, error) {
+                     $('#brochureModal').modal('hide');
+        showFeedbackModal(false, "Sorry, something went wrong. Please try again later.");
+    }
+            });
+        });
+    });
+</script>
+
+@{
+    if (ViewBag.Success != null)
+    {
+        <script type="text/javascript">
+
+            vt.success("@ViewBag.Success", {
+                title: "Successfull",
+                position: "top-center",
+                closable: true,
+               focusable: true, duration: 10000,
+                //callback: function () {
+                //    vt.success()
+                //}
+            });
+        </script>
+    }
+    if (ViewBag.Exception != null)
+    {
+        <script type="text/javascript">
+            vt.error("@ViewBag.Exception", {
+                title: "Alert",
+                position: "top-center",duration: 10000,
+                //callback: function () {
+                //    vt.success()
+                //}
+            });
+        </script>
+    }
+    if (ViewBag.Delete != null)
+    {
+        <script type="text/javascript">
+            vt.warn("@ViewBag.Delete", {
+                title: "Alert",
+                position: "top-center",duration: 10000,
+                //callback: function () {
+                //    vt.success()
+                //}
+            });
+        </script>
+    }
+}
+

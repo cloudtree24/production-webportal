@@ -1,0 +1,388 @@
+﻿@using HCMPortal.Helper
+@model HCMPortal.ViewModel.JobDetailsViewModel
+
+@{
+    Layout = "_LayoutWithoutEnquiryForm";
+}
+
+<body>
+
+
+
+    <div class="ct-inner_banner ct-gray__bg">
+        <div class="container">
+            <div class="row align-items-center g-1">
+                <div class="col-md-5 wow animate__animated animate__fadeInLeft" data-wow-delay="0.1s" ">
+                    <div class=" ct-inner__content mb-5">
+                        <p class="ct-fs-24">Welcome to</p>
+                        <h2 class="ct-fs-90 fw-bold">The Next Big Things</h2>
+                    </div>
+                </div>
+                <div class="col-md-7 wow animate__animated animate__fadeInRight" data-wow-delay="0.5s" ">
+                    <img src="/assets/images/bg/job_bg.png" class="img-fluid banner-img" alt="Career">
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="clearfix"></div>
+
+    <div class="ct-padding__120">
+
+        <div class="container">
+            <div class="row">
+                <!-- Card 1 -->
+                <div class="col-md-8">
+                    <div class="d-flex flex-column h-100">
+
+                        <!-- Job title -->
+                        <h5 class="fw-bold mb-2 ct-fs-48">@Model?.tblJobPostDetail?.JobTitle</h5>
+
+                        <!-- Top meta -->
+                        <div class="d-flex gap-3 mb-3">
+                            <p class="text-muted small mb-4">
+                                <i class="bi bi-clock"></i> <span>Created Date:-@Model?.tblJobPostDetail?.CreatedDate.ToString("dd-MM-yyyy")</span>
+                            </p>
+                           @*  <p class="text-muted small mb-4">
+                                <i class="bi bi-dot"></i>
+                                <span>Software Developer</span>
+                            </p> *@
+                            <p class="text-muted small mb-4">
+                                <i class="bi bi-briefcase"></i> <span>@Model?.tblJobPostDetail?.JobType</span>
+                            </p>
+                        </div>
+
+                        <!-- Job Description -->
+                        @{
+                            string jobDescription = Model?.tblJobPostDetail?.JobDescription ?? "";
+
+                            string baseUrl = Common.GetUrlImageAndDocAddress()
+                            .Replace("/api/", "")
+                            .TrimEnd('/');
+
+                            jobDescription = System.Text.RegularExpressions.Regex.Replace(
+                            jobDescription,
+                            "src=[\"'](?!http)([^\"']+)[\"']",
+                            match =>
+                            {
+                                string path = match.Groups[1].Value;
+
+                                // Remove ../
+                                path = path.Replace("../", "");
+
+                                // Remove starting /
+                                path = path.TrimStart('/');
+
+                                // Remove duplicate assets
+                                path = path.Replace("assets/", "");
+
+                                return $"src=\"{baseUrl}/assets/{path}\"";
+                            },
+                            System.Text.RegularExpressions.RegexOptions.IgnoreCase
+                            );
+                        }
+
+                        <div class="d-flex flex-column">
+                            <h5 class="ct-fs-30 fw-bold">Job Description</h5>
+
+                            @if (!string.IsNullOrEmpty(jobDescription))
+                            {
+                                @Html.Raw(System.Net.WebUtility.HtmlDecode(jobDescription))
+                            }
+                        </div>
+
+                    </div>
+                </div>
+
+                <div class="col-md-4">
+                    <form asp-action="JobDetails" id="jobApplyForm"
+                          asp-controller="Home"
+                          method="post"
+                          enctype="multipart/form-data">
+
+                        <div class="modal-header">
+                            <h5 class="modal-title">Apply for Job</h5>
+                            @* <button type="button"
+                                    class="btn-close"
+                                    data-bs-dismiss="modal">
+                            </button> *@
+                        </div>
+
+                        <div class="modal-body">
+
+                            <!-- Hidden Job Id -->
+                            <input asp-for="CandidateApplication.Jid"
+                                   type="hidden" value="@Model.tblJobPostDetail.Jid"
+                                   id="JobId" />
+                            <input asp-for="SelectedJobTitle"
+                                   type="hidden"
+                                   id="selectJobtitle" value="@Model.tblJobPostDetail.JobTitle" />
+                            <div class="row">
+
+                                <!-- Job Title -->
+                                <div class="col-md-12 mb-3">
+                                    <label class="form-label">Job Title</label>
+
+                                    <input asp-for="tblJobPostDetail.JobTitle"
+                                           id="JobTitle"
+                                           class="form-control"
+                                           readonly />
+                                </div>
+
+                                <!-- Full Name -->
+                                <div class="col-md-12 mb-3">
+                                    <label asp-for="CandidateApplication.Name" class="form-label">
+                                        Full Name <span class="text-danger">*</span>
+                                    </label>
+
+                                    <input asp-for="CandidateApplication.Name"
+                                           class="form-control"
+                                           placeholder="Enter Full Name" required />
+
+                                    <span asp-validation-for="CandidateApplication.Name"
+                                          class="text-danger"></span>
+                                </div>
+
+                                <!-- Mobile -->
+                                <div class="col-md-12 mb-3">
+                                    <label asp-for="CandidateApplication.Mobile" class="form-label">
+                                        Contact Number <span class="text-danger">*</span>
+                                    </label>
+
+                                    <input asp-for="CandidateApplication.Mobile"
+                                           type="text"
+                                           maxlength="10"
+                                           oninput="this.value=this.value.replace(/[^0-9]/g,'').slice(0,10)"
+                                           class="form-control"
+                                           placeholder="Enter Mobile Number" required />
+
+                                    <span asp-validation-for="CandidateApplication.Mobile"
+                                          class="text-danger"></span>
+                                </div>
+
+                                <!-- Email -->
+                                <div class="col-md-12 mb-3">
+                                    <label asp-for="CandidateApplication.EmailAddress" class="form-label">
+                                        Email <span class="text-danger">*</span>
+                                    </label>
+
+                                    <input asp-for="CandidateApplication.EmailAddress" type="email"
+                                           class="form-control"
+                                           placeholder="Enter Email Address" required />
+
+                                    <span asp-validation-for="CandidateApplication.EmailAddress"
+                                          class="text-danger"></span>
+                                </div>
+
+                                <!-- CV Upload -->
+                                <div class="col-md-12 mb-3">
+                                    <label asp-for="CandidateApplication.ResumeFile" class="form-label">
+                                        Upload CV <span class="text-danger">*</span>
+                                    </label>
+
+                                    <input asp-for="CandidateApplication.ResumeFile"
+                                           type="file"
+                                           class="form-control"
+                                           accept=".pdf,.doc,.docx" required />
+
+                                    <span asp-validation-for="CandidateApplication.ResumeFile"
+                                          class="text-danger"></span>
+
+                                    <small class="text-muted">
+                                        Allowed: PDF, DOC, DOCX
+                                    </small>
+                                </div>
+
+                                <!-- Remarks -->
+                                <div class="col-md-12 mb-3">
+                                    <label asp-for="CandidateApplication.Remarks" class="form-label">
+                                        Remark
+                                    </label>
+
+                                    <textarea asp-for="CandidateApplication.Remarks"
+                                              class="form-control"
+                                              rows="4"
+                                              placeholder="Enter Remarks"></textarea>
+
+                                    <span asp-validation-for="CandidateApplication.Remarks"
+                                          class="text-danger"></span>
+                                </div>
+
+                                <!-- Google reCAPTCHA -->
+                                <div class="col-md-12 mb-3">
+                                    <div class="g-recaptcha" data-sitekey="6LcP1r4rAAAAAHNiLqWilMZWVAroHkjaHZAEAIT9"></div>
+                                    <span asp-validation-summary="ModelOnly" class="text-danger"></span>
+                                    @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+                                </div>
+
+                            </div>
+                        </div>
+
+                        <div class="col-md-12 mb-3">
+                           @*  <button type="button"
+                                    class="btn btn-secondary"
+                                    data-bs-dismiss="modal">
+                                Cancel
+                            </button> *@
+
+                            <button type="submit"
+                                    class="btn btn-primary">
+                                Submit Application
+                            </button>
+                        </div>
+
+                    </form>
+
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <div class="modal fade" id="resultModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content text-center p-4">
+
+                <div id="resultIcon" class="mb-3"></div>
+
+                <h5 id="resultTitle"></h5>
+                <p id="resultMessage"></p>
+
+                <button class="btn btn-primary mt-3" data-bs-dismiss="modal">
+                    OK
+                </button>
+
+            </div>
+        </div>
+    </div>
+
+    <div class="clearfix"></div>
+
+    <div class="ct-contact relative ct-dark__bg ct-padding__60 hidden text-white">
+        <div class="ct-contact__address">
+            <div class="container">
+                <div class="row d-flex align-items-center">
+                    <div class="col-md-6">
+                        <h3 class="ct-fs-60 fw-bold mb-3 ">Ready to experience the future of HR management?</h3>
+                        <p><a href="Order/DemoBookingDetails" class="ct-btn__white btn py-2 px-4 btn-lg">Book Now</a></p>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="ct-contact__image p-4 ct-white__bg ct-radius__md shadow">
+                            <img src="/assets/images/bg/computer.png" class="img-fluid">
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="ring"></div>
+        </div>
+    </div>
+
+    <div class="clearfix"></div>
+</body>
+@* <script src="@Url.Content("~/assets/js/jquery-3.6.0.js")"></script>
+
+<script src="@Url.Content("~/lib/jquery-validation/dist/jquery.validate.min.js")"></script>
+
+<script src="@Url.Content("~/lib/jquery-validation-unobtrusive/dist/jquery.validate.unobtrusive.min.js")"></script> *@
+<script type="text/javascript">
+    document.addEventListener("DOMContentLoaded", function () {
+
+        var type = '@TempData["ResultType"]';
+        var message = '@TempData["ResultMessage"]';
+
+        if (type) {
+
+            // Set content
+            document.getElementById("resultTitle").innerText =
+                type === "Success" ? "Success" : "Error";
+
+            document.getElementById("resultMessage").innerText = message;
+
+            // Icon
+            var iconHtml = type === "Success"
+                ? '<i class="bi bi-check-circle-fill text-success" style="font-size:50px;"></i>'
+                : '<i class="bi bi-x-circle-fill text-danger" style="font-size:50px;"></i>';
+
+            document.getElementById("resultIcon").innerHTML = iconHtml;
+
+            // Show modal
+            var modal = new bootstrap.Modal(document.getElementById('resultModal'));
+            modal.show();
+        }
+    });
+</script>
+<script type="text/javascript">
+    function setJobId(jobId, jobTitle) {
+
+        // Set Job Id in hidden field
+        document.getElementById("JobId").value = jobId;
+
+        // Set Job Title in readonly textbox
+        document.getElementById("JobTitle").value = jobTitle;
+    }
+</script>
+<script type="text/javascript">
+        $(function () {
+
+        $.validator.unobtrusive.parse("#jobApplyForm");
+
+        $("#jobApplyForm").on("submit", function (e) {
+
+            // MVC Validation
+            if (!$(this).valid()) {
+
+                e.preventDefault();
+                e.stopImmediatePropagation();
+
+                return false;
+            }
+
+            // Google reCAPTCHA validation
+            var recaptchaResponse = grecaptcha.getResponse();
+
+            if (recaptchaResponse.length === 0) {
+
+                e.preventDefault();
+                e.stopImmediatePropagation();
+
+                // remove old validation message
+                $(".recaptcha-error").remove();
+
+                // show validation message
+                $(".g-recaptcha").after(
+                    '<span class="text-danger recaptcha-error">reCAPTCHA validation failed.</span>'
+                );
+
+                return false;
+            }
+
+            // remove error if captcha selected
+            $(".recaptcha-error").remove();
+
+            return true;
+        });
+
+    });
+    // $(function () {
+        
+        
+
+    //     $.validator.unobtrusive.parse("#jobApplyForm");
+
+    //     $("#jobApplyForm").on("submit", function (e) {
+
+            
+
+    //         if (!$(this).valid()) {
+    //             
+    //             e.preventDefault();
+    //             e.stopImmediatePropagation();
+
+    //             return false;
+    //         }
+
+            
+    //     });
+
+    // });
+</script>

@@ -1,0 +1,102 @@
+﻿@model HCMPortal.ViewModel.InvoicePrintDetailsViewModel
+
+
+@{
+    // Razor variable for the page title
+    ViewData["Title"] = "Transaction Timeout";
+    Layout = null;
+}
+
+<style>
+    /* ------------------------------------------------------------------- */
+    /* CSS STYLES */
+    /* ------------------------------------------------------------------- */
+
+    /* Basic Reset and Layout */
+    .container-custom {
+        max-width: 600px;
+        margin: 50px auto;
+        padding: 30px;
+        text-align: center;
+        font-family: Arial, sans-serif;
+    }
+
+    /* Heading Styling */
+    .timeout-header {
+        color: #dc3545; /* Red color for error */
+        font-size: 2.5em;
+        margin-bottom: 20px;
+        border-bottom: 2px solid #dc3545;
+        padding-bottom: 10px;
+    }
+
+    /* Lead Paragraph */
+    .lead-text {
+        font-size: 1.1em;
+        line-height: 1.6;
+        margin-bottom: 15px;
+    }
+
+    /* Card/Info Box */
+    .info-box {
+        background-color: #f8f9fa; /* Light gray background */
+        border: 1px solid #e9ecef;
+        padding: 25px;
+        border-radius: 8px;
+        margin-top: 30px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
+    }
+
+    /* Button Styling */
+    .btn-primary-custom {
+        display: inline-block;
+        padding: 10px 20px;
+        margin-top: 20px;
+        background-color: #007bff; /* Blue button */
+        color: white;
+        text-decoration: none;
+        border: none;
+        border-radius: 5px;
+        font-weight: bold;
+        transition: background-color 0.3s ease;
+    }
+
+        .btn-primary-custom:hover {
+            background-color: #0056b3;
+        }
+
+    /* Icon styling (using a unicode character instead of Font Awesome) */
+    .icon-redo {
+        margin-right: 8px;
+        font-style: normal;
+    }
+</style>
+
+<div class="container-custom">
+    <h1 class="timeout-header">Transaction Timed Out</h1>
+
+    <p class="lead-text">
+        We sincerely apologize, but it looks like your **payment process could not be completed** within the expected time frame.
+    </p>
+
+    <p class="lead-text">
+        This usually happens due to a momentary disruption or delay between our servers and the payment gateway.
+    </p>
+
+    <p class="lead-text" style="font-weight: bold; color: #343a40;">
+        Please be assured that **no charges have been applied** to your account.
+    </p>
+
+    <div class="info-box">
+        <h3 style="font-size: 1.2em; margin-bottom: 15px; color: #343a40;">What to do next?</h3>
+        <p style="margin-bottom: 0;">
+            Please allow a few minutes for any system latency to clear, and then you may **try your payment again**. If the issue continues, please consider using an alternative payment method.
+        </p>
+
+        <a href="@Url.Action("PaymentRequestHandleFromAMS", "CustomerManagement", new { invoiceNumber = Model.InvoiceNumber, csid = Model.customerDetails?.Csid, orderType = Model.RecordType })" class="btn-primary-custom"><span class="icon-redo">&#x21BB;</span> Try Again</a>
+    </div>
+
+    <p style="margin-top: 30px; color: #6c757d; font-size: 0.9em;">
+        If you require immediate assistance or believe this is an error, please do not hesitate to contact our support team.
+    </p>
+</div>

@@ -1,0 +1,20 @@
+/* ---------- Variables ---------- */
+:root {
+    --ct-primary: #224F2B;
+    --ct-dark: #000;
+    --ct-white: #fff;
+    --ct-gray: #F6F6F6;
+    --ct-border: #e5e5e5;
+    --ct-fs-90: 90px;
+    --ct-fs-80: 80px;
+    --ct-fs-60: 60px;
+    --ct-fs-48: 48px;
+    --ct-fs-30: 30px;
+    --ct-fs-24: 24px;
+    --ct-fs-18: 18px;
+    --ct-radius-sm: 4px;
+    --ct-radius-md: 12px;
+    --ct-radius-lg: 30px;
+    --ct-padding-60: 60px;
+    --ct-padding-120: 120px;
+}
