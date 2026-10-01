@@ -50,19 +50,20 @@
       <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
       <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
     </Content>
-    <Content Update="wwwroot\keys\service-account-hcmportal.json">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
   </ItemGroup>
 	<ItemGroup>
 	  <Compile Remove="HTMLPages\**" />
 	  <Compile Remove="wwwroot\HTMLPageStaticFile\**" />
+	  <Compile Remove="wwwroot\keys\**" />
 	  <Content Remove="HTMLPages\**" />
 	  <Content Remove="wwwroot\HTMLPageStaticFile\**" />
+	  <Content Remove="wwwroot\keys\**" />
 	  <EmbeddedResource Remove="HTMLPages\**" />
 	  <EmbeddedResource Remove="wwwroot\HTMLPageStaticFile\**" />
+	  <EmbeddedResource Remove="wwwroot\keys\**" />
 	  <None Remove="HTMLPages\**" />
 	  <None Remove="wwwroot\HTMLPageStaticFile\**" />
+	  <None Remove="wwwroot\keys\**" />
 	</ItemGroup>
 	<ItemGroup>
 	  <Compile Remove="Views\Shared\Components\OurTeam.cs" />
