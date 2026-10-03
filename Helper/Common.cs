@@ -29,32 +29,32 @@ namespace HCMPortal.Helper
         #region local IIS server
         public static string GetBaseAddress()
         {
-            return "http://192.168.0.116:91/api/";
+            return "http://192.168.0.116:222/api/";
         }
         public static string GetLandingPageAddress()
         {
-            return "https://192.168.0.116/Home/Index";
+            return "https://192.168.0.116:225/Home/Index";
         }
 
         public static string PaymentReturnUrl()
         {
-            return "http://192.168.0.116:93/Order/PaymentResponse";
+            return "http://192.168.0.116:224/Order/PaymentResponse";
         }
         public static string PaymentReturnUrlForAddonService()
         {
-            return "http://192.168.0.116:93/Order/HandleAddOnServicePaymentResponse";
+            return "http://192.168.0.116:224/Order/HandleAddOnServicePaymentResponse";
         }
         public static string ImageAndDocSavePageAddress()
         {
-            return "http://192.168.0.116:93/";
+            return "http://192.168.0.116:224/";
         }
         public static string GetUrlImageAndDocAddress()
         {
-            return "http://192.168.0.116:93/";
+            return "http://192.168.0.116:224/";
         }
         public static string GetUrlForOwnBaseAddress()
         {
-            return "http://192.168.0.116:94/";
+            return "http://192.168.0.116:225/";
         }
         #endregion
 

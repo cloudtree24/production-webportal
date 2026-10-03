@@ -4,32 +4,22 @@
 
   <url>
        <loc>https://thecloudtree.ai/</loc>
-       <lastmod>2026-08-13T06:28:36+00:00</lastmod>
-       <changefreq>daily</changefreq>
+       <lastmod>2026-09-30T11:36:30+00:00</lastmod>
        <priority>1.0000</priority>
   </url>
   <url>
-       <loc>https://thecloudtree.ai/customer/forgot-password</loc>
-       <lastmod>2026-08-13T06:28:36+00:00</lastmod>
-       <changefreq>daily</changefreq>
-       <priority>0.6400</priority>
-  </url>
-  <url>
        <loc>https://thecloudtree.ai/customer/register</loc>
-       <lastmod>2026-08-13T06:28:36+00:00</lastmod>
-       <changefreq>daily</changefreq>
+       <lastmod>2026-09-30T11:36:30+00:00</lastmod>
        <priority>0.6400</priority>
   </url>
   <url>
        <loc>https://thecloudtree.ai/customers/blogs?page=-498</loc>
-       <lastmod>2026-08-13T06:28:36+00:00</lastmod>
-       <changefreq>daily</changefreq>
+       <lastmod>2026-09-30T11:36:30+00:00</lastmod>
        <priority>0.0001</priority>
   </url>
   <url>
-       <loc>https://thecloudtree.ai/customers/blogs?page=505</loc>
-       <lastmod>2026-08-13T06:28:36+00:00</lastmod>
-       <changefreq>daily</changefreq>
+       <loc>https://thecloudtree.ai/customers/blogs?page=506</loc>
+       <lastmod>2026-09-30T11:36:30+00:00</lastmod>
        <priority>0.0001</priority>
   </url>
 </urlset>
