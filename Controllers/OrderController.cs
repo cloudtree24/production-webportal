@@ -1833,7 +1833,17 @@ color: #fff;
     { "quantity", 1 },
     { "customer_notify", 1 },
     { "start_at", startAt },
-    { "notes", new Dictionary<string, string> { { "CustomerId", Csid.ToString() } } },
+    { "notes", new Dictionary<string, string> {
+
+
+                 { "CustomerId", Csid.ToString() },
+                { "CustomerName", OrderDetailViewModel?.PortalCustomerDetails?.ContactPersonName ?? "" },
+                { "CustomerEmail", CustomerEmail ?? "" },
+                { "PlanName", OrderDetailViewModel?.SelectedSubscription?.SubscriptionName ?? "Subscription" },
+                { "PlanPeriod", $"Every {days} Days" }
+
+
+    } },
     { "addons", new List<Dictionary<string, object>> {
         new Dictionary<string, object> {
             { "item", new Dictionary<string, object> {
@@ -1954,7 +1964,13 @@ color: #fff;
             { "quantity", 1 },
             { "customer_notify", 1 },
             { "start_at", startAt },
-            { "notes", new Dictionary<string, string> { { "CustomerId", Csid.ToString() } } },
+            { "notes", new Dictionary<string, string> {
+                { "CustomerId", Csid.ToString() },
+                { "CustomerName", OrderDetailViewModel?.PortalCustomerDetails?.ContactPersonName ?? "" },
+                { "CustomerEmail", CustomerEmail ?? "" },
+                { "PlanName", OrderDetailViewModel?.SelectedSubscription?.SubscriptionName ?? "Subscription" },
+                { "PlanPeriod", $"Every {days} Days" }
+            } },
             { "addons", new List<Dictionary<string, object>> {
                 new Dictionary<string, object> {
                     { "item", new Dictionary<string, object> {
