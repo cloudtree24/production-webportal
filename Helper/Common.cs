@@ -27,35 +27,35 @@ namespace HCMPortal.Helper
         }
 
         #region local IIS server
-        public static string GetBaseAddress()
-        {
-            return "http://192.168.0.116:222/api/";
-        }
-        public static string GetLandingPageAddress()
-        {
-            return "https://192.168.0.116:225/Home/Index";
-        }
+        //public static string GetBaseAddress()
+        //{
+        //    return "http://192.168.0.116:222/api/";
+        //}
+        //public static string GetLandingPageAddress()
+        //{
+        //    return "https://192.168.0.116:225/Home/Index";
+        //}
 
-        public static string PaymentReturnUrl()
-        {
-            return "http://192.168.0.116:224/Order/PaymentResponse";
-        }
-        public static string PaymentReturnUrlForAddonService()
-        {
-            return "http://192.168.0.116:224/Order/HandleAddOnServicePaymentResponse";
-        }
-        public static string ImageAndDocSavePageAddress()
-        {
-            return "http://192.168.0.116:224/";
-        }
-        public static string GetUrlImageAndDocAddress()
-        {
-            return "http://192.168.0.116:224/";
-        }
-        public static string GetUrlForOwnBaseAddress()
-        {
-            return "http://192.168.0.116:225/";
-        }
+        //public static string PaymentReturnUrl()
+        //{
+        //    return "http://192.168.0.116:224/Order/PaymentResponse";
+        //}
+        //public static string PaymentReturnUrlForAddonService()
+        //{
+        //    return "http://192.168.0.116:224/Order/HandleAddOnServicePaymentResponse";
+        //}
+        //public static string ImageAndDocSavePageAddress()
+        //{
+        //    return "http://192.168.0.116:224/";
+        //}
+        //public static string GetUrlImageAndDocAddress()
+        //{
+        //    return "http://192.168.0.116:224/";
+        //}
+        //public static string GetUrlForOwnBaseAddress()
+        //{
+        //    return "http://192.168.0.116:225/";
+        //}
         #endregion
 
         #region Local System
@@ -162,36 +162,36 @@ namespace HCMPortal.Helper
         #endregion
 
         #region Live server
-        //public static string GetBaseAddress()
-        //{
-        //    return "https://hcapi.thecloudtree.in/api/";
-        //}
-        //public static string GetLandingPageAddress()
-        //{
-        //    return "https://thecloudtree.in/Home/Index";
-        //}
+        public static string GetBaseAddress()
+        {
+            return "https://hcapi.thecloudtree.in/api/";
+        }
+        public static string GetLandingPageAddress()
+        {
+            return "https://thecloudtree.in/Home/Index";
+        }
 
-        //public static string PaymentReturnUrl()
-        //{
-        //    return "https://thecloudtree.ai/Order/PaymentResponse";
-        //}
-        //public static string PaymentReturnUrlForAddonService()
-        //{
-        //    return "https://thecloudtree.ai/Order/HandleAddOnServicePaymentResponse";
-        //}
-        //public static string ImageAndDocSavePageAddress()
-        //{
-        //    return "https://cloudadmin.thecloudtree.in/";
-        //}
+        public static string PaymentReturnUrl()
+        {
+            return "https://thecloudtree.ai/Order/PaymentResponse";
+        }
+        public static string PaymentReturnUrlForAddonService()
+        {
+            return "https://thecloudtree.ai/Order/HandleAddOnServicePaymentResponse";
+        }
+        public static string ImageAndDocSavePageAddress()
+        {
+            return "https://cloudadmin.thecloudtree.in/";
+        }
 
-        //public static string GetUrlImageAndDocAddress()
-        //{
-        //    return "https://cloudadmin.thecloudtree.in/";
-        //}
-        //public static string GetUrlForOwnBaseAddress()
-        //{
-        //    return "https://thecloudtree.ai/";
-        //}
+        public static string GetUrlImageAndDocAddress()
+        {
+            return "https://cloudadmin.thecloudtree.in/";
+        }
+        public static string GetUrlForOwnBaseAddress()
+        {
+            return "https://thecloudtree.ai/";
+        }
         #endregion
 
         public static string CalculatePayPhiSecureHash(PayPhiPaymentRequest request)
