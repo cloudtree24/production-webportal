@@ -1835,7 +1835,7 @@ color: #fff;
     { "start_at", startAt },
     { "notes", new Dictionary<string, string> {
 
-
+        //added plan name by Daitari dt-16-10-2026
                  { "CustomerId", Csid.ToString() },
                 { "CustomerName", OrderDetailViewModel?.PortalCustomerDetails?.ContactPersonName ?? "" },
                 { "CustomerEmail", CustomerEmail ?? "" },
