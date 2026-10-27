@@ -12,8 +12,6 @@
 
     <Content Remove="Views\CustomerManagement\CustomerRegister.cshtml" />
 
-    <Content Remove="wwwroot\sitemap.xml" />
-
     <PackageReference Include="BCrypt.Net-Next" Version="4.0.3" />
 
     <PackageReference Include="Google.Apis.Auth" Version="1.69.0" />
@@ -70,6 +68,5 @@
 	</ItemGroup>
 	<ItemGroup>
 	  <None Include="bundleconfig.json" />
-	  <None Include="wwwroot\sitemap.xml" />
 	</ItemGroup>
 </Project>
