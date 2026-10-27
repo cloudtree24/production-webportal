@@ -26,37 +26,37 @@ namespace HCMPortal.Helper
             _serviceProvider = serviceProvider; // Store the provider
         }
 
-        #region local IIS server
+        //#region local IIS server
         //public static string GetBaseAddress()
         //{
-        //    return "http://192.168.0.116:222/api/";
+        //    return "http://192.168.0.116:91/api/";
         //}
         //public static string GetLandingPageAddress()
         //{
-        //    return "https://192.168.0.116:225/Home/Index";
+        //    return "https://192.168.0.116/Home/Index";
         //}
 
         //public static string PaymentReturnUrl()
         //{
-        //    return "http://192.168.0.116:224/Order/PaymentResponse";
+        //    return "http://192.168.0.116:93/Order/PaymentResponse";
         //}
         //public static string PaymentReturnUrlForAddonService()
         //{
-        //    return "http://192.168.0.116:224/Order/HandleAddOnServicePaymentResponse";
+        //    return "http://192.168.0.116:93/Order/HandleAddOnServicePaymentResponse";
         //}
         //public static string ImageAndDocSavePageAddress()
         //{
-        //    return "http://192.168.0.116:224/";
+        //    return "http://192.168.0.116:93/";
         //}
         //public static string GetUrlImageAndDocAddress()
         //{
-        //    return "http://192.168.0.116:224/";
+        //    return "http://192.168.0.116:93/";
         //}
         //public static string GetUrlForOwnBaseAddress()
         //{
-        //    return "http://192.168.0.116:225/";
+        //    return "http://192.168.0.116:94/";
         //}
-        #endregion
+        //#endregion
 
         #region Local System
         //public static string GetBaseAddress()

@@ -629,14 +629,16 @@ namespace HCMPortal.Controllers
             return View(orderDetails);
         }
         [HttpGet]
-        public async Task<IActionResult> InvoicePrint(int Id, string RecordType)
+        public async Task<IActionResult> InvoicePrint(int Id, string RecordType, int RenewalId)
         {
             int csid = Convert.ToInt32(HttpContext.Session.GetInt32("UserId"));
             InvoicePrintDetailsViewModel invoice = new InvoicePrintDetailsViewModel();
 
             using (var httpClient = Common.GetHttpClient())
             {
-                using (var response = await httpClient.GetAsync(Common.GetBaseAddress() + "AMSCustomerLedger/InvoicePrintDetailsForHCMPortal/" + Id + "/" + RecordType + "/" + csid))
+                //using (var response = await httpClient.GetAsync(Common.GetBaseAddress() + "AMSCustomerLedger/InvoicePrintDetailsForHCMPortal/" + Id + "/" + RecordType + "/" + csid))
+                using (var response = await httpClient.GetAsync($"{Common.GetBaseAddress()}AMSCustomerLedger/InvoicePrintDetailsForHCMPortal/{Id}/{RecordType}/{csid}/{RenewalId}"))
+
                 {
                     if (response.IsSuccessStatusCode)
                     {
@@ -1833,7 +1835,17 @@ color: #fff;
     { "quantity", 1 },
     { "customer_notify", 1 },
     { "start_at", startAt },
-    { "notes", new Dictionary<string, string> { { "CustomerId", Csid.ToString() } } },
+    { "notes", new Dictionary<string, string> {
+
+        //added plan name by Daitari dt-16-10-2026
+                 { "CustomerId", Csid.ToString() },
+                { "CustomerName", OrderDetailViewModel?.PortalCustomerDetails?.ContactPersonName ?? "" },
+                { "CustomerEmail", CustomerEmail ?? "" },
+                { "PlanName", OrderDetailViewModel?.SelectedSubscription?.SubscriptionName ?? "Subscription" },
+                { "PlanPeriod", $"Every {days} Days" }
+
+
+    } },
     { "addons", new List<Dictionary<string, object>> {
         new Dictionary<string, object> {
             { "item", new Dictionary<string, object> {
@@ -1954,7 +1966,13 @@ color: #fff;
             { "quantity", 1 },
             { "customer_notify", 1 },
             { "start_at", startAt },
-            { "notes", new Dictionary<string, string> { { "CustomerId", Csid.ToString() } } },
+            { "notes", new Dictionary<string, string> {
+                { "CustomerId", Csid.ToString() },
+                { "CustomerName", OrderDetailViewModel?.PortalCustomerDetails?.ContactPersonName ?? "" },
+                { "CustomerEmail", CustomerEmail ?? "" },
+                { "PlanName", OrderDetailViewModel?.SelectedSubscription?.SubscriptionName ?? "Subscription" },
+                { "PlanPeriod", $"Every {days} Days" }
+            } },
             { "addons", new List<Dictionary<string, object>> {
                 new Dictionary<string, object> {
                     { "item", new Dictionary<string, object> {
