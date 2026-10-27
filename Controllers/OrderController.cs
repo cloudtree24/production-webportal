@@ -629,14 +629,16 @@ namespace HCMPortal.Controllers
             return View(orderDetails);
         }
         [HttpGet]
-        public async Task<IActionResult> InvoicePrint(int Id, string RecordType)
+        public async Task<IActionResult> InvoicePrint(int Id, string RecordType, int RenewalId)
         {
             int csid = Convert.ToInt32(HttpContext.Session.GetInt32("UserId"));
             InvoicePrintDetailsViewModel invoice = new InvoicePrintDetailsViewModel();
 
             using (var httpClient = Common.GetHttpClient())
             {
-                using (var response = await httpClient.GetAsync(Common.GetBaseAddress() + "AMSCustomerLedger/InvoicePrintDetailsForHCMPortal/" + Id + "/" + RecordType + "/" + csid))
+                //using (var response = await httpClient.GetAsync(Common.GetBaseAddress() + "AMSCustomerLedger/InvoicePrintDetailsForHCMPortal/" + Id + "/" + RecordType + "/" + csid))
+                using (var response = await httpClient.GetAsync($"{Common.GetBaseAddress()}AMSCustomerLedger/InvoicePrintDetailsForHCMPortal/{Id}/{RecordType}/{csid}/{RenewalId}"))
+
                 {
                     if (response.IsSuccessStatusCode)
                     {

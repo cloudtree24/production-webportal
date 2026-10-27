@@ -40,10 +40,10 @@
 					List<CustomerOrderDetails> renewalData = new List<CustomerOrderDetails>();
 
 					renewalData =
-					
+
 					//for check already customer renew or Upgrade a new one--Anshuman 23.09.2026
-					(Model.Any(e=>e.RecordType=="Renewal"))?new List<CustomerOrderDetails>()
-							:Model.Where(e =>
+					(Model.Any(e => e.RecordType == "Renewal")) ? new List<CustomerOrderDetails>()
+					: Model.Where(e =>
 					e.SubscriptionEndDate.HasValue && (
 
 					(e.RecordType == "Subscription"
@@ -339,8 +339,8 @@
 													<a href="javascript:void(0);"
 													   class="btn btn-outline-primary btn-sm generate-invoice-btn text-nowrap"
 													   data-csorder-id="@item.CsorderId"
-													   data-record-type="@item.RecordType">
-
+													   data-record-type="@item.RecordType"
+													   data-subscription-id="@item.SubscriptionRenewalId">
 														<i class="bi bi-printer"></i>
 														Print Invoice
 
@@ -791,7 +791,7 @@
 				<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
 			</div>
 			<div class="modal-body">
-				<div class="text-center py-5" id="renewalLoader" >
+				<div class="text-center py-5" id="renewalLoader">
 					<div class="spinner-border text-primary" role="status">
 						<span class="visually-hidden">Loading...</span>
 					</div>
@@ -799,10 +799,6 @@
 				</div>
 
 				<div id="renewalContent" style="display: none;">
-
-
-					
-
 				</div>
 			</div>
 		</div>
@@ -825,7 +821,7 @@
 			// 1. Show loader, hide content, and clear previous content
 			content.hide().empty();
 			loader.show();
-			
+
 			if (csorderId) {
 				$.ajax({
 					url: '@Url.Action("GetSubscriptionDetailsForRenewal", "Subscription")', // <<< UPDATE URL IF NEEDED
@@ -862,18 +858,19 @@
 	});
 </script>
 <script>
-	
+
 
 
 
 
 	$('.generate-invoice-btn').on('click', function (e) {
-						
+
 
 			e.preventDefault(); // Prevent the default link behavior
-			
+
 			var csorderId = $(this).data('csorder-id');
 			var recordType = $(this).data('record-type');
+			var renewalid = $(this).data('subscription-id');
 			// var customerId = $(this).data('customer-id');
 
 			// Show a loading indicator
@@ -887,6 +884,7 @@
 				data: {
 					Id: csorderId,
 					RecordType: recordType,
+					RenewalId: renewalid,
 					// CustomerId: customerId
 				},
 				success: function (result) {
