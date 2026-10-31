@@ -175,18 +175,25 @@
 
             <tr>
                 <td style="width:50%; padding:10px; border:1px solid #000; vertical-align: top; text-align:left;">
-                    <strong>@Model.customerDetails?.CompanyName</strong><br>
+                    <strong>@Model.customerDetails?.CompanyName</strong>
                     @Model.customerDetails?.Address<br>
-                    <p>Phone No: @Model.customerDetails?.Phonenumber</p>
+                    @*  <p>Phone No: @Model.customerDetails?.Phonenumber</p> *@
+                    <p>
+                        Phone No: +@Model.customerDetails?.Phonenumber?.Substring(0, 2)  @Model.customerDetails?.Phonenumber?.Substring(2)
+                    </p>
                     <p>Email: @Model.customerDetails?.EmailAddress</p>
                     <p>GSTIN: <strong>@((!String.IsNullOrEmpty(Model.customerDetails?.Gstinnumber)) ? Model.customerDetails.Gstinnumber : "NOT AVAILABLE")</strong></p>
-                     <p>Pan No: <strong>@((!String.IsNullOrEmpty(Model.customerDetails?.Pancard)) ? Model.customerDetails.Pancard : "NOT AVAILABLE")</strong></p>
+                    <p>Pan No: <strong>@((!String.IsNullOrEmpty(Model.customerDetails?.Pancard)) ? Model.customerDetails.Pancard : "NOT AVAILABLE")</strong></p>
                 </td>
 
                 <td style="width:50%; padding:10px; border:1px solid #000; vertical-align: top; text-align:left;">
-                    <strong>@Model.customerDetails?.CompanyName</strong><br>
+                    <strong>@Model.customerDetails?.CompanyName</strong>
                     @Model.customerDetails?.Address<br>
-                    <p>Phone No: @Model.customerDetails?.Phonenumber</p>
+                    @* <p>Phone No: @Model.customerDetails?.Phonenumber</p> *@
+                    @*Added By Daitari 31-10-2026*@
+                    <p>
+                        Phone No: +@Model.customerDetails?.Phonenumber?.Substring(0, 2)  @Model.customerDetails?.Phonenumber?.Substring(2)
+                    </p>
                     <p>Email: @Model.customerDetails?.EmailAddress</p>
                     <p>GSTIN: <strong>@((!String.IsNullOrEmpty(Model.customerDetails?.Gstinnumber)) ? Model.customerDetails.Gstinnumber : "NOT AVAILABLE")</strong></p>
                     <p>Pan No: <strong>@((!String.IsNullOrEmpty(Model.customerDetails?.Pancard)) ? Model.customerDetails.Pancard : "NOT AVAILABLE")</strong></p>
@@ -198,8 +205,8 @@
     <table class="tableBorder" style="margin-bottom: 30px; table-layout: fixed; width: 100%;">
         <thead>
             <tr class="gray-bg">
-                <th rowspan="2" class="gray-bg text-left" style="width: 22%;">Service Details</th>
-                <th rowspan="2" class="text-left" style="width: 6%;">HSN/SAC</th>
+                <th rowspan="2" class="gray-bg text-left" style="width: 10%;">Service Details</th>
+                <th rowspan="2" class="text-left" style="width: 7%;">HSN/SAC</th>
                 <th rowspan="2" style="width: 4%;">Qty</th>
                 <th rowspan="2" style="width: 4%;">UM</th>
                 <th rowspan="2" style="width: 8%;">Rate(INR)</th>
@@ -259,13 +266,15 @@
                     : Convert.ToDecimal(item.Cgstamount + item.Sgstamount);
 
                     // UM (Unit of Measurement) logic (retained from Code-1)
-                    string[] serviceName = item.ServiceName.Split("-");
-                    string um = (serviceName.Length > 1) ? item.ServiceName.Split("-")[1] : "Add-On";
-
+                    @*Added By Daitari 31-10-2026*@
+                    string um = item.ServiceName.Contains("Monthly") ? "Monthly" :
+                    item.ServiceName.Contains("Quarterly") ? "Quarterly" :
+                    item.ServiceName.Contains("Yearly") ? "Yearly" : "Add-On";
                     <tr>
                         <td class="text-left" style="word-wrap: break-word; overflow-wrap: break-word; white-space: normal;">
-                            @item.ServiceName
+                            @Html.Raw(item.ServiceName)  @*Added By Daitari 31-10-2026*@
                         </td>
+
                         <td>@item.Hsncode</td>
                         @* <td>1</td> *@
                         <td>@item.Qty</td>
@@ -337,7 +346,8 @@
                             </tr>
 
                             <tr>
-                                <td colspan="2" style="text-align: right;">
+                                @*Added By Daitari 31-10-2026*@
+                                <td colspan="2" style="text-align: center;">
                                     <img src="~/assets/images/signature.png" alt="Authorized Signatory" style="width:200px; height:auto; margin-top:20px;"><br>
                                     <strong>Authorized Signatory</strong>
                                 </td>
@@ -379,65 +389,30 @@
     document.getElementById("downloadPdf").addEventListener("click", async function () {
       const { jsPDF } = window.jspdf;
 
-      const invoice = document.querySelector("#invoiceToPrint");
-      const downloadBtn = document.getElementById("downloadPdf");
+      const invoice = document.querySelector(".invoice-container");
 
-      @{
-          // If InvoiceNumber is present, use it; otherwise fallback to OrderNumber
-          string invoiceOrOrderNo = !string.IsNullOrEmpty(Model.InvoiceNumber) 
-              ? Model.InvoiceNumber 
-              : (!string.IsNullOrEmpty(Model.OrderNumber) ? Model.OrderNumber : "Document");
+      // Capture with better quality
+      const canvas = await html2canvas(invoice, { scale: 4, useCORS: true });
+      const imgData = canvas.toDataURL("image/png");
 
-          // Prefix with Invoice_ or Order_
-          string prefix = !string.IsNullOrEmpty(Model.InvoiceNumber) ? "Invoice_" : "Order_";
+      const pdf = new jsPDF("p", "mm", "a4");
 
-          string rawFileName = $"{prefix}{invoiceOrOrderNo}.pdf";
+      const pageWidth = pdf.internal.pageSize.getWidth();
+      const pageHeight = pdf.internal.pageSize.getHeight();
 
-          // Sanitize special characters (like / or \) to avoid broken downloads
-          string pdfFileName = System.Text.RegularExpressions.Regex.Replace(rawFileName, @"[\\/:*?""<>|]", "_");
+      // 🔸 Add custom margin
+      const margin = 5; // mm
+      const imgWidth = pageWidth - margin * 2;
+      const imgHeight = (canvas.height * imgWidth) / canvas.width;
+
+      // Center content vertically if smaller than page
+      let positionY = margin;
+      if (imgHeight < pageHeight - margin * 2) {
+        positionY = (pageHeight - imgHeight) / 4;
       }
-      const fileName = "@pdfFileName";
 
-      try {
-        // 1. Hide the download button so it isn't included in the PDF
-        downloadBtn.style.display = "none";
+      pdf.addImage(imgData, "PNG", margin, positionY, imgWidth, imgHeight);
 
-        // 2. Capture canvas with scale: 2 (Prevents memory crashes & corrupt PNG errors)
-        const canvas = await html2canvas(invoice, { 
-            scale: 2, 
-            useCORS: true, 
-            allowTaint: true,
-            logging: false
-        });
-
-        // 3. Convert to JPEG image
-        const imgData = canvas.toDataURL("image/jpeg", 0.98);
-
-        const pdf = new jsPDF("p", "mm", "a4");
-
-        const pageWidth = pdf.internal.pageSize.getWidth();
-        const pageHeight = pdf.internal.pageSize.getHeight();
-
-        const margin = 5; // mm
-        const imgWidth = pageWidth - margin * 2;
-        const imgHeight = (canvas.height * imgWidth) / canvas.width;
-
-        let positionY = margin;
-        if (imgHeight < pageHeight - margin * 2) {
-          positionY = (pageHeight - imgHeight) / 4;
-        }
-
-        pdf.addImage(imgData, "JPEG", margin, positionY, imgWidth, imgHeight);
-
-        // 4. Download PDF using the dynamic filename
-        pdf.save(fileName);
-
-      } catch (error) {
-        console.error("PDF Generation Error:", error);
-        alert("Failed to generate PDF. Check console for details.");
-      } finally {
-        // Restore download button
-        downloadBtn.style.display = "inline-block";
-      }
+      pdf.save("Invoice_CT_2025-26-006.pdf");
     });
 </script>
