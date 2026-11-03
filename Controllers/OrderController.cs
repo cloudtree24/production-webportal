@@ -628,6 +628,7 @@ namespace HCMPortal.Controllers
 
             return View(orderDetails);
         }
+
         [HttpGet]
         public async Task<IActionResult> InvoicePrint(int Id, string RecordType, int RenewalId)
         {
@@ -661,8 +662,13 @@ namespace HCMPortal.Controllers
             }
             string urlForQr = Url.Action("GenerateInvoice", "Order", new { orderId = invoice.OrderNumber, orderType = invoice.RecordType }, Request.Scheme) ?? String.Empty;
             invoice.QrCodeBase64Image = GenerateQrCodeBase64.GenerateQrCode(urlForQr);
+            // values used by the "Download PDF" link in the view Added By Daitari for Download the invoice pdf Dt:- 03-11-2026
+            ViewData["DownloadId"] = Id;
+            ViewData["DownloadRecordType"] = RecordType;
+            ViewData["DownloadRenewalId"] = RenewalId;
             return PartialView("_InvoicePrintPartialView", invoice);
         }
+ 
 
 
 
@@ -2426,11 +2432,250 @@ color: #fff;
             return View("RazorPaymentResponse", model);
         }
 
+        
+        #region Added By Daitari for Download the invoice pdf Dt:- 03-10-2026
 
+        [HttpGet]
+        public async Task<IActionResult> DownloadInvoicePdf(int id, string recordType, int renewalId)
+        {
+            try
+            {
+                int csid = Convert.ToInt32(HttpContext.Session.GetInt32("UserId"));
+                InvoicePrintDetailsViewModel invoice = new InvoicePrintDetailsViewModel();
 
+                using (var httpClient = Common.GetHttpClient())
+                {
+                    string apiUrl = $"{Common.GetBaseAddress()}AMSCustomerLedger/InvoicePrintDetailsForHCMPortal/{id}/{recordType}/{csid}/{renewalId}";
+                    using (var response = await httpClient.GetAsync(apiUrl))
+                    {
+                        if (response.IsSuccessStatusCode)
+                        {
+                            string apiResponse = await response.Content.ReadAsStringAsync();
+                            invoice = JsonConvert.DeserializeObject<InvoicePrintDetailsViewModel>(apiResponse) ?? new InvoicePrintDetailsViewModel();
+                        }
+                        else
+                        {
+                            logger.LogError("DownloadInvoicePdf: API call failed ({Status}) for {Url}", (int)response.StatusCode, apiUrl);
+                        }
+                    }
+                }
 
+                if (invoice.SelfDetails == null || invoice.customerDetails == null)
+                    return BadRequest("Missing details for PDF generation.");
+
+                // Logo & QR code setup
+                invoice.Base64LogoString = ImageToString.GetBase64Logo(_env.WebRootPath, "assets/images/Cloudtree_final_Logo.png");
+                string urlForQr = Url.Action("GenerateInvoice", "Order", new { orderId = invoice.OrderNumber, orderType = invoice.RecordType }, Request.Scheme) ?? string.Empty;
+                invoice.QrCodeBase64Image = GenerateQrCodeBase64.GenerateQrCode(urlForQr);
+
+                // Render HTML and generate PDF bytes using Puppeteer
+                string invoiceHtml = await RenderViewToStringAsync("_InvoicePrintPartialView", invoice);
+                byte[] pdfBytes = await GeneratePdfFromHtml(invoiceHtml, fitToSinglePage: true);
+
+                if (pdfBytes == null || pdfBytes.Length == 0)
+                    return StatusCode(500, "PDF generation failed. Please check server logs (Chrome/Edge availability).");
+
+                string fileName = $"Invoice_{SafeFileName(!string.IsNullOrEmpty(invoice.InvoiceNumber) ? invoice.InvoiceNumber : invoice.OrderNumber)}.pdf";
+                return File(pdfBytes, "application/pdf", fileName);
+            }
+            catch (Exception ex)
+            {
+                logger.LogError(ex, "DownloadInvoicePdf failed for id={Id}, recordType={RecordType}, renewalId={RenewalId}", id, recordType, renewalId);
+                return StatusCode(500, "Unable to download invoice PDF. Please try again.");
+            }
+        }
+        private static string SafeFileName(string? name)
+        {
+            var invalid = Path.GetInvalidFileNameChars();
+            string cleaned = new string((name ?? "Document").Select(c => invalid.Contains(c) ? '_' : c).ToArray()).Trim();
+            return string.IsNullOrWhiteSpace(cleaned) ? "Document" : cleaned;
+        }
+        public async Task<byte[]> GeneratePdfFromHtml(string htmlContent, bool fitToSinglePage = false)
+        {
+            string? userDataDir = null;
+            try
+            {
+                string? browserPath = ResolveBrowserExecutablePath();
+                if (string.IsNullOrEmpty(browserPath))
+                {
+                    logger.LogError("PDF generation failed: Chrome/Edge not found on server. Install it or set \"Puppeteer:ExecutablePath\" in appsettings.json.");
+                    return Array.Empty<byte>();
+                }
+
+                // Own writable profile folder (IIS app-pool users often can't use the default one)
+                userDataDir = Path.Combine(Path.GetTempPath(), "hcm-pdf-" + Guid.NewGuid().ToString("N"));
+                Directory.CreateDirectory(userDataDir);
+
+                var options = new LaunchOptions
+                {
+                    Headless = true,
+                    ExecutablePath = browserPath,
+                    UserDataDir = userDataDir,
+                    Timeout = 60000,
+                    Args = new[]
+                    {
+                        "--no-sandbox",
+                        "--disable-setuid-sandbox",
+                        "--disable-gpu",
+                        "--disable-dev-shm-usage",
+                        "--no-first-run"
+                    }
+                };
+
+                // Embed local images (logo, signature) so PDF never depends on network / base URL
+                string html = InlineLocalImages(htmlContent);
+                if (fitToSinglePage)
+                {
+                    // Appended last so it overrides the view's own "@page { margin: 15mm }"
+                    html += "<style>@page{size:A4 portrait;margin:8mm;} .tableBorder th,.tableBorder td{padding-left:2px;padding-right:2px;}</style>";
+                }
+
+                string baseUrl = _config["Puppeteer:BaseUrl"] ?? string.Empty;
+                if (string.IsNullOrWhiteSpace(baseUrl))
+                {
+                    baseUrl = HttpContext?.Request != null
+                        ? $"{Request.Scheme}://{Request.Host}{Request.PathBase}/"
+                        : "https://www.hcmportal.anantatek.com/";
+                }
+                string htmlWithBase = $"<base href='{baseUrl}' />" + html;
+
+                using var browser = await Puppeteer.LaunchAsync(options);
+                using var page = await browser.NewPageAsync();
+                await page.EmulateMediaTypeAsync(PuppeteerSharp.Media.MediaType.Print);
+                if (fitToSinglePage)
+                    await page.SetViewportAsync(new ViewPortOptions { Width = 1200, Height = 1600 });
+                await page.SetContentAsync(htmlWithBase, new NavigationOptions
+                {
+                    // Load (not Networkidle0): Networkidle0 hangs/time-outs when any external file is slow or blocked
+                    WaitUntil = new[] { WaitUntilNavigation.Load },
+                    Timeout = 30000
+                });
+                var pdfOptions = new PdfOptions
+                {
+                    Format = PaperFormat.A4,
+                    PrintBackground = true,
+                    MarginOptions = new MarginOptions
+                    {
+                        Top = "10mm",
+                        Bottom = "10mm",
+                        Left = "10mm",
+                        Right = "10mm"
+                    }
+                };
+
+                if (fitToSinglePage)
+                {
+                    // A4 minus 8mm margins, in CSS px (96 dpi)
+                    const double printableWidthPx = 733.0;
+                    const double printableHeightPx = 1062.0;
+                    // Same wide layout the invoice has on screen (this gives the compact look of the old jsPDF download)
+                    const double designWidthPx = 1140.0;
+
+                    pdfOptions.MarginOptions = new MarginOptions { Top = "8mm", Bottom = "8mm", Left = "8mm", Right = "8mm" };
+
+                    await page.EvaluateFunctionAsync(
+                        "(w) => { const e = document.getElementById('invoiceToPrint'); if (e) { e.style.width = w + 'px'; e.style.maxWidth = 'none'; e.style.margin = '0 auto'; } }",
+                        designWidthPx);
+                    double contentHeight = await page.EvaluateFunctionAsync<double>(
+                        "() => { const e = document.getElementById('invoiceToPrint') || document.body; return e.getBoundingClientRect().bottom + window.scrollY; }");
+
+                    double scaleByWidth = (printableWidthPx / designWidthPx) * 0.985;
+                    double scaleByHeight = contentHeight > 0 ? (printableHeightPx / contentHeight) * 0.97 : scaleByWidth;
+                    double scale = Math.Max(0.35, Math.Min(1.0, Math.Min(scaleByWidth, scaleByHeight)));
+
+                    // Long invoice (many items): smaller scale, so widen the layout to still fill the page width
+                    if (scale < scaleByWidth)
+                    {
+                        await page.EvaluateFunctionAsync(
+                            "(w) => { const e = document.getElementById('invoiceToPrint'); if (e) { e.style.width = w + 'px'; } }",
+                            printableWidthPx / scale);
+                    }
+                    pdfOptions.Scale = (decimal)Math.Round(scale, 3);
+                }
+
+                var pdfData = await page.PdfDataAsync(pdfOptions);
+                await browser.CloseAsync();
+                return pdfData;
+            }
+            catch (Exception ex)
+            {
+                logger.LogError(ex, "PDF generation failed in GeneratePdfFromHtml");
+                return Array.Empty<byte>();
+            }
+            finally
+            {
+                if (userDataDir != null)
+                {
+                    try { Directory.Delete(userDataDir, true); } catch { /* ignore cleanup errors */ }
+                }
+            }
+        }
+        // Converts <img src="/assets/..."> (or ~/assets/...) pointing to wwwroot into base64 data URIs
+        private string InlineLocalImages(string html)
+        {
+            if (string.IsNullOrEmpty(html) || string.IsNullOrEmpty(_env.WebRootPath)) return html;
+
+            string webRoot = Path.GetFullPath(_env.WebRootPath);
+            string pathBase = HttpContext?.Request?.PathBase.Value ?? string.Empty;
+
+            return Regex.Replace(html, @"(<img\b[^>]*?\bsrc\s*=\s*"")(~?/[^""]+)("")", m =>
+            {
+                try
+                {
+                    string rel = m.Groups[2].Value.TrimStart('~');
+                    int q = rel.IndexOfAny(new[] { '?', '#' });
+                    if (q >= 0) rel = rel.Substring(0, q);
+                    if (!string.IsNullOrEmpty(pathBase) && rel.StartsWith(pathBase, StringComparison.OrdinalIgnoreCase))
+                        rel = rel.Substring(pathBase.Length);
+                    rel = Uri.UnescapeDataString(rel).TrimStart('/', '\\');
+
+                    string full = Path.GetFullPath(Path.Combine(webRoot, rel));
+                    if (!full.StartsWith(webRoot, StringComparison.OrdinalIgnoreCase) || !System.IO.File.Exists(full))
+                        return m.Value;
+
+                    string? mime = Path.GetExtension(full).ToLowerInvariant() switch
+                    {
+                        ".png" => "image/png",
+                        ".jpg" => "image/jpeg",
+                        ".jpeg" => "image/jpeg",
+                        ".gif" => "image/gif",
+                        ".webp" => "image/webp",
+                        ".svg" => "image/svg+xml",
+                        _ => null
+                    };
+                    if (mime == null) return m.Value;
+
+                    return m.Groups[1].Value + "data:" + mime + ";base64," +
+                           Convert.ToBase64String(System.IO.File.ReadAllBytes(full)) + m.Groups[3].Value;
+                }
+                catch
+                {
+                    return m.Value;
+                }
+            }, RegexOptions.IgnoreCase);
+        }
+        private string? ResolveBrowserExecutablePath()
+        {
+            var candidates = new List<string>();
+            string? configured = _config["Puppeteer:ExecutablePath"];
+            if (!string.IsNullOrWhiteSpace(configured)) candidates.Add(configured);
+            string? fromEnv = Environment.GetEnvironmentVariable("CHROME_PATH");
+            if (!string.IsNullOrWhiteSpace(fromEnv)) candidates.Add(fromEnv);
+
+            candidates.AddRange(new[]
+            {
+                @"C:\Program Files\Google\Chrome\Application\chrome.exe",
+                @"C:\Program Files (x86)\Google\Chrome\Application\chrome.exe",
+                @"C:\Program Files\Microsoft\Edge\Application\msedge.exe",
+                @"C:\Program Files (x86)\Microsoft\Edge\Application\msedge.exe",
+                "/usr/bin/google-chrome",
+                "/usr/bin/google-chrome-stable",
+                "/usr/bin/chromium-browser",
+                "/usr/bin/chromium"
+            });
+
+            return candidates.FirstOrDefault(p => System.IO.File.Exists(p));
+        }
+        #endregion
     }
-
-
-
 }
