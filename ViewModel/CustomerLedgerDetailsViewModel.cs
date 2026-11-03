@@ -177,5 +177,6 @@ namespace HCMPortal.ViewModel
         public string? QrCodeUrl { get; set; }
         [NotMapped]
         public string? QrCodeBase64Image { get; set; }
+        public int srid { get; set; }
     }
 }
